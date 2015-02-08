@@ -17,7 +17,8 @@ import com.astuetz.PagerSlidingTabStrip;
 public class MainActivity extends FragmentActivity {
 
 
-    private CChatFragment CChatFragment;
+
+    private Schedule ChatFragment;
 
     private DisplayMetrics dm;
     private PagerSlidingTabStrip tabs;
@@ -84,14 +85,14 @@ public class MainActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    CChatFragment = new CChatFragment();
+                    ChatFragment = new Schedule();
 
-                    return CChatFragment;
+                    return ChatFragment;
                 case 1:
 
-                    CChatFragment = new CChatFragment();
+                    ChatFragment = new Schedule();
 
-                    return CChatFragment;
+                    return ChatFragment;
 
                 default:
                     return null;

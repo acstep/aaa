@@ -15,7 +15,7 @@ import android.widget.TextView;
 /**
  * Created by matt on 2015/2/6.
  */
-class ChatFragment extends Fragment {
+public class Schedule extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
