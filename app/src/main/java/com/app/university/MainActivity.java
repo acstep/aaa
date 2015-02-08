@@ -1,4 +1,4 @@
-package com.app.university.university;
+package com.app.university;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import com.astuetz.PagerSlidingTabStrip;
 
 public class MainActivity extends FragmentActivity {
 
-    private ChatFragment ChatFragment;
+
     private CChatFragment CChatFragment;
 
     private DisplayMetrics dm;
@@ -84,9 +84,9 @@ public class MainActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    ChatFragment = new ChatFragment();
+                    CChatFragment = new CChatFragment();
 
-                    return ChatFragment;
+                    return CChatFragment;
                 case 1:
 
                     CChatFragment = new CChatFragment();

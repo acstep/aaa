@@ -1,4 +1,4 @@
-package com.app.university.university;
+package com.app.university;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +15,7 @@ import android.widget.TextView;
 /**
  * Created by matt on 2015/2/6.
  */
-class CChatFragment extends Fragment {
+class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
