@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">University</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_logo">LogoActivity</string>
+    <string name="login">登入</string>
+    <string name="createaccount">創建帳號</string>
+    <string name="title_activity_create_account">創建帳號</string>
+    <string name="createaccount_title">創建帳號:</string>
+    <string name="createaccount_des">請使用 ntu.edu.tw 結尾的電子郵件帳號.</string>
+</resources>

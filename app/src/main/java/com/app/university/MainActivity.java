@@ -69,7 +69,7 @@ public class MainActivity extends FragmentActivity {
             super(fm);
         }
 
-        private final String[] titles = { "聊天", "發     現" };
+        private final String[] titles = { "課表", "討論", "社團", "我" };
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -93,7 +93,16 @@ public class MainActivity extends FragmentActivity {
                     ChatFragment = new Schedule();
 
                     return ChatFragment;
+                case 2:
 
+                    ChatFragment = new Schedule();
+
+                    return ChatFragment;
+                case 3:
+
+                    ChatFragment = new Schedule();
+
+                    return ChatFragment;
                 default:
                     return null;
             }
