@@ -10,4 +10,7 @@
     <string name="title_activity_create_account">CreateAccountActivity</string>
     <string name="createaccount_title">Create New Account:</string>
     <string name="createaccount_des">Please use a ntu.edu.tw email address.</string>
+    <string name="title_activity_add_course">AddCourse</string>
+    <string name="done">Done</string>
+    <string name="academic_year">103-2</string>
 </resources>
