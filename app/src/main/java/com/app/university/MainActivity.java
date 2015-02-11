@@ -1,6 +1,10 @@
 package com.app.university;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,14 +16,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
 public class MainActivity extends FragmentActivity {
 
+    private GoogleApiClient mGoogleApiClient;
+    private Location location;
+    private GoogleCloudMessaging gcm;
 
-
-    private Schedule ChatFragment;
-
+    private Schedule mSchedule;
+    private CourseList mCourseList;
+    private GroupList mGroupList;
     private DisplayMetrics dm;
     private PagerSlidingTabStrip tabs;
 
@@ -28,6 +37,12 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        if(settings.getBoolean(Data.COURSE_SCHEDULE_SET,false) == false){
+            Intent intent = new Intent(this, AddCourseActivity.class);
+            startActivity(intent);
+        }
 
         dm = getResources().getDisplayMetrics();
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
@@ -85,24 +100,24 @@ public class MainActivity extends FragmentActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    ChatFragment = new Schedule();
+                    mSchedule = new Schedule();
 
-                    return ChatFragment;
+                    return mSchedule;
                 case 1:
 
-                    ChatFragment = new Schedule();
+                    mCourseList = new CourseList();
 
-                    return ChatFragment;
+                    return mCourseList;
                 case 2:
 
-                    ChatFragment = new Schedule();
+                    mGroupList = new GroupList();
 
-                    return ChatFragment;
+                    return mGroupList;
                 case 3:
 
-                    ChatFragment = new Schedule();
+                    mCourseList = new CourseList();
 
-                    return ChatFragment;
+                    return mCourseList;
                 default:
                     return null;
             }

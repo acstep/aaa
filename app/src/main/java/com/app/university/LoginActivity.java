@@ -21,8 +21,17 @@ public class LoginActivity extends Activity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(arg0.getContext(), MainActivity.class);
-                startActivity(intent);
+
+
+
+
+
+
+
+
+            Intent intent = new Intent(arg0.getContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
             }
         });
 
@@ -30,21 +39,11 @@ public class LoginActivity extends Activity {
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent(arg0.getContext(), CreateAccountActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(arg0.getContext(), CreateAccountActivity.class);
+            startActivity(intent);
+            finish();
             }
         });
     }
-
-
-    @Override
-    public void onBackPressed() {
-
-        return;
-    }
-
-
-
-
 
 }

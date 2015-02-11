@@ -1,6 +1,7 @@
 package com.app.university;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,21 +19,22 @@ public class LogoActivity extends Activity {
 
     }
 
-
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        SharedPreferences settings = getSharedPreferences ("ID", MODE_PRIVATE);
-        String myid = settings.getString("ID", null);
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        String myid = settings.getString(Data.USER_ID, null);
         if(myid == null){
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-
+            finish();
         }
         else{
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
     }
+
 
 }

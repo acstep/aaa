@@ -77,12 +77,12 @@
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
         tools:context=".AddCourse"
-        android:id="@+id/laySwipe">
+        android:id="@+id/search_course_list_swipe">
 
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/lstData"
+            android:id="@+id/search_course_list"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />

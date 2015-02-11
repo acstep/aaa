@@ -24,7 +24,8 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2">
+            android:layout_weight="2"
+            android:id="@+id/frame_mon">
 
             <Button
                 android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:text="邏輯設計"
-                android:id="@+id/button"
+                android:id="@+id/btn_aa"
                 android:background="#fffff439"
                 android:layout_marginTop="150dp" />
 

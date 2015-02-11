@@ -7,10 +7,15 @@
     <string name="title_activity_logo">LogoActivity</string>
     <string name="login">登入</string>
     <string name="createaccount">創建帳號</string>
+    <string name="createaccount1">建立</string>
     <string name="title_activity_create_account">創建帳號</string>
     <string name="createaccount_title">創建帳號:</string>
-    <string name="createaccount_des">請使用 ntu.edu.tw 結尾的電子郵件帳號.</string>
+    <string name="createaccount_des">請使用 ntu.edu.tw 結尾的電子郵件帳號.\n稍後我們將會寄一封認證信到這個信箱。請前往認證才能使用全部功能</string>
     <string name="title_activity_add_course">添加課程</string>
     <string name="done">完成</string>
+    <string name="network_error">無法連線</string>
     <string name="academic_year">添加課程  學期 : 103-2</string>
+    <string name="passwd_not_match">密碼不同</string>
+    <string name="email_incorrent">請輸入 ntu.edu.tw 結尾的信箱</string>
+    <string name="user_exist">帳號已被使用</string>
 </resources>

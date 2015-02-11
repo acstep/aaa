@@ -36,16 +36,15 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/editEmail"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:hint="Email"
-        android:textIsSelectable="true"
-        android:background="#ffffffff"
+         android:background="#ffffffff"
         android:autoText="true"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:layout_width="match_parent"
@@ -73,7 +72,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/createaccount"
+        android:text="@string/createaccount1"
         android:id="@+id/btn_createaccount"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/btn_create_account"

@@ -7,10 +7,15 @@
     <string name="title_activity_logo">LogoActivity</string>
     <string name="login">Log In</string>
     <string name="createaccount">Create New Account</string>
+    <string name="createaccount1">Create</string>
     <string name="title_activity_create_account">CreateAccountActivity</string>
     <string name="createaccount_title">Create New Account:</string>
     <string name="createaccount_des">Please use a ntu.edu.tw email address.</string>
     <string name="title_activity_add_course">AddCourse</string>
     <string name="done">Done</string>
+    <string name="network_error">No Internet Connection!</string>
     <string name="academic_year">103-2</string>
+    <string name="passwd_not_match">Password does not match</string>
+    <string name="email_incorrent">Need a NTU email account</string>
+    <string name="user_exist">User Exist!</string>
 </resources>

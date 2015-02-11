@@ -32,6 +32,8 @@ public class Schedule extends Fragment {
         timeFrame = (FrameLayout) view.findViewById(R.id.timeframe);
         int timeStartTop = (int) (40 * displayMetrics.density);
         int timeStart  = 8;
+
+
         for (int i = 1; i <= 14; i++) {
 
             Button btn = new Button(getActivity());
