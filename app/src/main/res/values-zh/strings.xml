@@ -14,8 +14,14 @@
     <string name="title_activity_add_course">添加課程</string>
     <string name="done">完成</string>
     <string name="network_error">無法連線</string>
-    <string name="academic_year">添加課程  學期 : 103-2</string>
+    <string name="academic_year">添加課程  學期 : 103–2</string>
     <string name="passwd_not_match">密碼不同</string>
     <string name="email_incorrent">請輸入 ntu.edu.tw 結尾的信箱</string>
     <string name="user_exist">帳號已被使用</string>
+    <string name="login_error">帳號或密碼錯誤</string>
+    <string name="course_name">請輸入課程名稱</string>
+    <string name="teacher">教授: </string>
+    <string name="Time">時間: </string>
+    <string name="add">加入</string>
+    <string name="delete">刪除</string>
 </resources>

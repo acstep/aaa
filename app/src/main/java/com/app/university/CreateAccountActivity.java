@@ -40,27 +40,31 @@ public class CreateAccountActivity extends Activity {
         Button createButton = (Button)findViewById(R.id.btn_createaccount);
 
 
-        createButton.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-            EditText edEmail = (EditText)findViewById(R.id.editEmail);
-            EditText edPasswd = (EditText)findViewById(R.id.editPasswd);
-            EditText edPasswdConf = (EditText)findViewById(R.id.editPasswdConfirm);
-            final String emailString = edEmail.getText().toString().toLowerCase();
-            final String passwdString = edPasswd.getText().toString().toLowerCase();
-            String passwdConfString = edPasswdConf.getText().toString().toLowerCase();
+                EditText edEmail = (EditText)findViewById(R.id.editEmail);
+                EditText edPasswd = (EditText)findViewById(R.id.editPasswd);
+                EditText edPasswdConf = (EditText)findViewById(R.id.editPasswdConfirm);
+                final String emailString = edEmail.getText().toString().toLowerCase();
+                final String passwdString = edPasswd.getText().toString().toLowerCase();
+                String passwdConfString = edPasswdConf.getText().toString().toLowerCase();
 
-           if(passwdString.compareTo(passwdConfString) != 0){
-                Toast.makeText(mContext, R.string.passwd_not_match, Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if(emailString.isEmpty() || passwdString.isEmpty() || passwdConfString.isEmpty()){
+                    return;
+                }
 
-            if(emailString.endsWith("ntu.edu.tw") == false){
-                Toast.makeText(mContext, R.string.email_incorrent, Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if(passwdString.compareTo(passwdConfString) != 0){
+                    Toast.makeText(mContext, R.string.passwd_not_match, Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            final StringRequest stringRequest = new StringRequest(Request.Method.POST, NETTag.API_CREATE_ACCOUNT,
+                if(emailString.endsWith("ntu.edu.tw") == false){
+                    Toast.makeText(mContext, R.string.email_incorrent, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                final StringRequest stringRequest = new StringRequest(Request.Method.POST, NETTag.API_CREATE_ACCOUNT,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -108,22 +112,23 @@ public class CreateAccountActivity extends Activity {
                             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                             return;
                         }
-                    })
-            {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> map = new HashMap<String, String>();
+                    }
+                )
+                {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> map = new HashMap<String, String>();
 
-                    map.put(NETTag.EMAIL,emailString);
-                    map.put(NETTag.PASSWD, passwdString);
+                        map.put(NETTag.EMAIL,emailString);
+                        map.put(NETTag.PASSWD, passwdString);
 
-                    //SharedPreferences prefs = getSharedPreferences(mContext);
+                        //SharedPreferences prefs = getSharedPreferences(mContext);
 
-                    return map;
-                }
-            };
-            stringRequest.setTag("CreateAccountActivity");
-            mVolleyRequestQueue.add(stringRequest);
+                        return map;
+                    }
+                };
+                stringRequest.setTag("CreateAccountActivity");
+                mVolleyRequestQueue.add(stringRequest);
 
             }
         });
