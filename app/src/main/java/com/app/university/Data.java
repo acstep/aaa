@@ -13,11 +13,11 @@ public class Data {
     public static final String COURSE_SCHEDULE_SET = "course_schedule_set";
     public static final String DEPARTMENT = "department";
     public static final String CURRENTCOURSE = "course";
-    public static final String COURSENAME = "name";
-    public static final String COURSETIME = "time";
-    public static final String COURSETEACHER = "teacher";
-    public static final String COURSECOLOR = "color";
-    public static final String COURSEID = "id";
-    public static final String COURSETIMESEC = "timesec";
+    public static final String COURSE_NAME = "name";
+    public static final String COURSE_TIME = "time";
+    public static final String COURSE_TEACHER = "teacher";
+    public static final String COURSE_COLOR = "color";
+    public static final String COURSE_ID = "id";
+    public static final String COURSE_TIMESEC = "timesec";
 
 }
