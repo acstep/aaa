@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:hint="@string/course_name"
+                android:hint="@string/input_course_name"
                 android:singleLine="true" />
 
             <Button

@@ -1,6 +1,9 @@
 package com.app.university;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -41,6 +44,7 @@ public class Schedule extends Fragment {
         String color = "";
         String timeString = "";
         String time = "";
+        String courseBlockTime = "";
     }
 
     public void drawCourse() throws JSONException {
@@ -51,7 +55,26 @@ public class Schedule extends Fragment {
         String timeString = "";
         String time = "";
 
+        monView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_mon);
+        tueView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_tue);
+        wedView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_wed);
+        thuView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_thu);
+        friView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_fri);
 
+        monView.removeAllViews();
+        tueView.removeAllViews();
+        wedView.removeAllViews();
+        thuView.removeAllViews();
+        friView.removeAllViews();
+
+        SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+        String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
+        try {
+            mCourseJsonArray = new JSONArray(jsonCoursString);
+        } catch (JSONException e) {
+            mCourseJsonArray = new JSONArray();
+        }
+        Log.d("Schedule mCourseJsonArray = ", mCourseJsonArray.toString());
 
         for (int i=0;i<mCourseJsonArray.length();i++){
             CourseInfo courseInfo = new CourseInfo();
@@ -70,6 +93,7 @@ public class Schedule extends Fragment {
 
             while(index+15 <= courseInfo.timeString.length()){
                 time = courseInfo.timeString.substring(index);
+                courseInfo.courseBlockTime = time;
                 FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
                 String day = time.substring(0,3);
                 int startHR = Integer.valueOf(time.substring(4, 6));
@@ -124,39 +148,76 @@ public class Schedule extends Fragment {
             }
 
         }
+        monView.invalidate();
+        tueView.invalidate();
+        wedView.invalidate();
+        thuView.invalidate();
+        friView.invalidate();
     }
 
 
     class courseButton_Click implements View.OnClickListener {
 
         private Button mbutton;
-        private CourseInfo mCourseInf;
+        private CourseInfo mCourseInfo;
 
 
         courseButton_Click(Button button, CourseInfo courseInfo) {
 
             mbutton = button;
-            mCourseInf = courseInfo;
+            mCourseInfo = courseInfo;
         }
         public void onClick(View v) {
-            Log.d("Schedule mCourseJsonArray = ", mCourseInf.name);
+            final CharSequence courseOption[] = { getString(R.string.course_edit),getString( R.string.course_delete) };
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle(getString(R.string.course_action));
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            alert.setSingleChoiceItems(courseOption, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == 0) {
+                        dialog.cancel();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Data.COURSE_NAME, mCourseInfo.name);
+                        bundle.putString(Data.COURSE_TIME, mCourseInfo.courseBlockTime);
+                        bundle.putString(Data.COURSE_ID, mCourseInfo.id);
+                        Intent intent = new Intent(getActivity(), CourseTimeActivity.class);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 0);
+
+                        Log.d("Schedule mCourseJsonArray = ", mCourseInfo.name);
+
+                    } else {
+                        dialog.cancel();
+                    }
+                }
+            });
+            alert.show();
 
         }
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        try {
+            drawCourse();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-        SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
-        String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
-        try {
-            mCourseJsonArray = new JSONArray(jsonCoursString);
-        } catch (JSONException e) {
-            mCourseJsonArray = new JSONArray();
-        }
-        Log.d("Schedule mCourseJsonArray = ", mCourseJsonArray.toString());
 
         viewSchedule = inflater.inflate(R.layout.schedule, container, false);
 
@@ -191,11 +252,7 @@ public class Schedule extends Fragment {
             timeFrame.addView(btn);
 
         }
-        monView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_mon);
-        tueView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_tue);
-        wedView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_wed);
-        thuView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_thu);
-        friView =  (FrameLayout)viewSchedule.findViewById(R.id.frame_fri);
+
         try {
             drawCourse();
         } catch (JSONException e) {

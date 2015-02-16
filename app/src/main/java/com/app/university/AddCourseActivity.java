@@ -35,7 +35,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +55,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
     private String currentSearchText = "";
     private JSONArray mCourseJsonArray;
     private boolean hasMoreData = true;
-    Map<String, Boolean> courseColor = new HashMap<String, Boolean> ();
+    private CourseColor courseColor;
+
 
     public class CourseItem {
         private String name;
@@ -204,9 +204,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                     try {
                         if(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(m.getId()) == 0){
                             mCourseJsonArray.remove(i);
-                            if(courseColor.containsKey(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR))){
-                                courseColor.put(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR),false);
-                            }
+                            courseColor.deleteColor(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR));
+
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -235,7 +234,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                     e.printStackTrace();
                 }
                 try {
-                    String color = getNewColor();
+                    String color = courseColor.getNewColor();
                     if(color.length() == 0){
                         color = "6698ff";
                     }
@@ -273,49 +272,6 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
         }
     }
 
-
-    public void initColor(){
-        courseColor.put("1fc868",false);
-        courseColor.put("f8de41",false);
-        courseColor.put("f452af",false);
-        courseColor.put("8d44b6",false);
-        courseColor.put("533be1",false);
-        courseColor.put("6698ff",false);
-        courseColor.put("62b0d6",false);
-        courseColor.put("77d6e8",false);
-        courseColor.put("b1cd5f",false);
-        courseColor.put("427785",false);
-        courseColor.put("fc93b4",false);
-        courseColor.put("801f1f",false);
-        courseColor.put("92deff",false);
-        courseColor.put("ec713a",false);
-
-        for (int i=0;i<mCourseJsonArray.length();i++){
-            try {
-                String color = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR);
-                if(courseColor.containsKey(color)){
-                    courseColor.put(color,true);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-
-            }
-        }
-
-    }
-
-    public String getNewColor(){
-        Iterator entries = courseColor.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry thisEntry = (Map.Entry) entries.next();
-            if( thisEntry.getValue() == false){
-                thisEntry.setValue(true);
-                return (String)thisEntry.getKey();
-            }
-        }
-        return "";
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -340,7 +296,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
         }
         Log.d("AddCourseActivity mCourseJsonArray = ", mCourseJsonArray.toString() );
 
-        initColor();
+        courseColor = new CourseColor(jsonCoursString);
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) findViewById(R.id.search_course_list_swipe);
         mSwipeLayout.setOnRefreshListener(this);

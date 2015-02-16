@@ -24,9 +24,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:id="@+id/frame_mon">
-
+            android:layout_weight="2">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
@@ -36,67 +34,89 @@
                 android:textSize="16dp"
                 android:layout_gravity="top" />
 
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frame_mon">
 
-
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:id="@+id/frame_tue">
-
-
+            android:layout_weight="2">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Tue"
                 android:id="@+id/button14"
                 android:background="#FFFFFFFF"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:layout_gravity="top" />
 
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frame_tue">
+
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:id="@+id/frame_wed">
-
+            android:layout_weight="2">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Wed"
                 android:id="@+id/button15"
                 android:background="#FFFFFFFF"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:layout_gravity="top" />
+
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frame_wed">
+
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:id="@+id/frame_thu">
-
+            android:layout_weight="2">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Thu"
                 android:id="@+id/button16"
                 android:background="#FFFFFFFF"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:layout_gravity="top" />
+
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frame_thu">
+
+            </FrameLayout>
         </FrameLayout>
 
         <FrameLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:id="@+id/frame_fri">
-
+            android:layout_weight="2">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
@@ -104,8 +124,18 @@
                 android:id="@+id/button17"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
-                android:textStyle="normal" />
+                android:layout_gravity="top" />
+
+            <FrameLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/frame_fri">
+
+            </FrameLayout>
         </FrameLayout>
+
+
     </LinearLayout>
 
 </ScrollView>
