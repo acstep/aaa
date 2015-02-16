@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -153,6 +154,36 @@ public class Schedule extends Fragment {
         wedView.invalidate();
         thuView.invalidate();
         friView.invalidate();
+
+
+    }
+
+
+    class newCourse_Click implements View.OnClickListener, View.OnTouchListener{
+
+        private FrameLayout mFrame;
+        private String mWeekDay ;
+        newCourse_Click(FrameLayout frame, String weekDay) {
+            mFrame = frame;
+            mWeekDay = weekDay;
+        }
+
+        public void onClick(View v) {
+            //Bundle bundle = new Bundle();
+            //bundle.putString(Data.COURSE_NAME, "");
+            //bundle.putString(Data.COURSE_TIME, "");
+            //bundle.putString(Data.COURSE_ID, "");
+            //Intent intent = new Intent(getActivity(), CourseTimeActivity.class);
+            //intent.putExtras(bundle);
+            //startActivityForResult(intent, 0);
+
+            Log.d("Schedule mCourseJsonArray = ", String.valueOf(v.getY()) );
+        }
+
+        public boolean onTouch(View v, MotionEvent event) {
+            Log.d("Schedule mCourseJsonArray = ", String.valueOf(event.getY()) );
+            return false;
+        }
     }
 
 
@@ -193,7 +224,24 @@ public class Schedule extends Fragment {
 
                         Log.d("Schedule mCourseJsonArray = ", mCourseInfo.name);
 
-                    } else {
+                    } else if(which == 1){
+                        for (int i=0;i<mCourseJsonArray.length();i++){
+                            try {
+                                if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(mCourseInfo.id) == 0){
+                                    mCourseJsonArray.remove(i);
+                                    SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = settings.edit();
+                                    editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
+                                    editor.apply();
+                                    drawCourse();
+                                    dialog.cancel();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }else {
                         dialog.cancel();
                     }
                 }
@@ -255,6 +303,12 @@ public class Schedule extends Fragment {
 
         try {
             drawCourse();
+            monView.setOnClickListener(new newCourse_Click(monView,"MON"));
+            monView.setOnTouchListener(new newCourse_Click(monView,"MON"));
+            tueView.setOnClickListener(new newCourse_Click(tueView,"TUE"));
+            wedView.setOnClickListener(new newCourse_Click(wedView,"WED"));
+            thuView.setOnClickListener(new newCourse_Click(thuView,"THU"));
+            friView.setOnClickListener(new newCourse_Click(friView,"FRI"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -25,7 +25,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/textView6"
                 android:textSize="20sp"
-                android:text="@string/course_name" />
+                android:text="@string/course_name"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
 
 　　　　　　　<View
                 android:layout_width="fill_parent"
@@ -41,6 +43,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="20dp" />
+
 
             <TextView
                 android:layout_width="wrap_content"

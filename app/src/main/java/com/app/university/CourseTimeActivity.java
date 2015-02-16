@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -32,6 +33,7 @@ public class CourseTimeActivity extends Activity {
     private int endHR = 0;
     private int endMin = 0;
     private String day = "";
+    private String courseID = "";
 
 
     @Override
@@ -43,6 +45,7 @@ public class CourseTimeActivity extends Activity {
         Bundle bundle = intent.getExtras();
 
         timeString = bundle.getString(Data.COURSE_TIME);
+        courseID =  bundle.getString(Data.COURSE_ID);
         day = timeString.substring(0,3);
         startHR = Integer.valueOf(timeString.substring(4, 6));
         startMin = Integer.valueOf(timeString.substring(7, 9));
@@ -114,9 +117,24 @@ public class CourseTimeActivity extends Activity {
                         mCourseJsonArray = new JSONArray();
                     }
                     String week = spWeekDat.getSelectedItem().toString();
-                    String finalTimeString = week + "-"+ String.valueOf(startHR) + ":" + String.valueOf(startMin) + "~" + String.valueOf(endHR) + ":" + String.valueOf(endMin);
+
+                    String finalTimeString = week + "-"+ String.format("%02d", startHR) + ":" + String.format("%02d", startMin) + "~" + String.format("%02d", endHR) + ":" + String.format("%02d", endMin);
                     for (int i=0;i<mCourseJsonArray.length();i++){
-                        
+                        try {
+                            if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(courseID) == 0){
+                                String tmpTimeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
+                                tmpTimeString = tmpTimeString.replace(timeString,finalTimeString);
+                                ((JSONObject)mCourseJsonArray.get(i)).put(Data.COURSE_TIME,tmpTimeString);
+
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
+                                editor.apply();
+                                CourseTimeActivity.this.setResult(Activity.RESULT_OK);
+                                CourseTimeActivity.this.finish();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
                 else{
