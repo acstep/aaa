@@ -34,6 +34,8 @@ public class CourseTimeActivity extends Activity {
     private int endMin = 0;
     private String day = "";
     private String courseID = "";
+    private boolean mNewCourse = false;
+    private CourseColor courseColor;
 
 
     @Override
@@ -46,6 +48,10 @@ public class CourseTimeActivity extends Activity {
 
         timeString = bundle.getString(Data.COURSE_TIME);
         courseID =  bundle.getString(Data.COURSE_ID);
+        if(courseID.compareTo("") == 0){
+            mNewCourse = true;
+            getActionBar().setTitle(R.string.course_add);
+        }
         day = timeString.substring(0,3);
         startHR = Integer.valueOf(timeString.substring(4, 6));
         startMin = Integer.valueOf(timeString.substring(7, 9));
@@ -55,8 +61,8 @@ public class CourseTimeActivity extends Activity {
         EditText editCourseName =  (EditText)findViewById(R.id.edit_course_name);
         final TextView txStartTime = (TextView)findViewById(R.id.tx_start_time);
         final TextView txEndTime = (TextView)findViewById(R.id.tx_end_time);
-        txStartTime.setText(String.valueOf(startHR)+":"+String.valueOf(startMin));
-        txEndTime.setText(String.valueOf(endHR)+":"+String.valueOf(endMin));
+        txStartTime.setText(String.format("%02d", startHR)+":"+(String.format("%02d", startMin)));
+        txEndTime.setText(String.format("%02d", endHR)+":"+(String.format("%02d", endMin)));
 
         editCourseName.setText(bundle.getString(Data.COURSE_NAME));
         spWeekDat = (Spinner) findViewById(R.id.sp_week_day);
@@ -76,9 +82,8 @@ public class CourseTimeActivity extends Activity {
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 startHR = hourOfDay;
                                 startMin = minute;
-
-                                txStartTime.setText(String.valueOf(startHR)+":"+String.valueOf(startMin));
-                                txEndTime.setText(String.valueOf(endHR)+":"+String.valueOf(endMin));
+                                txStartTime.setText(String.format("%02d", startHR)+":"+String.format("%02d", startMin));
+                                txEndTime.setText(String.format("%02d", endHR)+":"+String.format("%02d", endMin));
 
                             }
                         }, startHR, startMin, true).show();
@@ -96,8 +101,8 @@ public class CourseTimeActivity extends Activity {
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 endHR = hourOfDay;
                                 endMin = minute;
-                                txStartTime.setText(String.valueOf(startHR)+":"+String.valueOf(startMin));
-                                txEndTime.setText(String.valueOf(endHR)+":"+String.valueOf(endMin));
+                                txStartTime.setText(String.format("%02d", startHR)+":"+String.format("%02d", startMin));
+                                txEndTime.setText(String.format("%02d", endHR)+":"+String.format("%02d", endMin));
                             }
                         }, endHR, endMin, true).show();
             }
@@ -108,25 +113,77 @@ public class CourseTimeActivity extends Activity {
             @Override
             public void onClick(View arg0) {
                 if(startHR < endHR || ((startHR==endHR)&&(startMin<endMin))){
+                    EditText editCourseName =  (EditText)findViewById(R.id.edit_course_name);
+                    String courseName = editCourseName.getText().toString();
+                    if(courseName.isEmpty()){
+                        Toast.makeText(CourseTimeActivity.this, R.string.empty_course_name, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     JSONArray mCourseJsonArray;
                     SharedPreferences settings = CourseTimeActivity.this.getSharedPreferences("ID", Context.MODE_PRIVATE);
                     String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
+                    SharedPreferences.Editor editor = settings.edit();
                     try {
                         mCourseJsonArray = new JSONArray(jsonCoursString);
                     } catch (JSONException e) {
                         mCourseJsonArray = new JSONArray();
                     }
                     String week = spWeekDat.getSelectedItem().toString();
-
                     String finalTimeString = week + "-"+ String.format("%02d", startHR) + ":" + String.format("%02d", startMin) + "~" + String.format("%02d", endHR) + ":" + String.format("%02d", endMin);
+
+                    if(mNewCourse){
+                        JSONObject courseItem = new JSONObject();
+                        courseColor = new CourseColor(jsonCoursString);
+                        try {
+                            courseItem.put(Data.COURSE_NAME ,courseName);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            courseItem.put(Data.COURSE_TEACHER ,"");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            courseItem.put(Data.COURSE_TIME ,finalTimeString);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            String color = courseColor.getNewColor();
+                            if(color.length() == 0){
+                                color = "6698ff";
+                            }
+                            courseItem.put(Data.COURSE_COLOR  ,color);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            SharedPreferences id = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                            String myid = settings.getString(Data.USER_ID, null);
+                            java.util.Date date= new java.util.Date();
+                            courseItem.put(Data.COURSE_ID ,CommonUtil.getMD5(courseName+myid+ String.valueOf(date.getTime())));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        mCourseJsonArray.put(courseItem);
+                        editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
+                        editor.apply();
+                        CourseTimeActivity.this.setResult(Activity.RESULT_OK);
+                        CourseTimeActivity.this.finish();
+
+                    }
+
+
                     for (int i=0;i<mCourseJsonArray.length();i++){
                         try {
                             if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(courseID) == 0){
                                 String tmpTimeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
                                 tmpTimeString = tmpTimeString.replace(timeString,finalTimeString);
                                 ((JSONObject)mCourseJsonArray.get(i)).put(Data.COURSE_TIME,tmpTimeString);
-
-                                SharedPreferences.Editor editor = settings.edit();
+                                ((JSONObject)mCourseJsonArray.get(i)).put(Data.COURSE_NAME,courseName);
                                 editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
                                 editor.apply();
                                 CourseTimeActivity.this.setResult(Activity.RESULT_OK);

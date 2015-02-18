@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollView2" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/about_me">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView2"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:background="#FFCCCCCC"
+                    android:adjustViewBounds="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/my_info"
+                    android:id="@+id/textView4"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"/>
+
+
+            </LinearLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#FFCCCCCC"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/add_course">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView3"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:background="#FFCCCCCC"
+                    android:adjustViewBounds="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/course_addto_schedule"
+                    android:id="@+id/textView5"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp" />
+
+            </LinearLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#FFCCCCCC"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/create_course">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView4"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:background="#FFCCCCCC"
+                    android:adjustViewBounds="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_new_course"
+                    android:id="@+id/textView6"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"/>
+
+
+            </LinearLayout>
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#FFCCCCCC"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/logout">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/imageView5"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:background="#FFCCCCCC"
+                    android:adjustViewBounds="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/logout"
+                    android:id="@+id/textView7"
+                    android:layout_weight="1"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="20dp"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

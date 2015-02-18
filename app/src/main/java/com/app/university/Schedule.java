@@ -19,6 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +43,10 @@ public class Schedule extends Fragment {
     private FrameLayout wedView;
     private FrameLayout thuView;
     private FrameLayout friView;
+    private int posY = 0;
+    private boolean mFirstLaunch = true;
+    private RequestQueue mQueue = null;
+    private CourseColor courseColor;
 
     class CourseInfo{
         String id = "";
@@ -46,6 +56,34 @@ public class Schedule extends Fragment {
         String timeString = "";
         String time = "";
         String courseBlockTime = "";
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mFirstLaunch){
+            mFirstLaunch = false;
+            SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+            if(settings.getBoolean(Data.COURSE_SCHEDULE_SET,false) == false){
+                Intent intent = new Intent(getActivity(), AddCourseActivity.class);
+                startActivityForResult(intent, 0);
+            }
+        }
+
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && !mFirstLaunch) {
+            try {
+                Log.d("Schedule  ", "redraw");
+                drawCourse();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public void drawCourse() throws JSONException {
@@ -163,28 +201,102 @@ public class Schedule extends Fragment {
 
         private FrameLayout mFrame;
         private String mWeekDay ;
+
         newCourse_Click(FrameLayout frame, String weekDay) {
             mFrame = frame;
             mWeekDay = weekDay;
         }
 
         public void onClick(View v) {
-            //Bundle bundle = new Bundle();
-            //bundle.putString(Data.COURSE_NAME, "");
-            //bundle.putString(Data.COURSE_TIME, "");
-            //bundle.putString(Data.COURSE_ID, "");
-            //Intent intent = new Intent(getActivity(), CourseTimeActivity.class);
-            //intent.putExtras(bundle);
-            //startActivityForResult(intent, 0);
+            final CharSequence courseOption[] = { getString(R.string.course_add)};
 
-            Log.d("Schedule mCourseJsonArray = ", String.valueOf(v.getY()) );
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle(getString(R.string.course_action));
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            alert.setSingleChoiceItems(courseOption, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == 0) {
+                        dialog.cancel();
+                        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+                        int timeStartTop = (int) (40 * displayMetrics.density);
+                        float dpHeight = displayMetrics.heightPixels;
+                        int timeBlockHeight = (int) (dpHeight/14);
+                        int startHR = (int)((posY - timeStartTop)/timeBlockHeight) + 8;
+                        String timeString = mWeekDay + "-"+ String.format("%02d", startHR) + ":" + String.format("%02d", 0) + "~" + String.format("%02d", startHR+1) + ":" + String.format("%02d", 0);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Data.COURSE_NAME, "");
+                        bundle.putString(Data.COURSE_TIME, timeString);
+                        bundle.putString(Data.COURSE_ID, "");
+                        Intent intent = new Intent(getActivity(), CourseTimeActivity.class);
+                        intent.putExtras(bundle);
+                        startActivityForResult(intent, 0);
+                    } else {
+                        dialog.cancel();
+                    }
+                }
+            });
+            alert.show();
         }
 
         public boolean onTouch(View v, MotionEvent event) {
-            Log.d("Schedule mCourseJsonArray = ", String.valueOf(event.getY()) );
+            posY = (int)event.getY();
+            Log.d("Schedule mCourseJsonArray = onTouch", String.valueOf(event.getY()) );
             return false;
         }
     }
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("AddCourseActivity", error.getMessage(), error);
+            Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
+    Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    for (int i=0;i<mCourseJsonArray.length();i++){
+                        try {
+                            if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(jsonObject.getString(NETTag.REMOVE_COURSE_ID)) == 0){
+
+                                mCourseJsonArray.remove(i);
+                                SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
+                                editor.apply();
+                                mCourseJsonArray = CommonUtil.getCourseJsonArray(getActivity());
+                                drawCourse();
+
+                            }
+                        } catch (JSONException e) {
+
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+                else{
+                    Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            }
+        }
+    };
 
 
     class courseButton_Click implements View.OnClickListener {
@@ -228,15 +340,12 @@ public class Schedule extends Fragment {
                         for (int i=0;i<mCourseJsonArray.length();i++){
                             try {
                                 if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(mCourseInfo.id) == 0){
-                                    mCourseJsonArray.remove(i);
-                                    SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = settings.edit();
-                                    editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
-                                    editor.apply();
-                                    drawCourse();
+                                    AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, mCourseInfo.id, listener, errorListener);
+                                    mQueue.add(stringRequest);
                                     dialog.cancel();
                                 }
                             } catch (JSONException e) {
+                                dialog.cancel();
                                 e.printStackTrace();
                             }
                         }
@@ -266,7 +375,7 @@ public class Schedule extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        mQueue = Volley.newRequestQueue(getActivity());
         viewSchedule = inflater.inflate(R.layout.schedule, container, false);
 
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
@@ -306,9 +415,13 @@ public class Schedule extends Fragment {
             monView.setOnClickListener(new newCourse_Click(monView,"MON"));
             monView.setOnTouchListener(new newCourse_Click(monView,"MON"));
             tueView.setOnClickListener(new newCourse_Click(tueView,"TUE"));
+            monView.setOnTouchListener(new newCourse_Click(monView,"TUE"));
             wedView.setOnClickListener(new newCourse_Click(wedView,"WED"));
+            monView.setOnTouchListener(new newCourse_Click(monView,"WED"));
             thuView.setOnClickListener(new newCourse_Click(thuView,"THU"));
+            monView.setOnTouchListener(new newCourse_Click(monView,"THU"));
             friView.setOnClickListener(new newCourse_Click(friView,"FRI"));
+            monView.setOnTouchListener(new newCourse_Click(monView,"FRI"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

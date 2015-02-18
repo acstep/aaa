@@ -5,7 +5,13 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_logo">LogoActivity</string>
+    <string name="schedule">Schedule</string>
+    <string name="course">Course</string>
+    <string name="group">Group</string>
+    <string name="message">Message</string>
+    <string name="me">Me</string>
     <string name="login">Log In</string>
+    <string name="logout">Log out</string>
     <string name="createaccount">Create New Account</string>
     <string name="createaccount1">Create</string>
     <string name="title_activity_create_account">CreateAccountActivity</string>
@@ -27,6 +33,7 @@
     <string name="title_activity_course_time">Modify Course</string>
     <string name="course_info">Course Information</string>
     <string name="course_name">Course Name</string>
+    <string name="empty_course_name">Please input course name.</string>
     <string name="course_edit">Edit Course</string>
     <string name="course_add">Add new Course</string>
     <string name="course_delete">Delete Course</string>
@@ -35,4 +42,8 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="end_time_small">End Time is before Start Time</string>
+    <string name="my_info">My Information</string>
+    <string name="create_new_course">Create a new course</string>
+    <string name="course_addto_schedule">Add new Courses to Schedule</string>
+    <string name="max_join_course">Course Taking 15 Limit is Reached</string>
 </resources>

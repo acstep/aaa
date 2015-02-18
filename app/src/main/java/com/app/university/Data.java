@@ -20,4 +20,7 @@ public class Data {
     public static final String COURSE_ID = "id";
     public static final String COURSE_TIMESEC = "timesec";
 
+
+
+    public static final int MAX_JOIN_COURSE = 15;
 }

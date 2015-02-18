@@ -1,8 +1,5 @@
 package com.app.university;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -29,6 +26,7 @@ public class MainActivity extends FragmentActivity {
     private Schedule mSchedule;
     private CourseList mCourseList;
     private GroupList mGroupList;
+    private Aboutme mAboutMe;
     private DisplayMetrics dm;
     private PagerSlidingTabStrip tabs;
 
@@ -37,12 +35,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
-        if(settings.getBoolean(Data.COURSE_SCHEDULE_SET,false) == false){
-            Intent intent = new Intent(this, AddCourseActivity.class);
-            startActivity(intent);
-        }
 
         dm = getResources().getDisplayMetrics();
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
@@ -84,7 +76,11 @@ public class MainActivity extends FragmentActivity {
             super(fm);
         }
 
-        private final String[] titles = { "課表", "討論", "社團", "我" };
+        private final String[] titles = { getString(R.string.schedule),
+                                          getString(R.string.course),
+                                          getString(R.string.group),
+                                          getString(R.string.message),
+                                          getString(R.string.me)};
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -118,6 +114,11 @@ public class MainActivity extends FragmentActivity {
                     mCourseList = new CourseList();
 
                     return mCourseList;
+                case 4:
+
+                    mAboutMe = new Aboutme();
+
+                    return mAboutMe;
                 default:
                     return null;
             }

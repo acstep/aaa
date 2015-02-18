@@ -1,5 +1,11 @@
 package com.app.university;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -25,4 +31,18 @@ public class CommonUtil {
             throw new RuntimeException(e);
         }
     }
+
+
+    public static JSONArray getCourseJsonArray(Context context){
+        JSONArray mCourseJsonArray;
+        SharedPreferences settings = context.getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
+        try {
+            mCourseJsonArray = new JSONArray(jsonCoursString);
+        } catch (JSONException e) {
+            mCourseJsonArray = new JSONArray();
+        }
+        return mCourseJsonArray;
+    }
+
 }
