@@ -46,5 +46,15 @@
     <string name="create_new_course">創建一門新的課程</string>
     <string name="course_addto_schedule">添加新課程到功課表</string>
     <string name="max_join_course">已達修課上限15門</string>
+    <string name="from_gallery">從相簿中選擇</string>
+    <string name="from_camera">拍攝照片</string>
+    <string name="image_from">圖片來源</string>
+    <string name="profile_name">姓名</string>
+    <string name="profile_university">學校</string>
+    <string name="profile_dep">系所</string>
+    <string name="profile_admission">入學年分</string>
+    <string name="profile_sex">性別</string>
+    <string name="profile_sex_boy">男生</string>
+    <string name="profile_sex_girl">女生</string>
 
 </resources>

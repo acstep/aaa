@@ -66,14 +66,36 @@ public class LoginActivity extends Activity {
                                         SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
                                         JSONObject user = jsonObject.getJSONObject(NETTag.USER);
                                         SharedPreferences.Editor editor = settings.edit();
-                                        editor.putString(Data.USER_ID,user.getString(NETTag.USER_ID));
-                                        editor.putString(Data.EMAIL,user.getString(NETTag.EMAIL));
-                                        editor.putString(Data.TOKEN,user.getString(NETTag.TOKEN));
-                                        editor.putString(Data.UNIVERSITY,user.getString(NETTag.UNIVERSITY));
-                                        editor.putString(Data.COURSE_SCHEDULE,user.getString(NETTag.SCHEDULE));
-                                        editor.putString(Data.DEPARTMENT,user.getString(NETTag.DEPARTMENT));
+                                        if(user.has(NETTag.USER_ID)){
+                                            editor.putString(Data.USER_ID,user.getString(NETTag.USER_ID));
+                                        }
+                                        if(user.has(NETTag.EMAIL)){
+                                            editor.putString(Data.USER_EMAIL,user.getString(NETTag.EMAIL));
+                                        }
+                                        if(user.has(NETTag.TOKEN)){
+                                            editor.putString(Data.TOKEN,user.getString(NETTag.TOKEN));
+                                        }
+                                        if(user.has(NETTag.USER_UNIVERSITY)){
+                                            editor.putString(Data.USER_UNIVERSITY,user.getString(NETTag.USER_UNIVERSITY));
+                                        }
+                                        if(user.has(NETTag.SCHEDULE)){
+                                            editor.putString(Data.CURRENTCOURSE,user.getString(NETTag.SCHEDULE));
+                                        }
+                                        if(user.has(NETTag.USER_DEPARTMENT)){
+                                            editor.putString(Data.USER_DEPARTMENT,user.getString(NETTag.USER_DEPARTMENT));
+                                        }
+                                        if(user.has(NETTag.USER_ADMISSION)){
+                                            editor.putString(Data.USER_ADMISSION,user.getString(NETTag.USER_ADMISSION));
+                                        }
+                                        if(user.has(NETTag.USER_SEX)){
+                                            editor.putString(Data.USER_SEX,user.getString(NETTag.USER_SEX));
+                                        }
+                                        if(user.has(NETTag.USER_NAME)){
+                                            editor.putString(Data.USER_NAME,user.getString(NETTag.USER_NAME));
+                                        }
+
                                         editor.putBoolean(Data.COURSE_SCHEDULE_SET, true);
-                                        editor.apply();
+                                        editor.commit();
 
                                         Intent intent = new Intent(mContext, MainActivity.class);
                                         startActivity(intent);

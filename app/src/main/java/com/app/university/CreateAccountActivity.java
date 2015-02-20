@@ -78,9 +78,9 @@ public class CreateAccountActivity extends Activity {
                                     editor.putString(Data.EMAIL,jsonObject.getString(NETTag.EMAIL));
                                     editor.putString(Data.TOKEN,jsonObject.getString(NETTag.TOKEN));
                                     editor.putString(Data.UNIVERSITY,jsonObject.getString(NETTag.UNIVERSITY));
-                                    editor.putString(Data.COURSE_SCHEDULE,"");
+                                    editor.putString(Data.CURRENTCOURSE,"");
                                     editor.putBoolean(Data.COURSE_SCHEDULE_SET, false);
-                                    editor.apply();
+                                    editor.commit();
 
                                     Intent intent = new Intent(mContext, MainActivity.class);
                                     startActivity(intent);

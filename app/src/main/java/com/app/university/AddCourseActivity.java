@@ -55,6 +55,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
     private JSONArray mCourseJsonArray;
     private boolean hasMoreData = true;
     private CourseColor courseColor;
+    private boolean mModifySchedule = false;
 
 
     public class CourseItem {
@@ -161,17 +162,17 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
 
             // getting movie data for the row
-            CourseItem m = courseList.get(position);
-            txName.setText(m.getName());
-            txTeacher.setText(m.getTeacher());
-            txSectime.setText(m.getTime());
+            CourseItem courseItem = courseList.get(position);
+            txName.setText(courseItem.getName());
+            txTeacher.setText(courseItem.getTeacher());
+            txSectime.setText(courseItem.getTime());
 
             Button addCourseButton = (Button) convertView.findViewById(R.id.btn_add_course);
-            if(isCourseExist(m.getId())){
-                m.setDone(true);
+            if(isCourseExist(courseItem.getId())){
+                courseItem.setDone(true);
             }
 
-            if(m.getDone() == true ){
+            if(courseItem.getDone() == true ){
                 addCourseButton.setText(R.string.delete);
                 addCourseButton.setBackgroundResource(R.drawable.btn_red);
             }
@@ -195,19 +196,17 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
             mbutton = button;
         }
         public void onClick(View v) {
-            final CourseItem m = courseList.get(mposition);
-
-
-
-            SharedPreferences shareId = getSharedPreferences ("ID", Context.MODE_PRIVATE);
-            final String myid = shareId.getString(Data.USER_ID, null);
-            final String mytoken = shareId.getString(Data.TOKEN, null);
-            String postSTring = "";
-            if(m.getDone() == true){
-                postSTring = NETTag.API_DELETE_COURSE;
+            final CourseItem tmpcourseItem = courseList.get(mposition);
+            final String preCourseString = mCourseJsonArray.toString();
+            String postCourseString = "";
+            JSONArray postCourseArray  = new JSONArray();
+            try {
+                postCourseArray = new JSONArray(mCourseJsonArray.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            else{
-                postSTring = NETTag.API_ADD_COURSE;
+
+            if(tmpcourseItem.getDone() == false){
                 if(mCourseJsonArray.length() > Data.MAX_JOIN_COURSE){
                     Toast.makeText(mContext, R.string.max_join_course, Toast.LENGTH_SHORT).show();
                     return;
@@ -220,76 +219,30 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                            if(m.getDone() == true){
-                                for (int i=0;i<mCourseJsonArray.length();i++){
-                                    try {
-                                        if(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(m.getId()) == 0){
-                                            courseColor.deleteColor(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR));
-                                            mCourseJsonArray.remove(i);
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+                            if(tmpcourseItem.getDone() == true){
+
                                 mbutton.setText(R.string.add);
                                 mbutton.setBackgroundResource(R.drawable.btn_blue);
-                                m.setDone(false);
+                                tmpcourseItem.setDone(false);
                             }
                             else{
-                                JSONObject courseItem = new JSONObject();
-
-                                try {
-                                    courseItem.put(Data.COURSE_NAME ,m.getName());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    courseItem.put(Data.COURSE_TIME ,m.getRealtime());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    courseItem.put(Data.COURSE_TEACHER ,m.getTeacher());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    String color = courseColor.getNewColor();
-                                    if(color.length() == 0){
-                                        color = "6698ff";
-                                    }
-                                    courseItem.put(Data.COURSE_COLOR  ,color);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    courseItem.put(Data.COURSE_ID ,m.getId());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    courseItem.put(Data.COURSE_TIMESEC ,m.getTime());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                mCourseJsonArray.put(courseItem);
-
-
                                 mbutton.setText(R.string.delete);
                                 mbutton.setBackgroundResource(R.drawable.btn_red);
-                                m.setDone(true);
+                                tmpcourseItem.setDone(true);
                             }
+                            String schedule = jsonObject.getString(NETTag.POST_COURSE_STRING);
                             SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
                             SharedPreferences.Editor editor = settings.edit();
-                            editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
-                            editor.apply();
+                            editor.putString(Data.CURRENTCOURSE, schedule);
+                            editor.putBoolean(Data.MODIFY_DIRTY, true);
+                            editor.commit();
+                            courseColor = new CourseColor(schedule);
                             mCourseJsonArray = CommonUtil.getCourseJsonArray(mContext);
-                            Log.d("AddCourseActivity mCourseJsonArray add course = ", mCourseJsonArray.toString() );
-                            Log.d("AddCourseActivity", "item click -> " + m.getName());
-                            Log.d("AddCourseActivity", "item click -> " + m.getRealtime());
+                            //Log.d("AddCourseActivity mCourseJsonArray add course = ", mCourseJsonArray.toString() );
+
                         }
                         else{
+
                             //Toast.makeText(mContext, R.string.login_error, Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -301,23 +254,95 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                 }
             };
 
+
             Response.ErrorListener errorListener = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e("AddCourseActivity", error.getMessage(), error);
+                    SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                    String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
+                    try {
+                        mCourseJsonArray = new JSONArray(jsonCoursString);
+                    } catch (JSONException e) {
+                        mCourseJsonArray = new JSONArray();
+                    }
+                    Log.d("AddCourseActivity mCourseJsonArray = ", mCourseJsonArray.toString() );
+
+                    courseColor = new CourseColor(jsonCoursString);
                     Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                     return;
                 }
             };
 
+            if(tmpcourseItem.getDone() == true){
+
+                for (int i=0;i<mCourseJsonArray.length();i++){
+                    try {
+                        if(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(tmpcourseItem.getId()) == 0){
+
+                            postCourseArray.remove(i);
+                            postCourseString = postCourseArray.toString();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+            else{
+
+                JSONObject courseItem = new JSONObject();
+
+                try {
+                    courseItem.put(Data.COURSE_NAME ,tmpcourseItem.getName());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    courseItem.put(Data.COURSE_TIME ,tmpcourseItem.getRealtime());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    courseItem.put(Data.COURSE_TEACHER ,tmpcourseItem.getTeacher());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    String color = courseColor.getNewColor();
+                    if(color.length() == 0){
+                        color = "6698ff";
+                    }
+                    courseItem.put(Data.COURSE_COLOR  ,color);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    courseItem.put(Data.COURSE_ID ,tmpcourseItem.getId());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    courseItem.put(Data.COURSE_TIMESEC ,tmpcourseItem.getTime());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                postCourseArray.put(courseItem);
+                postCourseString = postCourseArray.toString();
+
+
+            }
+
             String url = "";
-            if(m.getDone() == true){
+            if(tmpcourseItem.getDone() == true){
                 url = NETTag.API_DELETE_COURSE;
+
             }
             else{
                 url = NETTag.API_ADD_COURSE;
             }
-            AddCourseRequest stringRequest = new AddCourseRequest(mContext, url, m.getId(), listener, errorListener);
+            AddCourseRequest stringRequest = new AddCourseRequest(mContext, url, tmpcourseItem.getId(), listener, errorListener,preCourseString,postCourseString, "");
 
             mQueue.add(stringRequest);
         }
@@ -398,8 +423,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
                 SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean(Data.COURSE_SCHEDULE_SET,true);
-                editor.apply();
+                editor.putBoolean(Data.MODIFY_DIRTY,true);
+                editor.commit();
 
                 AddCourseActivity.this.setResult(Activity.RESULT_OK);
                 AddCourseActivity.this.finish();

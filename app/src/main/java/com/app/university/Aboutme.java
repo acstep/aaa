@@ -1,13 +1,7 @@
 package com.app.university;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +17,7 @@ public class Aboutme extends Fragment {
     private LinearLayout mAddCourse;
     private String f;
     private View mView;
+    private static final String IMAGE_FILE_NAME = "face.jpg";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,10 +29,19 @@ public class Aboutme extends Fragment {
         mAboutme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult( Intent.createChooser(intent, ""),  1);
+                //Intent pickImageIntent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                //pickImageIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                //pickImageIntent.setType("image/jpeg");
+
+                //pickImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriWhereToStore);
+
+                //startActivityForResult(pickImageIntent, 1);
+                //Intent intent = new Intent();
+                //intent.setType("image/*");
+                //intent.setAction(Intent.ACTION_GET_CONTENT);
+                //startActivityForResult( Intent.createChooser(intent, ""),  1);
+                Intent intent = new Intent(getActivity(), ProfileActivity.class);
+                startActivity(intent);
                 Log.d("Aboutme ", "pressed");
             }
         });
@@ -57,26 +61,8 @@ public class Aboutme extends Fragment {
 
     public void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        String selectedImagePath = "";
-        if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == 1) {
-                String selectedPath = getRealPathFromURI(getActivity(), data.getData());
-                f = selectedPath;
-                //FileUploadTask uploadHead = (FileUploadTask) new FileUploadTask(getActivity(),(ProgressBar)mView.findViewById(R.id.progressBar))
-                //         .execute(selectedPath, "");
-            }
-        }
-    }
 
-    private String getRealPathFromURI(Context context,Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
-
 
 
 

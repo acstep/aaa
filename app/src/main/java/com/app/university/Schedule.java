@@ -48,6 +48,7 @@ public class Schedule extends Fragment {
     private RequestQueue mQueue = null;
     private CourseColor courseColor;
 
+
     class CourseInfo{
         String id = "";
         String name = "";
@@ -116,22 +117,23 @@ public class Schedule extends Fragment {
         Log.d("Schedule mCourseJsonArray = ", mCourseJsonArray.toString());
 
         for (int i=0;i<mCourseJsonArray.length();i++){
-            CourseInfo courseInfo = new CourseInfo();
-            courseInfo.id = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID);
-            courseInfo.name = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_NAME);
-            courseInfo.teacher = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TEACHER);
-            courseInfo.color = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR);
-            courseInfo.timeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
+            String courseTimeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
             Integer index = 0;
-            FrameLayout dayFrame;
+            while(index+15 <= courseTimeString.length()){
+                CourseInfo courseInfo = new CourseInfo();
+                courseInfo.id = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID);
+                courseInfo.name = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_NAME);
+                courseInfo.teacher = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TEACHER);
+                courseInfo.color = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_COLOR);
+                courseInfo.timeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
 
-            DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-            int timeStartTop = (int) (40 * displayMetrics.density);
-            float dpHeight = displayMetrics.heightPixels;
-            int timeBlockHeight = (int) (dpHeight/14);
+                FrameLayout dayFrame;
 
-            while(index+15 <= courseInfo.timeString.length()){
-                time = courseInfo.timeString.substring(index);
+                DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+                int timeStartTop = (int) (40 * displayMetrics.density);
+                float dpHeight = displayMetrics.heightPixels;
+                int timeBlockHeight = (int) (dpHeight/14);
+                time = courseInfo.timeString.substring(index,index+15);
                 courseInfo.courseBlockTime = time;
                 FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
                 String day = time.substring(0,3);
@@ -187,11 +189,7 @@ public class Schedule extends Fragment {
             }
 
         }
-        monView.invalidate();
-        tueView.invalidate();
-        wedView.invalidate();
-        thuView.invalidate();
-        friView.invalidate();
+
 
 
     }
@@ -266,25 +264,14 @@ public class Schedule extends Fragment {
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                    for (int i=0;i<mCourseJsonArray.length();i++){
-                        try {
-                            if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(jsonObject.getString(NETTag.REMOVE_COURSE_ID)) == 0){
-
-                                mCourseJsonArray.remove(i);
-                                SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor editor = settings.edit();
-                                editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
-                                editor.apply();
-                                mCourseJsonArray = CommonUtil.getCourseJsonArray(getActivity());
-                                drawCourse();
-
-                            }
-                        } catch (JSONException e) {
-
-                            e.printStackTrace();
-                        }
-                    }
-
+                    String schedule = jsonObject.getString(NETTag.POST_COURSE_STRING);
+                    SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(Data.CURRENTCOURSE, schedule);
+                    editor.commit();
+                    courseColor = new CourseColor(schedule);
+                    mCourseJsonArray = CommonUtil.getCourseJsonArray(getActivity());
+                    drawCourse();
                 }
                 else{
                     Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
@@ -340,7 +327,18 @@ public class Schedule extends Fragment {
                         for (int i=0;i<mCourseJsonArray.length();i++){
                             try {
                                 if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(mCourseInfo.id) == 0){
-                                    AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, mCourseInfo.id, listener, errorListener);
+
+                                    String preCourseString = mCourseJsonArray.toString();
+                                    JSONArray postCourseArray  = new JSONArray();
+                                    try {
+                                        postCourseArray = new JSONArray(mCourseJsonArray.toString());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    postCourseArray.remove(i);
+                                    String postCourseString = postCourseArray.toString();
+
+                                    AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, mCourseInfo.id, listener, errorListener,preCourseString,postCourseString,"");
                                     mQueue.add(stringRequest);
                                     dialog.cancel();
                                 }
@@ -363,6 +361,8 @@ public class Schedule extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+
 
         try {
             drawCourse();

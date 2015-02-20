@@ -1,9 +1,13 @@
 package com.app.university;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -19,6 +23,8 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FilterOutputStream;
@@ -33,8 +39,13 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
 
     private Context context;
     private ProgressBar myProgressbar;
+    private ImageView mImageView;
     private long totalSize;
+    public AsyncResponse delegate=null;
 
+    public interface AsyncResponse {
+        void processFinish(String output);
+    }
 
     class ProgressOutHttpEntity extends HttpEntityWrapper {
 
@@ -54,6 +65,7 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
                 super(out);
                 this.listener = listener;
                 this.transferred = 0;
+
             }
 
             @Override
@@ -84,15 +96,18 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
         public void transferred(long transferedBytes);
     }
 
-    public FileUploadTask(Context context, ProgressBar pb) {
+    public FileUploadTask(Context context, ProgressBar pb,ImageView image) {
         this.context = context;
         this.myProgressbar = pb;
+
+        this.mImageView = image;
     }
 
     @Override
     protected void onPreExecute() {
         //myProgressbar.setVisibility(View.VISIBLE);
         //myProgressbar.setText(0);
+
     }
 
     @Override
@@ -119,16 +134,45 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected void onProgressUpdate(Integer... progress) {
         Log.d("FileUploadTask ", String.valueOf((int) (progress[0])));
-        myProgressbar.setProgress((int) (progress[0]));
+        if(myProgressbar != null){
+            myProgressbar.setProgress((int) (progress[0]));
+        }
+
     }
 
     @Override
     protected void onPostExecute(String result) {
+
+
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0) {
+                mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME)));
+                mImageView.invalidate();
+                File orgImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME);
+                File finalImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME);
+                finalImage.delete();
+                orgImage.renameTo(finalImage);
+                mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
+                mImageView.invalidate();
+                Log.d("FileUploadTask 2", result);
+
+
+            }
+            else{
+                Log.d("FileUploadTask 1", "network error");
+                Toast.makeText(context,  R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("FileUploadTask 1", result);
+
         //Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
     }
 
 
-    public static String uploadFile(String path, String mode, ProgressOutHttpEntity entity) {
+    public String uploadFile(String path, String mode, ProgressOutHttpEntity entity) {
         HttpClient httpClient=new DefaultHttpClient();
 
         httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 5000);
@@ -145,14 +189,21 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
             ResponseHandler<String> handler=new BasicResponseHandler();
             String response=new String(httpClient.execute(httpPost,handler).getBytes(), HTTP.UTF_8);
             Log.d("FileUploadTask ", response);
+
             return response;
 
         } catch (ClientProtocolException e) {
+
             e.printStackTrace();
+
         } catch (ConnectTimeoutException e) {
+
             e.printStackTrace();
+
         } catch (Exception e) {
+
             e.printStackTrace();
+
         } finally {
             if (httpClient != null && httpClient.getConnectionManager() != null) {
                 httpClient.getConnectionManager().shutdown();

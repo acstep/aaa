@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,6 +15,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,12 +42,50 @@ public class CourseTimeActivity extends Activity {
     private String courseID = "";
     private boolean mNewCourse = false;
     private CourseColor courseColor;
+    private Context mContext = this;
+    private RequestQueue mQueue = null;
 
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("AddCourseActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
+    Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    String schedule = jsonObject.getString(NETTag.POST_COURSE_STRING);
+                    SharedPreferences settings = mContext.getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(Data.CURRENTCOURSE, schedule);
+                    editor.commit();
+                    CourseTimeActivity.this.setResult(Activity.RESULT_OK);
+                    CourseTimeActivity.this.finish();
+                }
+                else{
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_time);
+        mQueue = Volley.newRequestQueue(this);
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
@@ -120,21 +164,24 @@ public class CourseTimeActivity extends Activity {
                         return;
                     }
 
-                    JSONArray mCourseJsonArray;
-                    SharedPreferences settings = CourseTimeActivity.this.getSharedPreferences("ID", Context.MODE_PRIVATE);
-                    String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
-                    SharedPreferences.Editor editor = settings.edit();
+                    SharedPreferences settings = mContext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+                    String preJsonCourseString = settings.getString(Data.CURRENTCOURSE, "[]");
+
+                    JSONArray postJsonArray;
                     try {
-                        mCourseJsonArray = new JSONArray(jsonCoursString);
+                        postJsonArray = new JSONArray(preJsonCourseString);
                     } catch (JSONException e) {
-                        mCourseJsonArray = new JSONArray();
+                        postJsonArray = new JSONArray();
                     }
+
+                    String postCourseString = "";
+
                     String week = spWeekDat.getSelectedItem().toString();
                     String finalTimeString = week + "-"+ String.format("%02d", startHR) + ":" + String.format("%02d", startMin) + "~" + String.format("%02d", endHR) + ":" + String.format("%02d", endMin);
 
                     if(mNewCourse){
                         JSONObject courseItem = new JSONObject();
-                        courseColor = new CourseColor(jsonCoursString);
+                        courseColor = new CourseColor(preJsonCourseString);
                         try {
                             courseItem.put(Data.COURSE_NAME ,courseName);
                         } catch (JSONException e) {
@@ -168,37 +215,37 @@ public class CourseTimeActivity extends Activity {
                             e.printStackTrace();
                         }
 
-                        mCourseJsonArray.put(courseItem);
-                        editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
-                        editor.apply();
-                        CourseTimeActivity.this.setResult(Activity.RESULT_OK);
-                        CourseTimeActivity.this.finish();
+                        postJsonArray.put(courseItem);
+                        postCourseString = postJsonArray.toString();
 
                     }
+                    else{
+                        for (int i=0;i<postJsonArray.length();i++){
+                            try {
+                                if( ((JSONObject)postJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(courseID) == 0){
+                                    String tmpTimeString = ((JSONObject)postJsonArray.get(i)).getString(Data.COURSE_TIME);
+                                    tmpTimeString = tmpTimeString.replace(timeString,finalTimeString);
+                                    ((JSONObject)postJsonArray.get(i)).put(Data.COURSE_TIME,tmpTimeString);
+                                    ((JSONObject)postJsonArray.get(i)).put(Data.COURSE_NAME,courseName);
+                                    postCourseString = postJsonArray.toString();
 
-
-                    for (int i=0;i<mCourseJsonArray.length();i++){
-                        try {
-                            if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(courseID) == 0){
-                                String tmpTimeString = ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_TIME);
-                                tmpTimeString = tmpTimeString.replace(timeString,finalTimeString);
-                                ((JSONObject)mCourseJsonArray.get(i)).put(Data.COURSE_TIME,tmpTimeString);
-                                ((JSONObject)mCourseJsonArray.get(i)).put(Data.COURSE_NAME,courseName);
-                                editor.putString(Data.CURRENTCOURSE, mCourseJsonArray.toString());
-                                editor.apply();
-                                CourseTimeActivity.this.setResult(Activity.RESULT_OK);
-                                CourseTimeActivity.this.finish();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+
                     }
+
+                    AddCourseRequest stringRequest = new AddCourseRequest(mContext, NETTag.API_ADD_COURSE , "0", listener, errorListener,preJsonCourseString,postCourseString, "1");
+                    mQueue.add(stringRequest);
+
                 }
                 else{
                     Toast.makeText(CourseTimeActivity.this, R.string.end_time_small, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                finish();
+
             }
         });
 

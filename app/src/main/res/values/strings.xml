@@ -46,4 +46,13 @@
     <string name="create_new_course">Create a new course</string>
     <string name="course_addto_schedule">Add new Courses to Schedule</string>
     <string name="max_join_course">Course Taking 15 Limit is Reached</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="from_gallery">From GAllery</string>
+    <string name="from_camera">Take a picture</string>
+    <string name="image_from">Image source</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_university">Univeristy</string>
+    <string name="profile_dep">Department</string>
+    <string name="profile_admission">Admission Year</string>
+    <string name="profile_sex">Sex</string>
 </resources>
