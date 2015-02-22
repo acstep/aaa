@@ -57,6 +57,7 @@ public class NETTag {
     public static final String USER_NAME = "name";
     public static final String USER_DEPARTMENT = "dep";
     public static final String USER_UNIVERSITY = "univerisity";
+    public static final String UPLOAD_FILENAME = "filename";
 }
 
 

@@ -154,7 +154,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.search_course, null);
             }
-            final View mview = convertView;
+
 
             TextView txName = (TextView) convertView.findViewById(R.id.course_name);
             TextView txTeacher = (TextView) convertView.findViewById(R.id.teacher_name);

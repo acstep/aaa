@@ -207,7 +207,7 @@ public class CourseTimeActivity extends Activity {
                             e.printStackTrace();
                         }
                         try {
-                            SharedPreferences id = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+
                             String myid = settings.getString(Data.USER_ID, null);
                             java.util.Date date= new java.util.Date();
                             courseItem.put(Data.COURSE_ID ,CommonUtil.getMD5(courseName+myid+ String.valueOf(date.getTime())));

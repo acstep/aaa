@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
+
+import java.io.File;
 
 
 public class LogoActivity extends Activity {
@@ -15,7 +18,10 @@ public class LogoActivity extends Activity {
         setContentView(R.layout.activity_logo);
 
 
-
+        File folder = new File(Environment.getExternalStorageDirectory()+ "/" + Data.FOLDER);
+        if(!folder.exists()){
+            folder.mkdirs();
+        }
 
     }
 

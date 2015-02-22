@@ -4,11 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -324,7 +322,7 @@ public class ProfileActivity extends Activity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                File folder = new File(Environment.getExternalStorageDirectory()+"/temp");
+                                File folder = new File(Environment.getExternalStorageDirectory()+ "/" + Data.FOLDER);
                                 if(!folder.exists()){
                                     folder.mkdirs();
                                 }
@@ -337,7 +335,7 @@ public class ProfileActivity extends Activity {
                                         break;
                                     case 1:
                                         Intent intentFromCapture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        intentFromCapture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory()+"/temp",Data.CROP_IMAGE_FILE_NAME)));
+                                        intentFromCapture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory()+ "/" + Data.FOLDER,Data.CROP_IMAGE_FILE_NAME)));
                                         startActivityForResult(intentFromCapture,CAMERA_REQUEST_CODE);
                                         break;
                                 }
@@ -359,14 +357,7 @@ public class ProfileActivity extends Activity {
         });
     }
 
-    private String getRealPathFromURI(Context context,Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
+
 
 
     @Override
@@ -377,8 +368,8 @@ public class ProfileActivity extends Activity {
             if (requestCode == IMAGE_REQUEST_CODE || requestCode == CAMERA_REQUEST_CODE ) {
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 if(requestCode == IMAGE_REQUEST_CODE){
-                    String selectedPath = getImagePath(data.getData());
-                    String selectedPath1 = getRealPathFromURI(this,data.getData());
+                    String selectedPath = CommonUtil.getImagePath(this, data.getData());
+                    String selectedPath1 = CommonUtil.getRealPathFromURI(this,data.getData());
 
                     if(selectedPath == null){
                         intent.setDataAndType(Uri.fromFile(new File(selectedPath1)), "image/*");
@@ -388,7 +379,7 @@ public class ProfileActivity extends Activity {
                     }
                 }
                 else{
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/temp", Data.CROP_IMAGE_FILE_NAME)), "image/*");;
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.CROP_IMAGE_FILE_NAME)), "image/*");;
                 }
 
 
@@ -408,8 +399,8 @@ public class ProfileActivity extends Activity {
             }
             if (requestCode == RESULT_REQUEST_CODE) {
                 ImageView imHeadPhoto = (ImageView)findViewById(R.id.head_image);
-                FileUploadTask uploadHead = (FileUploadTask) new FileUploadTask(mContext,(ProgressBar)null,imHeadPhoto)
-                         .execute(Environment.getExternalStorageDirectory()+"/"+Data.FOLDER+"/"+Data.IMAGE_FILE_NAME,"");
+                FileUploadTask uploadHead = (FileUploadTask) new FileUploadTask(mContext,(ProgressBar)null,imHeadPhoto,"", 1, 0,null)
+                         .execute(Environment.getExternalStorageDirectory()+"/"+Data.FOLDER+"/"+Data.IMAGE_FILE_NAME,"face");
 
 
             }
@@ -417,22 +408,5 @@ public class ProfileActivity extends Activity {
     }
 
 
-
-    public String getImagePath(Uri uri){
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
-
-        cursor = getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-
-        return path;
-    }
 
 }

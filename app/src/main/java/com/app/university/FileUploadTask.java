@@ -1,6 +1,7 @@
 package com.app.university;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -41,7 +42,11 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
     private ProgressBar myProgressbar;
     private ImageView mImageView;
     private long totalSize;
+    private int mtotalFile;
+    private int mCurrentFile;
     public AsyncResponse delegate=null;
+    private String mMode = "";
+
 
     public interface AsyncResponse {
         void processFinish(String output);
@@ -96,11 +101,14 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
         public void transferred(long transferedBytes);
     }
 
-    public FileUploadTask(Context context, ProgressBar pb,ImageView image) {
+    public FileUploadTask(Context context, ProgressBar pb,ImageView image, String mode, int totalfile, int currentFile, AsyncResponse rsp) {
         this.context = context;
         this.myProgressbar = pb;
-
+        this.mMode = mode;
         this.mImageView = image;
+        this.delegate = rsp;
+        this.mtotalFile = totalfile;
+        this.mCurrentFile = currentFile;
     }
 
     @Override
@@ -113,19 +121,25 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
     @Override
     protected String doInBackground(String... params) {
 
+        SharedPreferences shareId = context.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
         MultipartEntityBuilder entitys = MultipartEntityBuilder.create();
         entitys.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         entitys.setCharset(Charset.forName(HTTP.UTF_8));
         File file = new File(params[0]);
         entitys.addPart("file", new FileBody(file));
-        //entitys.addTextBody("model", params[1]);
+        entitys.addTextBody("mode", params[1]);
+        entitys.addTextBody(NETTag.USER_ID, myid);
+        entitys.addTextBody(NETTag.TOKEN, mytoken);
+
         HttpEntity httpEntity = entitys.build();
         totalSize = httpEntity.getContentLength();
         ProgressOutHttpEntity progressHttpEntity = new ProgressOutHttpEntity(httpEntity,
                 new ProgressListener() {
                     @Override
                     public void transferred(long transferedBytes) {
-                        publishProgress((int) (100 * transferedBytes / totalSize));
+                        publishProgress((int) (100 * transferedBytes / totalSize / mtotalFile + 100 * (float)mCurrentFile /mtotalFile));
                     }
                 });
         return uploadFile(params[0], params[1], progressHttpEntity);
@@ -147,16 +161,17 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
         try {
             JSONObject jsonObject = new JSONObject(result);
             if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0) {
-                mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME)));
-                mImageView.invalidate();
-                File orgImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME);
-                File finalImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME);
-                finalImage.delete();
-                orgImage.renameTo(finalImage);
-                mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
-                mImageView.invalidate();
-                Log.d("FileUploadTask 2", result);
-
+                if(mImageView != null) {
+                    mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME)));
+                    mImageView.invalidate();
+                    File orgImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME);
+                    File finalImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME);
+                    finalImage.delete();
+                    orgImage.renameTo(finalImage);
+                    mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
+                    mImageView.invalidate();
+                    Log.d("FileUploadTask 2", result);
+                }
 
             }
             else{
@@ -167,6 +182,9 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
             e.printStackTrace();
         }
         Log.d("FileUploadTask 1", result);
+        if(delegate != null){
+            delegate.processFinish(result);
+        }
 
         //Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
     }

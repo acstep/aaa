@@ -1,6 +1,7 @@
 package com.app.university;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -121,8 +123,28 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             txName.setText(courseName);
 
 
+            LinearLayout courseItem = (LinearLayout)convertView.findViewById(R.id.my_course_item);
+            courseItem.setOnClickListener(new ItemButton_Click(position));
+
 
             return convertView;
+        }
+    }
+
+
+    class ItemButton_Click implements View.OnClickListener {
+        private int mposition;
+
+        ItemButton_Click(int pos) {
+            mposition = pos;
+
+        }
+        public void onClick(View v) {
+            Bundle bundle = new Bundle();
+            bundle.putString(Data.COURSE_ID, courseList.get(mposition).getId());
+            Intent intent = new Intent(getActivity(), MessageActivity.class);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, 0);
         }
     }
 

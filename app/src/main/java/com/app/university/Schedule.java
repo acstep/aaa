@@ -130,7 +130,7 @@ public class Schedule extends Fragment {
                 FrameLayout dayFrame;
 
                 DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-                int timeStartTop = (int) (40 * displayMetrics.density);
+                int timeStartTop = (int) (50 * displayMetrics.density);
                 float dpHeight = displayMetrics.heightPixels;
                 int timeBlockHeight = (int) (dpHeight/14);
                 time = courseInfo.timeString.substring(index,index+15);
@@ -141,8 +141,8 @@ public class Schedule extends Fragment {
                 int startMin = Integer.valueOf(time.substring(7, 9));
                 int endHR = Integer.valueOf(time.substring(10, 12));
                 int endMin = Integer.valueOf(time.substring(13, 15));
-                int startPos = timeStartTop+(startHR-8)*timeBlockHeight + (int)((float)(startMin/60)*timeBlockHeight);
-                int endPos = timeStartTop+(endHR-8)*timeBlockHeight + (int)((float)(endMin/60)*timeBlockHeight);
+                int startPos = timeStartTop+(startHR-8)*timeBlockHeight + (int)(((float)startMin/60)*timeBlockHeight);
+                int endPos = timeStartTop+(endHR-8)*timeBlockHeight + (int)(((float)endMin/60)*timeBlockHeight);
                 Button btn = new Button(getActivity());
                 int englishIndex = courseInfo.name.indexOf("-");
                 if(englishIndex != -1){
