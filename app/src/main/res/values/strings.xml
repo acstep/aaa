@@ -57,4 +57,5 @@
     <string name="profile_sex">Sex</string>
     <string name="title_activity_message">Course</string>
     <string name="title_activity_new_message">New Message</string>
+    <string name="title_activity_comment">CommentActivity</string>
 </resources>

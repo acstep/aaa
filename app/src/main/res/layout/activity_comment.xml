@@ -1,0 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.university.CommentActivity">
+    <com.app.university.view.SwipeRefreshAndLoadLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/comment_list_swipe"
+        android:layout_marginBottom="60dp">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/comment_list"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:divider="#ffe4e4e4"
+            android:background="#ffe4e4e4"/>
+
+    </com.app.university.view.SwipeRefreshAndLoadLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal|bottom">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/editText"
+            android:layout_weight="5"
+            android:layout_margin="5dp"
+            android:layout_gravity="center" />
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:id="@+id/button"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_send"
+            android:layout_margin="5dp" />
+
+    </LinearLayout>
+
+</FrameLayout>

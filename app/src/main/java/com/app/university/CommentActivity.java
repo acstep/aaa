@@ -8,12 +8,9 @@ import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -40,8 +37,8 @@ import java.util.Date;
 import java.util.List;
 
 
-public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayout.OnRefreshListener{
-    String mCourseID;
+public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayout.OnRefreshListener{
+    String mEvnetID;
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MessageAdapter mAdapter;
     private List<MessageItem> mMessageList;
@@ -292,7 +289,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
             }
             public void onClick(View v) {
-                Log.d("MessageActivity like click pos = ", String.valueOf(mposition)  );
+                Log.d("CommentActivity like click pos = ", String.valueOf(mposition)  );
             }
         }
 
@@ -306,7 +303,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
             }
             public void onClick(View v) {
-                Log.d("MessageActivity comment click pos = ", String.valueOf(mposition)  );
+                Log.d("CommentActivity comment click pos = ", String.valueOf(mposition)  );
             }
         }
 
@@ -344,32 +341,30 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         if(start == 0){
             mClear = true;
         }
-        GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mCourseID, start, Data.GET_MESSAGE_NUMBER);
-        mQueue.add(stringRequest);
+        //GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mCourseID, start, Data.GET_MESSAGE_NUMBER);
+        //mQueue.add(stringRequest);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message);
+        setContentView(R.layout.activity_comment);
         mContext = this;
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        mCourseID =  bundle.getString(Data.COURSE_ID);
-        Log.d("MessageActivity course id = ", mCourseID);
+        mEvnetID =  bundle.getString(Data.COMMENT_EVNET_ID);
+        Log.d("CommentActivity course id = ", mEvnetID);
         mQueue = Volley.newRequestQueue(this);
         mImageLoader = new ImageLoader(mQueue, new BitmapCache());
 
         mMessageList = new ArrayList<MessageItem>();
         mAdapter = new MessageAdapter(this, mMessageList);
-        mListView = (ListView) findViewById(R.id.message_list);
+        mListView = (ListView) findViewById(R.id.comment_list);
         mListView.setAdapter(mAdapter);
-
-
         mQueue = Volley.newRequestQueue(this);
 
-        mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) findViewById(R.id.message_list_swipe);
-        mSwipeLayout.setOnRefreshListener(MessageActivity.this);
+        mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) findViewById(R.id.comment_list_swipe);
+        mSwipeLayout.setOnRefreshListener(CommentActivity.this);
         mSwipeLayout.setColorScheme(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
@@ -397,18 +392,6 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             }
         });
 
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle bundle = new Bundle();
-                bundle.putString(NETTag.GROPU_EVNET_EVENTID, mMessageList.get(position).eventID);
-                Intent intent = new Intent(mContext, CommentActivity.class);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
-            }
-        });
-
         GetMessage(0);
 
     }
@@ -416,7 +399,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
     Response.Listener<String> listener = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
-            Log.d("MessageActivity  response = ", response);
+            Log.d("CommentActivity  response = ", response);
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 mFlagloading = false;
@@ -441,19 +424,19 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                         MessageItem messageItem = new MessageItem();
 
-                                messageItem.eventID = jsonMessageItem.getString(NETTag.GROPU_EVNET_EVENTID);
-                                messageItem.content = jsonMessageItem.getString(NETTag.GROPU_EVNET_CONTENT);
-                                messageItem.groupid =     jsonMessageItem.getString(NETTag.GROPU_EVNET_GROUPID);
-                                messageItem.userName = jsonMessageItem.getString(NETTag.GROPU_EVNET_NAME);
-                                messageItem.userID =jsonMessageItem.getString(NETTag.GROPU_EVNET_USERID);
-                                messageItem.imageNameList =jsonMessageItem.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
-                                messageItem.type =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TYPE);
-                                messageItem.url =jsonMessageItem.getString(NETTag.GROPU_EVNET_URL);
-                                messageItem.likenum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_LIKENUM);
-                                messageItem.commentnum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
-                                messageItem.anonymous =jsonMessageItem.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
-                                messageItem.postTime =jsonMessageItem.getInt(NETTag.GROPU_EVNET_POSTTIME);
-                                messageItem.time =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TIME);
+                        messageItem.eventID = jsonMessageItem.getString(NETTag.GROPU_EVNET_EVENTID);
+                        messageItem.content = jsonMessageItem.getString(NETTag.GROPU_EVNET_CONTENT);
+                        messageItem.groupid =     jsonMessageItem.getString(NETTag.GROPU_EVNET_GROUPID);
+                        messageItem.userName = jsonMessageItem.getString(NETTag.GROPU_EVNET_NAME);
+                        messageItem.userID =jsonMessageItem.getString(NETTag.GROPU_EVNET_USERID);
+                        messageItem.imageNameList =jsonMessageItem.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
+                        messageItem.type =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TYPE);
+                        messageItem.url =jsonMessageItem.getString(NETTag.GROPU_EVNET_URL);
+                        messageItem.likenum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_LIKENUM);
+                        messageItem.commentnum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
+                        messageItem.anonymous =jsonMessageItem.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
+                        messageItem.postTime =jsonMessageItem.getInt(NETTag.GROPU_EVNET_POSTTIME);
+                        messageItem.time =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TIME);
                         mMessageList.add(messageItem);
 
 
@@ -486,7 +469,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.e("MessageActivity", error.getMessage(), error);
+            Log.e("CommentActivity", error.getMessage(), error);
             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -498,40 +481,14 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
         mNoMore = false;
         GetMessage(0);
-        Log.d("MessageActivity  = ", "onRefresh");
+        Log.d("CommentActivity  = ", "onRefresh");
         return;
     }
     @Override
     public void onLoadMore() {
         mSwipeLayout.setRefreshing(false);
-        Log.d("MessageActivity  = ", "onLoadMore");
+        Log.d("CommentActivity  = ", "onLoadMore");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_message, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_add_message) {
-            Bundle bundle = new Bundle();
-            bundle.putString(Data.COURSE_ID, mCourseID);
-            Intent intent = new Intent(this, NewMessageActivity.class);
-            intent.putExtras(bundle);
-            startActivityForResult(intent, 0);
-
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

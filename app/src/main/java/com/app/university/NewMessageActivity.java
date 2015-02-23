@@ -18,10 +18,18 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +38,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class NewMessageActivity extends Activity implements FileUploadTask.AsyncResponse {
@@ -41,19 +48,26 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     private ImageView imgAddFromGallery;
     private final int IMAGE_REQUEST_CODE = 0;
     private final int CAMERA_REQUEST_CODE = 1;
-    private List<String> imageNameList = new ArrayList<String>();
-    private List<String> imageUploadNameList = new ArrayList<String>();
+    private ArrayList<String> imageNameList = new ArrayList<String>();
+    private ArrayList<String> imageUploadNameList = new ArrayList<String>();
     private String currentFileName = "";
     private final String tmpFileName = "newImage.jpg";
     private LinearLayout mListUploadImage;
     private int mCurrentUploadIndex = 0;
     private boolean uploading = false;
     private ProgressBar mProgressBar;
+    String mCourseID;
+    private RequestQueue mQueue = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        mCourseID =  bundle.getString(Data.COURSE_ID);
+        mQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_new_message);
         mServiceContext = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListUploadImage = (LinearLayout)findViewById(R.id.list_upload_image);
@@ -143,7 +157,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                     mListUploadImage.addView(tmpUploadImgView);
                     ImageView tmpDelUploadImg =  (ImageView)tmpUploadImgView.findViewById(R.id.btn_delete_upload_image_item);
                     imageNameList.add(currentFileName);
-                    tmpDelUploadImg.setOnClickListener(new deleteImage_Click(tmpUploadImgView,Environment.getExternalStorageDirectory()  + "/" + Data.FOLDER + "/" + currentFileName));
+                    tmpDelUploadImg.setOnClickListener(new deleteImage_Click(tmpUploadImgView,currentFileName));
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -202,13 +216,60 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                         .execute(Environment.getExternalStorageDirectory()  + "/" + Data.FOLDER + "/" + imageNameList.get(mCurrentUploadIndex),"");
             }
             else{
-
+                postEvent();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         //this you will received result fired from async class of onPostExecute(result) method.
+    }
+
+    Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    Log.d("NewMessageActivity", "success");
+                    finish();
+                }
+                else{
+
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            } finally {
+
+            }
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("NewMessageActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
+    public void postEvent() throws JSONException {
+        EditText editContent = (EditText)findViewById(R.id.edit_event_content);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(NETTag.COURSE_EVNET_GROUPID, mCourseID);
+        JSONArray imageArray = new JSONArray(imageUploadNameList);
+        jsonObject.put(NETTag.COURSE_EVNET_IMAGE_LIST, imageArray);
+
+        jsonObject.put(NETTag.COURSE_EVNET_CONTENT, editContent.getText().toString());
+        Log.d("NewMessageActivity post string = ", jsonObject.toString());
+        PostCourseEventRequest stringRequest = new PostCourseEventRequest(this, listener, errorListener, jsonObject.toString());
+        mQueue.add(stringRequest);
     }
 
     @Override
@@ -235,6 +296,13 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 mProgressBar.setVisibility(ProgressBar.VISIBLE);
                 FileUploadTask uploadHead = (FileUploadTask) new FileUploadTask(mContext,mProgressBar,null,"", imageNameList.size(), 0, this)
                         .execute(Environment.getExternalStorageDirectory()  + "/" + Data.FOLDER + "/" + imageNameList.get(mCurrentUploadIndex),"");
+            }
+            else{
+                try {
+                    postEvent();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             return true;

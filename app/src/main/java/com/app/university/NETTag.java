@@ -24,6 +24,12 @@ public class NETTag {
     public static final String API_ADD_COURSE = "http://newsapi.nexbbs.com/api/addcourse";
     public static final String API_DELETE_COURSE = "http://newsapi.nexbbs.com/api/deletecourse";
     public static final String API_GET_MY_COURSE = "http://newsapi.nexbbs.com/api/getcourse";
+    public static final String API_POST_COURSE_EVENT = "http://newsapi.nexbbs.com/api/addevent";
+    public static final String API_GET_GROUP_EVENT = "http://newsapi.nexbbs.com/api/getevent";
+    public static final String API_GET_HEADIMAGE = "http://newsapi.nexbbs.com/api/headimage";
+    public static final String API_GET_HEADIMAGE_SMALL = "http://newsapi.nexbbs.com/api/headimagem";
+    public static final String API_GET_FEEDIMAGE = "http://newsapi.nexbbs.com/api/eventimage";
+    public static final String API_GET_FEEDIMAGE_SMALL = "http://newsapi.nexbbs.com/api/eventimagem";
     public static final String EMAIL = "email";
     public static final String PASSWD = "passwd";
     public static final String RESULT = "result";
@@ -58,6 +64,31 @@ public class NETTag {
     public static final String USER_DEPARTMENT = "dep";
     public static final String USER_UNIVERSITY = "univerisity";
     public static final String UPLOAD_FILENAME = "filename";
+    public static final String COURSE_EVNET = "data";
+    public static final String COURSE_EVNET_GROUPID = "groupid";
+    public static final String COURSE_EVNET_IMAGE_LIST = "imagelist";
+    public static final String COURSE_EVNET_CONTENT = "content";
+    ///////////////////////
+    public static final String GROPU_EVNET_INFO ="groupinfo";
+    public static final String GROPU_EVNET_LIST ="event";
+    public static final String GROPU_EVNET_EVENTID ="eventid";
+    public static final String GROPU_EVNET_USERID ="userid";
+    public static final String GROPU_EVNET_NAME ="name";
+    public static final String GROPU_EVNET_POSTTIME ="postTime";
+    public static final String GROPU_EVNET_CONTENT ="content";
+    public static final String GROPU_EVNET_IMAGELIST ="imagelist";
+    public static final String GROPU_EVNET_GROUPID ="groupid";
+    public static final String GROPU_EVNET_ANONYMOUS ="anonymous";
+    public static final String GROPU_EVNET_TIME ="time";
+    public static final String GROPU_EVNET_TYPE ="type";
+    public static final String GROPU_EVNET_URL ="url";
+    public static final String GROPU_EVNET_LIKENUM ="likenum";
+    public static final String GROPU_EVNET_COMMENTNUM ="commentnum";
+    public static final String GROPU_EVNET_NEXT_START_TIME ="nextstart";
+    /////////////////////////////////
+    public static final String GET_EVNET_GROUPID ="groupid";
+    public static final String GET_EVNET_NUMBER ="number";
+    public static final String GET_EVNET_START ="start";
 }
 
 
@@ -153,6 +184,9 @@ class userData{
     }
 }
 
+
+
+
 class UpdateAccountRequest extends StringRequest {
     private Context mCcontext;
     private String mCourseID;
@@ -197,6 +231,87 @@ class UpdateAccountRequest extends StringRequest {
             map.put(NETTag.SCHEDULE, mUserData.schedule);
         }
         Log.e("AddCourseActivity", myid + mytoken);
+        return map;
+    }
+
+
+}
+
+
+
+
+class PostCourseEventRequest extends StringRequest {
+    private Context mCcontext;
+    private String mEvent;
+
+
+
+    public PostCourseEventRequest(Context context,
+                                Response.Listener<String> listener,
+                                Response.ErrorListener errorListener,
+                                String event) {
+        super(Request.Method.POST, NETTag.API_POST_COURSE_EVENT, listener, errorListener);
+        mCcontext = context;
+        mEvent = event;
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.COURSE_EVNET, mEvent);
+
+
+        Log.e("AddCourseActivity", myid + mytoken);
+        return map;
+    }
+
+
+}
+
+
+class GetEventRequest extends StringRequest {
+    private Context mCcontext;
+    private int mStart;
+    private int mNumber;
+    private String mGroupid;
+
+
+    public GetEventRequest(Context context,
+                                  Response.Listener<String> listener,
+                                  Response.ErrorListener errorListener,
+                                  String groupid, int start, int number) {
+        super(Request.Method.POST, NETTag.API_GET_GROUP_EVENT, listener, errorListener);
+        mCcontext = context;
+        mStart = start;
+        mNumber = number;
+        mGroupid = groupid;
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.GET_EVNET_GROUPID, mGroupid);
+        if(mNumber != 0) {
+            map.put(NETTag.GET_EVNET_NUMBER, String.valueOf(mNumber) );
+        }
+        if(mStart != 0){
+            map.put(NETTag.GET_EVNET_START, String.valueOf(mStart));
+        }
+
+
+        Log.e("GetEventRequest", myid +' ' + mytoken +' ' +mGroupid +' ' +String.valueOf(mNumber));
         return map;
     }
 

@@ -31,6 +31,9 @@ public class Data {
     public static final String FINAL_FACE_FILE_NAME = "face.jpg";
     public static final String CROP_IMAGE_FILE_NAME = "crop.jpg";
 
+    public static final String COMMENT_EVNET_ID ="eventid";
+
 
     public static final int MAX_JOIN_COURSE = 15;
+    public static final int GET_MESSAGE_NUMBER = 10;
 }
