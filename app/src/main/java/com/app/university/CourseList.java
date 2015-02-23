@@ -189,6 +189,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
+            mSwipeLayout.setRefreshing(false);
             Log.e("CourseList", error.getMessage(), error);
             Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
             return;

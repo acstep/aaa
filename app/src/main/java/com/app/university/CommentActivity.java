@@ -10,9 +10,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -52,10 +56,13 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
     boolean mFlagloading = false;
 
 
+
+
     public class MessageItem {
 
         public String title;
         public String eventID;
+        public String commentID;
         public String content;
         public String groupid;
         public String userName;
@@ -73,15 +80,16 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
         public static final int TYPE_TITLE = 0;
         public static final int TYPE_MESSAGE = 1;
+        public static final int TYPE_COMMENT = 2;
 
-        public static final int TYPE_COUNT = 2;
+        public static final int TYPE_COUNT = 3;
 
         public MessageItem() {
 
         }
 
         public int getType() {
-            return TYPE_MESSAGE;
+            return TYPE_COMMENT;
         }
 
         public String getDateDisplayString(Context context) {
@@ -157,7 +165,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         @Override
         public int getItemViewType(int position) {
             if(position == 0){
-                return MessageItem.TYPE_TITLE;
+                return MessageItem.TYPE_MESSAGE;
             }
             if (messageList != null && position < messageList.size()) {
                 return messageList.get(position).getType();
@@ -207,7 +215,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textName.setText(messageList.get(position).userName);
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
                     holder.textContent.setText(messageList.get(position).content);
-
+                    holder.textContent.setMaxLines(1000);
                     holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
@@ -271,6 +279,29 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                     break;
                 }
+                case MessageItem.TYPE_COMMENT: {
+                    EventViewHolder holder = null;
+                    if (convertView == null) {
+                        convertView = getLayoutInflater().inflate(R.layout.comment_item, null);
+                        holder = new EventViewHolder();
+                        holder.headImage = (ImageView) convertView.findViewById(R.id.comment_item_head);
+                        holder.textName = (TextView) convertView.findViewById(R.id.comment_item_name);
+                        holder.textDate = (TextView) convertView.findViewById(R.id.comment_item_date);
+                        holder.textContent = (TextView) convertView.findViewById(R.id.comment_item_content);
+                        convertView.setTag(holder);
+                    } else {
+                        holder = (EventViewHolder) convertView.getTag();
+
+                    }
+
+                    holder.textName.setText(messageList.get(position).userName);
+                    holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
+                    holder.textContent.setText(messageList.get(position).content);
+                    holder.textContent.setMaxLines(100);
+                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
+                    break;
+                }
                 default:
                     break;
             }
@@ -326,6 +357,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             public FrameLayout  layerImageOne;
             public FrameLayout  LikeLayer;
             public FrameLayout  CommentLayer;
+
             ArrayList<ImageView> imageList = new ArrayList<ImageView>();
 
 
@@ -341,8 +373,8 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         if(start == 0){
             mClear = true;
         }
-        //GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mCourseID, start, Data.GET_MESSAGE_NUMBER);
-        //mQueue.add(stringRequest);
+        GetCommentRequest stringRequest = new GetCommentRequest(this, listener, errorListener, mEvnetID, start, Data.GET_MESSAGE_NUMBER);
+        mQueue.add(stringRequest);
     }
 
     @Override
@@ -392,6 +424,68 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             }
         });
 
+        final Response.Listener<String> listener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                        EditText editContent = (EditText) findViewById(R.id.edit_comment);
+                        editContent.setText("");
+                        editContent.clearFocus();
+                        InputMethodManager imm = (InputMethodManager)getSystemService(
+                                Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(editContent.getWindowToken(), 0);
+                        GetMessage(0);
+                        Log.d("NewMessageActivity", "success");
+
+                    }
+                    else{
+
+                        Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (JSONException e) {
+
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                    return;
+                } finally {
+
+                }
+            }
+        };
+
+        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("CommentActivity", error.getMessage(), error);
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        };
+
+        ImageButton btnPostComment = (ImageButton) findViewById(R.id.btn_post_comment);
+        btnPostComment.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                EditText editContent = (EditText) findViewById(R.id.edit_comment);
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(NETTag.GET_COMMENT_EVENTID, mEvnetID);
+                    jsonObject.put(NETTag.POST_COMMENT_CONTENT, editContent.getText().toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                Log.d("CommentActivity post string = ", jsonObject.toString());
+                PostCommentRequest stringRequest = new PostCommentRequest(mContext, listener, errorListener, jsonObject.toString());
+                mQueue.add(stringRequest);
+            }
+        });
+
+
         GetMessage(0);
 
     }
@@ -406,14 +500,27 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
                     if(mClear == true){
                         mMessageList.clear();
-                        mClear = false;
-                        MessageItem messageItem = new MessageItem();
-                        messageItem.title = jsonObject.getJSONObject(NETTag.GROPU_EVNET_INFO).getString(NETTag.COURSE_NAME);
 
+                        MessageItem messageItem = new MessageItem();
+                        JSONObject eventinfoJson = jsonObject.getJSONObject(NETTag.GET_COMMENT_EVENTINFO);
+                        messageItem.eventID = eventinfoJson.getString(NETTag.GROPU_EVNET_EVENTID);
+                        messageItem.content = eventinfoJson.getString(NETTag.GROPU_EVNET_CONTENT);
+                        messageItem.groupid =     eventinfoJson.getString(NETTag.GROPU_EVNET_GROUPID);
+                        messageItem.userName = eventinfoJson.getString(NETTag.GROPU_EVNET_NAME);
+                        messageItem.userID =eventinfoJson.getString(NETTag.GROPU_EVNET_USERID);
+                        messageItem.imageNameList =eventinfoJson.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
+                        messageItem.type =eventinfoJson.getInt(NETTag.GROPU_EVNET_TYPE);
+                        messageItem.url =eventinfoJson.getString(NETTag.GROPU_EVNET_URL);
+                        messageItem.likenum =eventinfoJson.getInt(NETTag.GROPU_EVNET_LIKENUM);
+                        messageItem.commentnum =eventinfoJson.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
+                        messageItem.anonymous =eventinfoJson.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
+                        messageItem.postTime =eventinfoJson.getInt(NETTag.GROPU_EVNET_POSTTIME);
+                        messageItem.time =eventinfoJson.getInt(NETTag.GROPU_EVNET_TIME);
                         mMessageList.add(messageItem);
                     }
+
                     mStart = Integer.valueOf(jsonObject.getString(NETTag.GROPU_EVNET_NEXT_START_TIME));
-                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.GROPU_EVNET_LIST));
+                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.GET_COMMENT_LIST));
                     mNoMore = false;
                     if(jsonCourseList.length() < Data.GET_MESSAGE_NUMBER){
                         mNoMore = true;
@@ -424,21 +531,14 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                         MessageItem messageItem = new MessageItem();
 
-                        messageItem.eventID = jsonMessageItem.getString(NETTag.GROPU_EVNET_EVENTID);
-                        messageItem.content = jsonMessageItem.getString(NETTag.GROPU_EVNET_CONTENT);
-                        messageItem.groupid =     jsonMessageItem.getString(NETTag.GROPU_EVNET_GROUPID);
-                        messageItem.userName = jsonMessageItem.getString(NETTag.GROPU_EVNET_NAME);
-                        messageItem.userID =jsonMessageItem.getString(NETTag.GROPU_EVNET_USERID);
-                        messageItem.imageNameList =jsonMessageItem.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
-                        messageItem.type =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TYPE);
-                        messageItem.url =jsonMessageItem.getString(NETTag.GROPU_EVNET_URL);
-                        messageItem.likenum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_LIKENUM);
-                        messageItem.commentnum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
-                        messageItem.anonymous =jsonMessageItem.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
-                        messageItem.postTime =jsonMessageItem.getInt(NETTag.GROPU_EVNET_POSTTIME);
-                        messageItem.time =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TIME);
+                        messageItem.eventID = jsonMessageItem.getString(NETTag.GET_COMMENT_EVENTID);
+                        messageItem.content = jsonMessageItem.getString(NETTag.POST_COMMENT_CONTENT);
+                        messageItem.commentID = jsonMessageItem.getString(NETTag.POST_COMMENT_ID);
+                        messageItem.userName = jsonMessageItem.getString(NETTag.POST_COMMENT_USER_NAME);
+                        messageItem.userID = jsonMessageItem.getString(NETTag.POST_COMMENT_USERID);
+                        messageItem.postTime =jsonMessageItem.getInt(NETTag.POST_COMMENT_POST_TIME);
+                        messageItem.type =jsonMessageItem.getInt(NETTag.POST_COMMENT_TYPE);
                         mMessageList.add(messageItem);
-
 
                         mSwipeLayout.setRefreshing(false);
                     }
@@ -459,7 +559,11 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 mSwipeLayout.setRefreshing(false);
                 mFlagloading = false;
                 if (mClear) {
+                    Log.d("CommentActivity", "scroll to top");
+                    
                     mListView.setSelectionAfterHeaderView();
+                    mListView.setSelection(0);
+                    mClear = false;
                 }
                 mAdapter.notifyDataSetChanged();
             }
@@ -470,6 +574,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e("CommentActivity", error.getMessage(), error);
+            mSwipeLayout.setRefreshing(false);
             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -486,7 +591,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
     }
     @Override
     public void onLoadMore() {
-        mSwipeLayout.setRefreshing(false);
+        //mSwipeLayout.setRefreshing(false);
         Log.d("CommentActivity  = ", "onLoadMore");
     }
 

@@ -26,6 +26,8 @@ public class NETTag {
     public static final String API_GET_MY_COURSE = "http://newsapi.nexbbs.com/api/getcourse";
     public static final String API_POST_COURSE_EVENT = "http://newsapi.nexbbs.com/api/addevent";
     public static final String API_GET_GROUP_EVENT = "http://newsapi.nexbbs.com/api/getevent";
+    public static final String API_POST_COMMENT = "http://newsapi.nexbbs.com/api/addcomment";
+    public static final String API_GET_COMMENT = "http://newsapi.nexbbs.com/api/getcomment";
     public static final String API_GET_HEADIMAGE = "http://newsapi.nexbbs.com/api/headimage";
     public static final String API_GET_HEADIMAGE_SMALL = "http://newsapi.nexbbs.com/api/headimagem";
     public static final String API_GET_FEEDIMAGE = "http://newsapi.nexbbs.com/api/eventimage";
@@ -74,7 +76,7 @@ public class NETTag {
     public static final String GROPU_EVNET_EVENTID ="eventid";
     public static final String GROPU_EVNET_USERID ="userid";
     public static final String GROPU_EVNET_NAME ="name";
-    public static final String GROPU_EVNET_POSTTIME ="postTime";
+    public static final String GROPU_EVNET_POSTTIME ="posttime";
     public static final String GROPU_EVNET_CONTENT ="content";
     public static final String GROPU_EVNET_IMAGELIST ="imagelist";
     public static final String GROPU_EVNET_GROUPID ="groupid";
@@ -89,6 +91,19 @@ public class NETTag {
     public static final String GET_EVNET_GROUPID ="groupid";
     public static final String GET_EVNET_NUMBER ="number";
     public static final String GET_EVNET_START ="start";
+    /////////////////////////////////////////////
+    public static final String GET_COMMENT_EVENTID ="eventid";
+    public static final String GET_COMMENT_EVENTINFO ="eventinfo";
+    public static final String GET_COMMENT_LIST ="comment";
+    public static final String POST_COMMENT_DATA ="data";
+    public static final String POST_COMMENT_CONTENT ="content";
+    public static final String POST_COMMENT_ID ="commentid";
+    public static final String POST_COMMENT_USERID ="userid";
+    public static final String POST_COMMENT_USER_NAME ="name";
+    public static final String POST_COMMENT_POST_TIME ="posttime";
+    public static final String POST_COMMENT_ANONMOUS ="anonymous";
+    public static final String POST_COMMENT_TYPE ="type";
+
 }
 
 
@@ -312,6 +327,84 @@ class GetEventRequest extends StringRequest {
 
 
         Log.e("GetEventRequest", myid +' ' + mytoken +' ' +mGroupid +' ' +String.valueOf(mNumber));
+        return map;
+    }
+
+
+}
+
+
+class GetCommentRequest extends StringRequest {
+    private Context mCcontext;
+    private int mStart;
+    private int mNumber;
+    private String mEventID;
+
+
+    public GetCommentRequest(Context context,
+                           Response.Listener<String> listener,
+                           Response.ErrorListener errorListener,
+                           String eventid, int start, int number) {
+        super(Request.Method.POST, NETTag.API_GET_COMMENT, listener, errorListener);
+        mCcontext = context;
+        mStart = start;
+        mNumber = number;
+        mEventID = eventid;
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.GET_COMMENT_EVENTID, mEventID);
+        if(mNumber != 0) {
+            map.put(NETTag.GET_EVNET_NUMBER, String.valueOf(mNumber) );
+        }
+        if(mStart != 0){
+            map.put(NETTag.GET_EVNET_START, String.valueOf(mStart));
+        }
+
+
+        Log.e("GetEventRequest", myid +' ' + mytoken +' ' +mEventID +' ' +String.valueOf(mNumber));
+        return map;
+    }
+
+}
+
+
+class PostCommentRequest extends StringRequest {
+    private Context mCcontext;
+    private String mComment;
+
+
+
+    public PostCommentRequest(Context context,
+                                  Response.Listener<String> listener,
+                                  Response.ErrorListener errorListener,
+                                  String comment) {
+        super(Request.Method.POST, NETTag.API_POST_COMMENT, listener, errorListener);
+        mCcontext = context;
+        mComment = comment;
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.POST_COMMENT_DATA, mComment);
+
+
+        Log.e("PostCommentRequest", myid + mytoken);
         return map;
     }
 

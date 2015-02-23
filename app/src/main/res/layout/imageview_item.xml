@@ -19,5 +19,5 @@
         android:layout_height="50dp"
         android:id="@+id/btn_delete_upload_image_item"
         android:layout_gravity="right|top"
-        android:src="@android:drawable/ic_delete" />
+        android:src="@android:drawable/presence_offline" />
 </FrameLayout>

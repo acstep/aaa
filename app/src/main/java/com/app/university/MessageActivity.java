@@ -476,6 +476,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                 mSwipeLayout.setRefreshing(false);
                 mFlagloading = false;
                 if (mClear) {
+                    mAdapter.notifyDataSetInvalidated ();
                     mListView.setSelectionAfterHeaderView();
                 }
                 mAdapter.notifyDataSetChanged();
@@ -486,6 +487,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
+            mSwipeLayout.setRefreshing(false);
             Log.e("MessageActivity", error.getMessage(), error);
             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
