@@ -41,7 +41,7 @@ import java.util.List;
 
 
 public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayout.OnRefreshListener{
-    String mCourseID;
+    private String mGroupID;
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MessageAdapter mAdapter;
     private List<MessageItem> mMessageList;
@@ -53,6 +53,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
     boolean mClear = false;
     boolean mNoMore = false;
     boolean mFlagloading = false;
+    int mGroupType = 0;
 
 
     public class MessageItem {
@@ -222,6 +223,8 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                         holder.layerImageOne.setVisibility(View.GONE);
 
                     }
+
+
                     else if(messageList.get(position).imageNameList.length() == 1){
                         holder.layerImageList.setVisibility(View.GONE);
                         holder.layerImageOne.setVisibility(View.VISIBLE);
@@ -236,6 +239,9 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     else{
                         holder.layerImageList.setVisibility(View.VISIBLE);
                         holder.layerImageOne.setVisibility(View.GONE);
+                        holder.contentImage1.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImage2.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImage3.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
                         for(int i=0; i<messageList.get(position).imageNameList.length() && i<3; i++){
                             ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.imageList.get(i), R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
                             try {
@@ -306,6 +312,11 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
             }
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(NETTag.GROPU_EVNET_EVENTID, mMessageList.get(mposition).eventID);
+                Intent intent = new Intent(mContext, CommentActivity.class);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, 0);
                 Log.d("MessageActivity comment click pos = ", String.valueOf(mposition)  );
             }
         }
@@ -344,7 +355,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         if(start == 0){
             mClear = true;
         }
-        GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mCourseID, start, Data.GET_MESSAGE_NUMBER);
+        GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mGroupID, mGroupType, start, Data.GET_MESSAGE_NUMBER);
         mQueue.add(stringRequest);
     }
 
@@ -355,8 +366,11 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         mContext = this;
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        mCourseID =  bundle.getString(Data.COURSE_ID);
-        Log.d("MessageActivity course id = ", mCourseID);
+        mGroupID =  bundle.getString(Data.GROUP_ID);
+        mGroupType = bundle.getInt(Data.GROUP_TYPE);
+
+        Log.d("MessageActivity course id = ", mGroupID);
+        Log.d("MessageActivity course type = ", String.valueOf(mGroupType) );
         mQueue = Volley.newRequestQueue(this);
         mImageLoader = new ImageLoader(mQueue, new BitmapCache());
 
@@ -403,6 +417,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
                 bundle.putString(NETTag.GROPU_EVNET_EVENTID, mMessageList.get(position).eventID);
+                bundle.putInt(Data.GROUP_TYPE, mGroupType);
                 Intent intent = new Intent(mContext, CommentActivity.class);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
@@ -526,7 +541,8 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_message) {
             Bundle bundle = new Bundle();
-            bundle.putString(Data.COURSE_ID, mCourseID);
+            bundle.putString(Data.GROUP_ID, mGroupID);
+            bundle.putInt(Data.GROUP_TYPE, mGroupType);
             Intent intent = new Intent(this, NewMessageActivity.class);
             intent.putExtras(bundle);
             startActivityForResult(intent, 0);

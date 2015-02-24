@@ -423,7 +423,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
                 SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean(Data.MODIFY_DIRTY,true);
+                editor.putBoolean(Data.COURSE_SCHEDULE_SET,true);
                 editor.commit();
 
                 AddCourseActivity.this.setResult(Activity.RESULT_OK);

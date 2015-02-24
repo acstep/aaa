@@ -56,7 +56,8 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     private int mCurrentUploadIndex = 0;
     private boolean uploading = false;
     private ProgressBar mProgressBar;
-    String mCourseID;
+    private String mGroupID;
+    private int mGroupType = 0;
     private RequestQueue mQueue = null;
 
     @Override
@@ -66,7 +67,8 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        mCourseID =  bundle.getString(Data.COURSE_ID);
+        mGroupID =  bundle.getString(Data.GROUP_ID);
+        mGroupType =  bundle.getInt(Data.GROUP_TYPE);
         mQueue = Volley.newRequestQueue(this);
         setContentView(R.layout.activity_new_message);
         mServiceContext = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -262,13 +264,14 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     public void postEvent() throws JSONException {
         EditText editContent = (EditText)findViewById(R.id.edit_event_content);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(NETTag.COURSE_EVNET_GROUPID, mCourseID);
+        jsonObject.put(NETTag.COURSE_EVNET_GROUPID, mGroupID);
+        jsonObject.put(NETTag.GROPU_EVNET_TYPE, mGroupType);
         JSONArray imageArray = new JSONArray(imageUploadNameList);
         jsonObject.put(NETTag.COURSE_EVNET_IMAGE_LIST, imageArray);
 
         jsonObject.put(NETTag.COURSE_EVNET_CONTENT, editContent.getText().toString());
         Log.d("NewMessageActivity post string = ", jsonObject.toString());
-        PostCourseEventRequest stringRequest = new PostCourseEventRequest(this, listener, errorListener, jsonObject.toString());
+        PostEventRequest stringRequest = new PostEventRequest(this, listener, errorListener, jsonObject.toString());
         mQueue.add(stringRequest);
     }
 

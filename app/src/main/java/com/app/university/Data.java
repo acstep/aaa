@@ -19,11 +19,13 @@ public class Data {
     public static final String COURSE_SCHEDULE_SET = "course_schedule_set";
     public static final String DEPARTMENT = "department";
     public static final String CURRENTCOURSE = "course";
+    public static final String CURRENTCOURSELIST = "courselist";
     public static final String COURSE_NAME = "name";
     public static final String COURSE_TIME = "time";
     public static final String COURSE_TEACHER = "teacher";
     public static final String COURSE_COLOR = "color";
     public static final String COURSE_ID = "id";
+
     public static final String COURSE_TIMESEC = "timesec";
     public static final String MODIFY_TIME = "modify_time";
     public static final String MODIFY_DIRTY = "modify_dirty";
@@ -33,7 +35,14 @@ public class Data {
 
     public static final String COMMENT_EVNET_ID ="eventid";
 
+    public static final String GROUP_ID = "groupid";
+    public static final String GROUP_TYPE = "grouptype";
+
 
     public static final int MAX_JOIN_COURSE = 15;
     public static final int GET_MESSAGE_NUMBER = 10;
+
+    public static final int GROUP_TYPE_COURSE = 1;
+    public static final int GROUP_TYPE_SOCIAL  = 2;
+    public static final String CURRENTGROUPLIST = "grouplist";
 }

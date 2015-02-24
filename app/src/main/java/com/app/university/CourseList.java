@@ -2,6 +2,7 @@ package com.app.university;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -141,7 +142,8 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
         }
         public void onClick(View v) {
             Bundle bundle = new Bundle();
-            bundle.putString(Data.COURSE_ID, courseList.get(mposition).getId());
+            bundle.putString(Data.GROUP_ID, courseList.get(mposition).getId());
+            bundle.putInt(Data.GROUP_TYPE, Data.GROUP_TYPE_COURSE);
             Intent intent = new Intent(getActivity(), MessageActivity.class);
             intent.putExtras(bundle);
             startActivityForResult(intent, 0);
@@ -154,7 +156,14 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    if(getActivity() != null) {
+                        SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(Data.CURRENTCOURSELIST, response);
+                        editor.commit();
+                    }
                     JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_COURSE_LIST));
+                    courseList.clear();
                     for (int i = 0; i < jsonCourseList.length(); i++) {
                         JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
                         if (jsonCourseItem == null) continue;
@@ -190,6 +199,34 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
         @Override
         public void onErrorResponse(VolleyError error) {
             mSwipeLayout.setRefreshing(false);
+            if(getActivity() != null) {
+                SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                String response = settings.getString(Data.CURRENTCOURSELIST, "[]");
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(response);
+                    JSONArray jsonCourseList = new JSONArray(jsonObject.getString(NETTag.MY_COURSE_LIST));
+                    courseList.clear();
+                    for (int i = 0; i < jsonCourseList.length(); i++) {
+                        JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
+                        if (jsonCourseItem == null) continue;
+
+                        CourseItem courseItem = new CourseItem(
+                                jsonCourseItem.getString(NETTag.COURSE_ID),
+                                jsonCourseItem.getString(NETTag.COURSE_NAME),
+                                jsonCourseItem.getString(NETTag.COURSE_REALTIME),
+                                jsonCourseItem.getString(NETTag.COURSE_LOCATION),
+                                jsonCourseItem.getString(NETTag.COURSE_STUDENT_NUMBER));
+                        courseList.add(courseItem);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                mAdapter.notifyDataSetChanged();
+            }
+            mSwipeLayout.setRefreshing(false);
+
             Log.e("CourseList", error.getMessage(), error);
             Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
@@ -197,8 +234,22 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
     };
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("CourseList  = ", "onResume");
+
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        Log.d("CourseList  = ", "setUserVisibleHint");
+        if(mSwipeLayout != null){
+            mSwipeLayout.setRefreshing(true);
+            GetMyCourseRequest stringRequest = new GetMyCourseRequest(getActivity(), listener, errorListener);
+            mQueue.add(stringRequest);
+        }
+
 
     }
 

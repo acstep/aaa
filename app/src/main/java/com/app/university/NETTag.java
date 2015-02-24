@@ -32,6 +32,7 @@ public class NETTag {
     public static final String API_GET_HEADIMAGE_SMALL = "http://newsapi.nexbbs.com/api/headimagem";
     public static final String API_GET_FEEDIMAGE = "http://newsapi.nexbbs.com/api/eventimage";
     public static final String API_GET_FEEDIMAGE_SMALL = "http://newsapi.nexbbs.com/api/eventimagem";
+    public static final String API_GET_MY_GROUP = "http://newsapi.nexbbs.com/api/getgroup";
     public static final String EMAIL = "email";
     public static final String PASSWD = "passwd";
     public static final String RESULT = "result";
@@ -72,6 +73,7 @@ public class NETTag {
     public static final String COURSE_EVNET_CONTENT = "content";
     ///////////////////////
     public static final String GROPU_EVNET_INFO ="groupinfo";
+    public static final String GROPU_EVNET = "data";
     public static final String GROPU_EVNET_LIST ="event";
     public static final String GROPU_EVNET_EVENTID ="eventid";
     public static final String GROPU_EVNET_USERID ="userid";
@@ -82,7 +84,7 @@ public class NETTag {
     public static final String GROPU_EVNET_GROUPID ="groupid";
     public static final String GROPU_EVNET_ANONYMOUS ="anonymous";
     public static final String GROPU_EVNET_TIME ="time";
-    public static final String GROPU_EVNET_TYPE ="type";
+    public static final String GROPU_EVNET_TYPE ="grouptype";
     public static final String GROPU_EVNET_URL ="url";
     public static final String GROPU_EVNET_LIKENUM ="likenum";
     public static final String GROPU_EVNET_COMMENTNUM ="commentnum";
@@ -91,6 +93,7 @@ public class NETTag {
     public static final String GET_EVNET_GROUPID ="groupid";
     public static final String GET_EVNET_NUMBER ="number";
     public static final String GET_EVNET_START ="start";
+    public static final String GET_EVNET_GROUP_TYPE ="grouptype";
     /////////////////////////////////////////////
     public static final String GET_COMMENT_EVENTID ="eventid";
     public static final String GET_COMMENT_EVENTINFO ="eventinfo";
@@ -102,8 +105,13 @@ public class NETTag {
     public static final String POST_COMMENT_USER_NAME ="name";
     public static final String POST_COMMENT_POST_TIME ="posttime";
     public static final String POST_COMMENT_ANONMOUS ="anonymous";
-    public static final String POST_COMMENT_TYPE ="type";
+    public static final String POST_COMMENT_TYPE ="grouptype";
 
+    /////////////////////////////////////
+    public static final String GROPU_NAME = "name";
+    public static final String COURSE_MEMBER = "member";
+    public static final String GROUP_ID = "id";
+    public static final String MY_GROUP_LIST = "grouplist";
 }
 
 
@@ -174,12 +182,42 @@ class GetMyCourseRequest extends StringRequest {
         Map<String, String> map = new HashMap<String, String>();
         map.put(NETTag.USER_ID,myid);
         map.put(NETTag.TOKEN, mytoken);
-        Log.e("AddCourseActivity", myid + mytoken);
+        Log.d("AddCourseActivity", myid + mytoken);
         return map;
     }
 
 
 }
+
+
+class GetMyGroupRequest extends StringRequest {
+    private Context mCcontext;
+    private String mCourseID;
+
+    public GetMyGroupRequest(Context context,
+                              Response.Listener<String> listener,
+                              Response.ErrorListener errorListener) {
+        super(Request.Method.POST, NETTag.API_GET_MY_GROUP, listener, errorListener);
+        mCcontext = context;
+
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        Log.d("GetMyGroupRequest", myid + mytoken);
+        return map;
+    }
+
+
+}
+
 
 class userData{
     String name = "";
@@ -255,13 +293,13 @@ class UpdateAccountRequest extends StringRequest {
 
 
 
-class PostCourseEventRequest extends StringRequest {
+class PostEventRequest extends StringRequest {
     private Context mCcontext;
     private String mEvent;
 
 
 
-    public PostCourseEventRequest(Context context,
+    public PostEventRequest(Context context,
                                 Response.Listener<String> listener,
                                 Response.ErrorListener errorListener,
                                 String event) {
@@ -279,7 +317,7 @@ class PostCourseEventRequest extends StringRequest {
         Map<String, String> map = new HashMap<String, String>();
         map.put(NETTag.USER_ID,myid);
         map.put(NETTag.TOKEN, mytoken);
-        map.put(NETTag.COURSE_EVNET, mEvent);
+        map.put(NETTag.GROPU_EVNET, mEvent);
 
 
         Log.e("AddCourseActivity", myid + mytoken);
@@ -295,17 +333,19 @@ class GetEventRequest extends StringRequest {
     private int mStart;
     private int mNumber;
     private String mGroupid;
+    private int mGroupType;
 
 
     public GetEventRequest(Context context,
                                   Response.Listener<String> listener,
                                   Response.ErrorListener errorListener,
-                                  String groupid, int start, int number) {
+                                  String groupid, int grouptype, int start, int number) {
         super(Request.Method.POST, NETTag.API_GET_GROUP_EVENT, listener, errorListener);
         mCcontext = context;
         mStart = start;
         mNumber = number;
         mGroupid = groupid;
+        mGroupType = grouptype;
     }
 
 
@@ -318,6 +358,7 @@ class GetEventRequest extends StringRequest {
         map.put(NETTag.USER_ID,myid);
         map.put(NETTag.TOKEN, mytoken);
         map.put(NETTag.GET_EVNET_GROUPID, mGroupid);
+        map.put(NETTag.GET_EVNET_GROUP_TYPE, String.valueOf(mGroupType));
         if(mNumber != 0) {
             map.put(NETTag.GET_EVNET_NUMBER, String.valueOf(mNumber) );
         }

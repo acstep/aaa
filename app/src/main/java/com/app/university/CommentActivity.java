@@ -42,7 +42,8 @@ import java.util.List;
 
 
 public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayout.OnRefreshListener{
-    String mEvnetID;
+    private String mEvnetID;
+    private int mGroupType;
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MessageAdapter mAdapter;
     private List<MessageItem> mMessageList;
@@ -385,6 +386,8 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         mEvnetID =  bundle.getString(Data.COMMENT_EVNET_ID);
+        mGroupType = bundle.getInt(Data.GROUP_TYPE);
+
         Log.d("CommentActivity course id = ", mEvnetID);
         mQueue = Volley.newRequestQueue(this);
         mImageLoader = new ImageLoader(mQueue, new BitmapCache());
@@ -473,6 +476,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(NETTag.GET_COMMENT_EVENTID, mEvnetID);
+                    jsonObject.put(NETTag.POST_COMMENT_TYPE, mGroupType);
                     jsonObject.put(NETTag.POST_COMMENT_CONTENT, editContent.getText().toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -560,7 +564,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 mFlagloading = false;
                 if (mClear) {
                     Log.d("CommentActivity", "scroll to top");
-                    
+
                     mListView.setSelectionAfterHeaderView();
                     mListView.setSelection(0);
                     mClear = false;
