@@ -34,6 +34,7 @@ public class NETTag {
     public static final String API_GET_FEEDIMAGE_SMALL = "http://newsapi.nexbbs.com/api/eventimagem";
     public static final String API_GET_MY_GROUP = "http://newsapi.nexbbs.com/api/getgroup";
     public static final String EMAIL = "email";
+    public static final String GCM = "gcm";
     public static final String PASSWD = "passwd";
     public static final String RESULT = "result";
     public static final String OK = "ok";
@@ -226,14 +227,16 @@ class userData{
     String adimission = "";
     String sex = "";
     String schedule = "";
+    String gcm = "";
 
-    public userData(String name, String university, String dep, String adimission, String sex, String schedule) {
+    public userData(String name, String university, String dep, String adimission, String sex, String schedule, String gcm) {
         this.name = name;
         this.university = university;
         this.dep = dep;
         this.adimission = adimission;
         this.sex = sex;
         this.schedule = schedule;
+        this.gcm = gcm;
     }
 }
 
@@ -282,6 +285,9 @@ class UpdateAccountRequest extends StringRequest {
         }
         if(!mUserData.schedule.isEmpty()){
             map.put(NETTag.SCHEDULE, mUserData.schedule);
+        }
+        if(!mUserData.gcm.isEmpty()){
+            map.put(NETTag.GCM, mUserData.gcm);
         }
         Log.e("AddCourseActivity", myid + mytoken);
         return map;
@@ -446,6 +452,43 @@ class PostCommentRequest extends StringRequest {
 
 
         Log.e("PostCommentRequest", myid + mytoken);
+        return map;
+    }
+
+
+}
+
+
+
+class SearchCourseRequest extends StringRequest {
+    private Context mCcontext;
+    private String mCourseName;
+    private int mNumber;
+    private int mStartIndex;
+
+
+
+    public SearchCourseRequest(Context context,
+                              Response.Listener<String> listener,
+                              Response.ErrorListener errorListener,
+                              String courseName, int number, int startIndex) {
+        super(Request.Method.POST, NETTag.API_SEARCH_COURSE, listener, errorListener);
+        this.mCcontext = context;
+        this.mCourseName = courseName;
+        this.mNumber = number;
+        this.mStartIndex = startIndex;
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.SEARCH_NAME, mCourseName);
+        map.put(NETTag.SEARCH_NUMBER, String.valueOf(mNumber));
+        map.put(NETTag.SEARCH_START, String.valueOf(mStartIndex));
+
+
         return map;
     }
 

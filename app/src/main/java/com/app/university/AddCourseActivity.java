@@ -19,12 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
@@ -33,9 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLayout.OnRefreshListener{
@@ -46,16 +42,20 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
     private SearchCourseAdapter mAdapter;
     private ImageLoader.ImageCache mImageCache = null;
     private List<CourseItem> courseList;
-    private boolean mFlagloading = false;
+    private boolean mloading = false;
+    private boolean mNeedSearch = false;
+    private boolean mMore = false;
     private RequestQueue mQueue = null;
     private Integer startIndex = 0;
     private Integer number = 20;
     private Integer editTextNum = 0;
-    private String currentSearchText = "";
+
     private JSONArray mCourseJsonArray;
     private boolean hasMoreData = true;
     private CourseColor courseColor;
     private boolean mModifySchedule = false;
+    private String mNextSearchWord = "";
+    private String mCurrentSearchWord = "";
 
 
     public class CourseItem {
@@ -397,17 +397,16 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
-                Log.d("AddCourseActivity", "cccccc " + mFlagloading +  "1" + hasMoreData + "2" + firstVisibleItem + visibleItemCount);
+                Log.d("AddCourseActivity", "cccccc " +  "1" + hasMoreData + "2" + firstVisibleItem + visibleItemCount);
                 if (firstVisibleItem + visibleItemCount > totalItemCount -3
                         && totalItemCount > 0
-                        && mFlagloading == false
-                        && hasMoreData == true) {
-                    mFlagloading = true;
+                         && hasMoreData == true) {
+
                     EditText edittext = (EditText) findViewById(R.id.edit_search);
 
                     Log.d("AddCourseActivity", "bbbbbb " );
-                    mSwipeLayout.setRefreshing(true);
-                    searchCourse(edittext.getText().toString(), false);
+
+                    searchCourse(edittext.getText().toString(),true);
 
 
                     //getNews(mRequestNextUrl, false);
@@ -456,16 +455,9 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
             @Override
             public void afterTextChanged(Editable s) {
 
-                if(currentSearchText.compareTo(edittext.getText().toString()) != 0 && edittext.getText().toString().compareTo("") != 0){
-                    startIndex = 0;
-                    mFlagloading = true;
-                    hasMoreData = true;
-                    currentSearchText = edittext.getText().toString();
-                    Log.d("AddCourseActivity", "aaaaaa " );
-                    searchCourse(edittext.getText().toString(), true);
-                }
-                else{
-                    mFlagloading = false;
+                Log.d("AddCourseActivity", "aaaaaa " );
+                if(edittext.getText().toString().length() != 0){
+                    searchCourse(edittext.getText().toString(),false);
                 }
 
             }
@@ -484,99 +476,118 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
     }
 
-    private void searchCourse(final String courseName, final boolean bClear) {
 
-        if (bClear) {
-            mSwipeLayout.setRefreshing(true);
-        }
-        final StringRequest stringRequest = new StringRequest(Request.Method.POST, NETTag.API_SEARCH_COURSE,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("AddCourseActivity", "response -> " + response);
-                        try {
-                            if (bClear) {
-                                courseList.clear();
-                            }
-
-                            JSONObject jsonObject = new JSONObject(response);
-                            if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                                JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.COURSE_ARRAY));
-                                for (int i = 0; i < jsonCourseList.length(); i++) {
-                                    JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
-                                    if (jsonCourseItem == null) continue;
-
-                                    CourseItem courseItem = new CourseItem(
-                                            jsonCourseItem.getString(NETTag.COURSE_NAME),
-                                            jsonCourseItem.getString(NETTag.COURSE_TEACHER),
-                                            jsonCourseItem.getString(NETTag.COURSE_SECTIME),
-                                            jsonCourseItem.getString(NETTag.COURSE_REALTIME),
-                                            jsonCourseItem.getString(NETTag.COURSE_LOCATION),
-                                            jsonCourseItem.getString(NETTag.COURSE_ID));
-                                    courseList.add(courseItem);
-                                }
-                                startIndex = startIndex +  jsonCourseList.length();
-                                if(jsonCourseList.length() < number){
-                                    Log.d("AddCourseActivity", "no more data !!!! ");
-                                    hasMoreData = false;
-                                }
-                                else{
-                                    hasMoreData = true;
-                                }
-                            }
-                            else{
-
-                                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            mSwipeLayout.setRefreshing(false);
-                            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                            return;
-                        } finally {
-
-                            mFlagloading = false;
-                            mSwipeLayout.setRefreshing(false);
-
-                            if (bClear) {
-                                mAdapter.notifyDataSetInvalidated();
-                                mListView.setSelectionAfterHeaderView();
-                            }
-                            else {
-                                mAdapter.notifyDataSetChanged();
-                            }
-                        }
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        mSwipeLayout.setRefreshing(false);
-                        Log.e("AddCourseActivity", error.getMessage(), error);
-                        Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+    Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                if (startIndex == 0) {
+                    courseList.clear();
                 }
-        )
-        {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> map = new HashMap<String, String>();
 
-                map.put(NETTag.SEARCH_NAME, courseName);
-                map.put(NETTag.SEARCH_NUMBER, String.valueOf(number));
-                map.put(NETTag.SEARCH_START, String.valueOf(startIndex));
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.COURSE_ARRAY));
+                    for (int i = 0; i < jsonCourseList.length(); i++) {
+                        JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
+                        if (jsonCourseItem == null) continue;
 
-                //SharedPreferences prefs = getSharedPreferences(mContext);
+                        CourseItem courseItem = new CourseItem(
+                                jsonCourseItem.getString(NETTag.COURSE_NAME),
+                                jsonCourseItem.getString(NETTag.COURSE_TEACHER),
+                                jsonCourseItem.getString(NETTag.COURSE_SECTIME),
+                                jsonCourseItem.getString(NETTag.COURSE_REALTIME),
+                                jsonCourseItem.getString(NETTag.COURSE_LOCATION),
+                                jsonCourseItem.getString(NETTag.COURSE_ID));
+                        courseList.add(courseItem);
+                    }
+                    startIndex = startIndex +  jsonCourseList.length();
+                    if(jsonCourseList.length() < number){
+                        Log.d("AddCourseActivity", "no more data !!!! ");
+                        hasMoreData = false;
+                    }
+                    else{
+                        hasMoreData = true;
+                    }
+                    if(startIndex == jsonCourseList.length()){
+                        mAdapter.notifyDataSetInvalidated();
+                        mListView.setSelectionAfterHeaderView();
+                    }
+                    else{
+                        mAdapter.notifyDataSetChanged();
+                    }
 
-                return map;
+                    mloading = false;
+                    if(mNeedSearch == true){
+
+                        mNeedSearch = false;
+                        searchCourse(mNextSearchWord, mMore);
+                    }
+
+
+                }
+                else{
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    mloading = false;
+                    return;
+                }
+            } catch (JSONException e) {
+                mSwipeLayout.setRefreshing(false);
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                mloading = false;
+                return;
+            } finally {
+                mSwipeLayout.setRefreshing(false);
+
+
             }
-        };
-        stringRequest.setTag("AddCourseActivity");
+
+        }
+    };
+
+    Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            mloading = false;
+            mSwipeLayout.setRefreshing(false);
+            Log.e("AddCourseActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+
+    private void searchCourse(final String courseName, boolean more) {
+
+        mNextSearchWord = courseName;
+        Log.d("AddCourseActivity call search",  "searchwrod = " + courseName);
+
+        if(mloading == true){
+            mMore = more;
+            mNeedSearch = true;
+
+            Log.d("AddCourseActivity loading ",  "mNextSearchWord = " + mNextSearchWord);
+            return;
+        }
+
+        if(mNextSearchWord.compareTo(mCurrentSearchWord) == 0 && more == false){
+            Log.d("AddCourseActivity call search return",  "searchwrod = " + courseName + "last = " + mNextSearchWord);
+            return;
+        }
+
+        mloading = true;
+        if(mNextSearchWord.compareTo(mCurrentSearchWord) != 0){
+            startIndex = 0;
+            hasMoreData = true;
+        }
+
+        mSwipeLayout.setRefreshing(true);
+        mCurrentSearchWord = mNextSearchWord;
+        Log.d("AddCourseActivity", "startIndex= " + String.valueOf(startIndex) + "searchwrod = " + courseName);
+        SearchCourseRequest stringRequest = new SearchCourseRequest(this, listener, errorListener, mCurrentSearchWord, number, startIndex);
         mQueue.add(stringRequest);
     }
+
+
 
 }

@@ -147,14 +147,15 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                    if(getActivity() != null) {
+
+                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_GROUP_LIST));
+                    groupList.clear();
+                    if(getActivity() != null && jsonCourseList.length() != 0) {
                         SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(Data.CURRENTGROUPLIST, response);
                         editor.commit();
                     }
-                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_GROUP_LIST));
-                    groupList.clear();
                     for (int i = 0; i < jsonCourseList.length(); i++) {
                         JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
                         if (jsonCourseItem == null) continue;

@@ -25,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -326,7 +328,7 @@ public class Schedule extends Fragment {
                     } else if(which == 1){
                         for (int i=0;i<mCourseJsonArray.length();i++){
                             try {
-                                if( ((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(mCourseInfo.id) == 0){
+                                if( ((JSONObject)(mCourseJsonArray.get(i))).getString(Data.COURSE_ID).compareTo(mCourseInfo.id) == 0){
 
                                     String preCourseString = mCourseJsonArray.toString();
                                     JSONArray postCourseArray  = new JSONArray();
@@ -377,6 +379,13 @@ public class Schedule extends Fragment {
                              Bundle savedInstanceState) {
         mQueue = Volley.newRequestQueue(getActivity());
         viewSchedule = inflater.inflate(R.layout.schedule, container, false);
+
+        Tracker t = ((UniversityApp) getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Schedule");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="app_background" type="color">#FFF39C12</item>
-
+    <color name="background_tab_pressed">#6633B5E5</color>
 
 </resources>

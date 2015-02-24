@@ -156,14 +156,15 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                    if(getActivity() != null) {
+
+                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_COURSE_LIST));
+                    courseList.clear();
+                    if(getActivity() != null && jsonCourseList.length() != 0) {
                         SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putString(Data.CURRENTCOURSELIST, response);
                         editor.commit();
                     }
-                    JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_COURSE_LIST));
-                    courseList.clear();
                     for (int i = 0; i < jsonCourseList.length(); i++) {
                         JSONObject jsonCourseItem = jsonCourseList.optJSONObject(i);
                         if (jsonCourseItem == null) continue;
@@ -184,8 +185,8 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     return;
                 }
             } catch (JSONException e) {
-                mSwipeLayout.setRefreshing(false);
-                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                //mSwipeLayout.setRefreshing(false);
+                //Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return;
             } finally {

@@ -173,7 +173,7 @@ public class ProfileActivity extends Activity {
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        userData udata = new userData(editText.getText().toString(), "","","","","");
+                        userData udata = new userData(editText.getText().toString(), "","","","","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
                         mQueue.add(stringRequest);
                     }
@@ -214,7 +214,7 @@ public class ProfileActivity extends Activity {
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        userData udata = new userData("", "",editText.getText().toString(),"","","");
+                        userData udata = new userData("", "",editText.getText().toString(),"","","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
                         mQueue.add(stringRequest);
                     }
@@ -247,7 +247,7 @@ public class ProfileActivity extends Activity {
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        userData udata = new userData("", "","",String.valueOf(yearPicker.getValue()),"","");
+                        userData udata = new userData("", "","",String.valueOf(yearPicker.getValue()),"","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
                         mQueue.add(stringRequest);
 
@@ -276,7 +276,7 @@ public class ProfileActivity extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                userData udata = new userData("", "","","",String.valueOf(which+1),"");
+                                userData udata = new userData("", "","","",String.valueOf(which+1),"","");
                                 UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
                                 mQueue.add(stringRequest);
 

@@ -5,6 +5,8 @@ package com.app.university;
  */
 public class Data {
 
+    public static final String GCM_ID = "gcmid";
+    public static final String GCM_ID_NEED_UPDATE = "gcmupdate";
     public static final String FOLDER = "university";
     public static final String USER_ID = "userid";
     public static final String TOKEN = "token";
