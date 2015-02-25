@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -46,7 +48,8 @@ public class ProfileActivity extends Activity {
     private TextView myAdmission;
     private TextView mySex;
     private SharedPreferences.Editor editor;
-    private RequestQueue mQueue = null;
+
+    private ImageLoader mImageLoader;
 
 
     public String getYearString(int year){
@@ -135,7 +138,7 @@ public class ProfileActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         mContext = this;
-        mQueue = Volley.newRequestQueue(this);
+        mImageLoader = MySingleton.getInstance(getApplicationContext()).getImageLoader();
 
         SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
         String myid = settings.getString(Data.USER_ID, null);
@@ -157,6 +160,7 @@ public class ProfileActivity extends Activity {
         mySex.setText(getSexString(Integer.valueOf(settings.getString(Data.USER_SEX,"0"))));
 
 
+
         LinearLayout lMyName = (LinearLayout)findViewById(R.id.layer_name);
         lMyName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +179,7 @@ public class ProfileActivity extends Activity {
 
                         userData udata = new userData(editText.getText().toString(), "","","","","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
-                        mQueue.add(stringRequest);
+                        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
                     }
                 });
                 editDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -216,7 +220,7 @@ public class ProfileActivity extends Activity {
 
                         userData udata = new userData("", "",editText.getText().toString(),"","","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
-                        mQueue.add(stringRequest);
+                        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
                     }
                 });
                 editDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -249,7 +253,7 @@ public class ProfileActivity extends Activity {
 
                         userData udata = new userData("", "","",String.valueOf(yearPicker.getValue()),"","","");
                         UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
-                        mQueue.add(stringRequest);
+                        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
                     }
                 });
@@ -278,7 +282,7 @@ public class ProfileActivity extends Activity {
 
                                 userData udata = new userData("", "","","",String.valueOf(which+1),"","");
                                 UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, listener, errorListener, udata);
-                                mQueue.add(stringRequest);
+                                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
 
                             }
@@ -304,7 +308,22 @@ public class ProfileActivity extends Activity {
         }
 
         ImageView imHeadPhoto = (ImageView)findViewById(R.id.head_image);
-        imHeadPhoto.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
+        //imHeadPhoto.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
+        ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(imHeadPhoto, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+        //mImageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
+        RequestQueue mQueue = Volley.newRequestQueue(this);
+        ImageLoader imageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+            }
+
+            @Override
+            public Bitmap getBitmap(String url) {
+                return null;
+            }
+        });
+        imageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
+
 
 
         imHeadPhoto.setOnClickListener(new View.OnClickListener() {

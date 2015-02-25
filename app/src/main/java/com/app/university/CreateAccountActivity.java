@@ -12,11 +12,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +26,7 @@ import java.util.Map;
 public class CreateAccountActivity extends Activity {
 
     private static Context mContext;
-    private static RequestQueue mVolleyRequestQueue;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +34,7 @@ public class CreateAccountActivity extends Activity {
         setContentView(R.layout.activity_create_account);
 
         mContext = getApplicationContext();
-        mVolleyRequestQueue = Volley.newRequestQueue(mContext);
+
         Button createButton = (Button)findViewById(R.id.btn_createaccount);
 
 
@@ -128,7 +126,7 @@ public class CreateAccountActivity extends Activity {
                     }
                 };
                 stringRequest.setTag("CreateAccountActivity");
-                mVolleyRequestQueue.add(stringRequest);
+                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
             }
         });

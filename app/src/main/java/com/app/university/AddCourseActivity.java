@@ -19,11 +19,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
 import org.json.JSONArray;
@@ -40,12 +37,12 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
     protected ListView mListView;
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private SearchCourseAdapter mAdapter;
-    private ImageLoader.ImageCache mImageCache = null;
+
     private List<CourseItem> courseList;
     private boolean mloading = false;
     private boolean mNeedSearch = false;
     private boolean mMore = false;
-    private RequestQueue mQueue = null;
+
     private Integer startIndex = 0;
     private Integer number = 20;
     private Integer editTextNum = 0;
@@ -280,7 +277,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                     try {
                         if(((JSONObject)mCourseJsonArray.get(i)).getString(Data.COURSE_ID).compareTo(tmpcourseItem.getId()) == 0){
 
-                            postCourseArray.remove(i);
+                            postCourseArray = CommonUtil.RemoveJSONArray(postCourseArray,i);
+                            //postCourseArray.remove(i);
                             postCourseString = postCourseArray.toString();
                         }
                     } catch (JSONException e) {
@@ -343,8 +341,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                 url = NETTag.API_ADD_COURSE;
             }
             AddCourseRequest stringRequest = new AddCourseRequest(mContext, url, tmpcourseItem.getId(), listener, errorListener,preCourseString,postCourseString, "");
+            MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
-            mQueue.add(stringRequest);
         }
     }
 
@@ -366,7 +364,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
         mAdapter = new SearchCourseAdapter(this, courseList);
         mListView = (ListView) findViewById(R.id.search_course_list);
         mListView.setAdapter(mAdapter);
-        mQueue = Volley.newRequestQueue(this);
+
 
 
 
@@ -585,7 +583,7 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
         mCurrentSearchWord = mNextSearchWord;
         Log.d("AddCourseActivity", "startIndex= " + String.valueOf(startIndex) + "searchwrod = " + courseName);
         SearchCourseRequest stringRequest = new SearchCourseRequest(this, listener, errorListener, mCurrentSearchWord, number, startIndex);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
 

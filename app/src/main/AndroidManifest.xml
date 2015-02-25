@@ -80,18 +80,25 @@
         <activity
             android:name=".CommentActivity"
             android:label="@string/title_activity_comment"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan" >
         </activity>
+
         <receiver
             android:name=".GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="com.app.university" />
             </intent-filter>
         </receiver>
+
         <service android:name=".GcmIntentService" />
 
+        <activity
+            android:name=".WebViewerActivity"
+            android:label="@string/title_activity_web_viewer" >
+        </activity>
     </application>
 
 </manifest>

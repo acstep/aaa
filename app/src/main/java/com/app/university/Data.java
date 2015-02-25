@@ -47,4 +47,7 @@ public class Data {
     public static final int GROUP_TYPE_COURSE = 1;
     public static final int GROUP_TYPE_SOCIAL  = 2;
     public static final String CURRENTGROUPLIST = "grouplist";
+    public static final String CURRENTNOTIGYLIST = "notifylist";
+
+    public static final String NOTIFY_URL = "url";
 }

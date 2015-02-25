@@ -16,10 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
 import org.json.JSONArray;
@@ -38,7 +36,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MyCourseAdapter mAdapter;
     private List<CourseItem> courseList;
-    private RequestQueue mQueue = null;
+
     protected ListView mListView;
 
     public class CourseItem {
@@ -124,8 +122,8 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             txName.setText(courseName);
 
 
-            LinearLayout courseItem = (LinearLayout)convertView.findViewById(R.id.my_course_item);
-            courseItem.setOnClickListener(new ItemButton_Click(position));
+            LinearLayout itemLayout = (LinearLayout)convertView.findViewById(R.id.my_course_item);
+            itemLayout.setOnClickListener(new ItemButton_Click(position));
 
 
             return convertView;
@@ -248,7 +246,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
         if(mSwipeLayout != null){
             mSwipeLayout.setRefreshing(true);
             GetMyCourseRequest stringRequest = new GetMyCourseRequest(getActivity(), listener, errorListener);
-            mQueue.add(stringRequest);
+            MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
         }
 
 
@@ -276,7 +274,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
         mAdapter = new MyCourseAdapter(getActivity(), courseList);
         mListView = (ListView) view.findViewById(R.id.my_course_list);
         mListView.setAdapter(mAdapter);
-        mQueue = Volley.newRequestQueue(getActivity());
+
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) view.findViewById(R.id.my_course_list_swipe);
         mSwipeLayout.setOnRefreshListener(CourseList.this);
@@ -302,7 +300,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
         mSwipeLayout.setRefreshing(true);
         GetMyCourseRequest stringRequest = new GetMyCourseRequest(getActivity(), listener, errorListener);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
         return view;
     }
 }

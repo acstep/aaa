@@ -90,26 +90,25 @@
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/create_course">
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/imageView4"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:background="#FFCCCCCC"
-                    android:adjustViewBounds="false" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/create_new_course"
-                    android:id="@+id/textView6"
+                    android:text="@string/profile_notify"
+                    android:id="@+id/textView17"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="20sp" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/spinner"
                     android:layout_weight="1"
-                    android:textSize="20dp"
-                    android:layout_gravity="center"
-                    android:paddingLeft="20dp"/>
-
-
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:entries="@array/notify_arrays" />
             </LinearLayout>
             <View
                 android:layout_width="fill_parent"

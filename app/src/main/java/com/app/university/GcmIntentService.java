@@ -1,9 +1,13 @@
 package com.app.university;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
@@ -34,6 +38,10 @@ public class GcmIntentService extends IntentService {
 
         if (!extras.isEmpty()) {  // has effect of un-parcelling Bundle
             if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
+                sendNotification(
+                        extras.getString(NETTag.NOTIFICATION_TITLE),
+                        extras.getString(NETTag.NOTIFICATION_CONTENT)
+                );
 
             }
         }
@@ -45,11 +53,28 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String id, String url, String title, String desc, long time) {
+    private void sendNotification(String title, String content) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intentNewsViewer = new Intent(this, MainActivity.class);
 
+        int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, iUniqueId, intentNewsViewer, 0);
 
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.common_signin_btn_icon_disabled_light);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.common_signin_btn_icon_disabled_light)
+                        .setContentTitle(title)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
+                        .setLargeIcon(largeIcon)
+                        .setContentText(content)
+                        .setAutoCancel(true);
+
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
+        mBuilder.setContentIntent(contentIntent);
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
 

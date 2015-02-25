@@ -164,6 +164,7 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
                 if(mImageView != null) {
                     mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME)));
                     mImageView.invalidate();
+
                     File orgImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME);
                     File finalImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME);
                     finalImage.delete();

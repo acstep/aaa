@@ -24,10 +24,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,7 +56,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     private ProgressBar mProgressBar;
     private String mGroupID;
     private int mGroupType = 0;
-    private RequestQueue mQueue = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +67,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
         Bundle bundle = intent.getExtras();
         mGroupID =  bundle.getString(Data.GROUP_ID);
         mGroupType =  bundle.getInt(Data.GROUP_TYPE);
-        mQueue = Volley.newRequestQueue(this);
+
         setContentView(R.layout.activity_new_message);
         mServiceContext = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mListUploadImage = (LinearLayout)findViewById(R.id.list_upload_image);
@@ -272,7 +270,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
         jsonObject.put(NETTag.COURSE_EVNET_CONTENT, editContent.getText().toString());
         Log.d("NewMessageActivity post string = ", jsonObject.toString());
         PostEventRequest stringRequest = new PostEventRequest(this, listener, errorListener, jsonObject.toString());
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     @Override

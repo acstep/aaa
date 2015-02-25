@@ -33,6 +33,9 @@ public class NETTag {
     public static final String API_GET_FEEDIMAGE = "http://newsapi.nexbbs.com/api/eventimage";
     public static final String API_GET_FEEDIMAGE_SMALL = "http://newsapi.nexbbs.com/api/eventimagem";
     public static final String API_GET_MY_GROUP = "http://newsapi.nexbbs.com/api/getgroup";
+    public static final String API_GET_MY_NOTIFY = "http://newsapi.nexbbs.com/api/getnotify";
+    public static final String API_GET_CRASH = "http://newsapi.nexbbs.com/api/crash";
+    public static final String CRASH = "crash";
     public static final String EMAIL = "email";
     public static final String GCM = "gcm";
     public static final String PASSWD = "passwd";
@@ -113,6 +116,22 @@ public class NETTag {
     public static final String COURSE_MEMBER = "member";
     public static final String GROUP_ID = "id";
     public static final String MY_GROUP_LIST = "grouplist";
+    ////////////////////////////////////
+    public static final String NOTIFY_TIME = "time";
+    public static final String NOTIFY_FROMID = "fromid";
+    public static final String NOTIFY_USERID = "userid";
+    public static final String NOTIFY_TITLE = "title";
+    public static final String NOTIFY_CONTENT = "content";
+    public static final String NOTIFY_TYPE = "type";
+    public static final String NOTIFY_URL = "url";
+    public static final String NOTIFY_EVENTID = "eventid";
+    public static final String NOTIFY_FROMNAME = "fromname";
+    public static final String NOTIFY_ID = "id";
+    public static final String MY_NOTIFY_LIST = "notify";
+    public static final String NOTIFY_EVNET_NEXT_START_TIME ="nextstart";
+    //////////////////////////////////////////
+    public static final String NOTIFICATION_TITLE = "title";
+    public static final String NOTIFICATION_CONTENT = "content";
 }
 
 
@@ -492,5 +511,76 @@ class SearchCourseRequest extends StringRequest {
         return map;
     }
 
+
+}
+
+
+
+
+class SendCrashRequest extends StringRequest {
+    private Context mCcontext;
+    private String mCrash;
+
+    public SendCrashRequest(Context context,
+                               Response.Listener<String> listener,
+                               Response.ErrorListener errorListener,
+                               String crash) {
+        super(Request.Method.POST, NETTag.API_GET_CRASH, listener, errorListener);
+        this.mCcontext = context;
+        this.mCrash = crash;
+
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.CRASH, mCrash);
+        return map;
+    }
+
+
+}
+
+
+class GetNotifyRequest extends StringRequest {
+    private Context mCcontext;
+    private int mStart;
+    private int mNumber;
+    private String mEventID;
+
+
+    public GetNotifyRequest(Context context,
+                             Response.Listener<String> listener,
+                             Response.ErrorListener errorListener,
+                             int start, int number) {
+        super(Request.Method.POST, NETTag.API_GET_MY_NOTIFY, listener, errorListener);
+        mCcontext = context;
+        mStart = start;
+        mNumber = number;
+
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+
+        if(mNumber != 0) {
+            map.put(NETTag.GET_EVNET_NUMBER, String.valueOf(mNumber) );
+        }
+        if(mStart != 0){
+            map.put(NETTag.GET_EVNET_START, String.valueOf(mStart));
+        }
+
+        Log.e("GetNotifyRequest", myid +' ' + mytoken +' ' +mEventID +' ' +String.valueOf(mNumber));
+        return map;
+    }
 
 }

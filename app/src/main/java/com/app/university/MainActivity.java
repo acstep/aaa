@@ -1,6 +1,10 @@
 package com.app.university;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -19,10 +23,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,11 +41,12 @@ public class MainActivity extends FragmentActivity {
     private GoogleApiClient mGoogleApiClient;
     private Location location;
     private GoogleCloudMessaging gcm;
-    private RequestQueue mQueue = null;
+
 
     private Schedule mSchedule;
     private CourseList mCourseList;
     private GroupList mGroupList;
+    private NotifyList mNotifyList;
     private Aboutme mAboutMe;
     private DisplayMetrics dm;
     private PagerSlidingTabStrip tabs;
@@ -53,8 +56,41 @@ public class MainActivity extends FragmentActivity {
     private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String TAG = "MainActivity";
+    private static MainActivityBroadcastReceiver mGCMReceiver;
+    private View[] Tabs;
 
 
+    public class MainActivityBroadcastReceiver extends BroadcastReceiver {
+
+        public MainActivityBroadcastReceiver(Activity mainActivity) {
+
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Toast toast = Toast.makeText(context, "hola", Toast.LENGTH_LONG);
+            //toast.show();
+            //abortBroadcast();
+            //TextView mmm = (TextView)Tabs[0].findViewById(R.id.tab_text);
+            //mmm.setText("bbb");
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(mGCMReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mGCMReceiver = new MainActivityBroadcastReceiver(this);
+        IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
+        filter.setPriority(1);
+        registerReceiver(mGCMReceiver, filter);
+        super.onResume();
+    }
 
     Response.Listener<String> listener = new Response.Listener<String>() {
         @Override
@@ -93,7 +129,7 @@ public class MainActivity extends FragmentActivity {
     private void updateGCM(String gid){
         userData udata = new userData("", "","","","","",gid);
         UpdateAccountRequest stringRequest = new UpdateAccountRequest(this, listener, errorListener, udata);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     private void registerInBackground() {
@@ -199,7 +235,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mQueue = Volley.newRequestQueue(this);
+
         if (checkPlayServices()) {
             gcm = GoogleCloudMessaging.getInstance(this);
 
@@ -218,7 +254,7 @@ public class MainActivity extends FragmentActivity {
         tabs.setShouldExpand(true);
         tabs.setIndicatorColor(Color.parseColor("#45c01a"));
 
-        View[] Tabs = new View[5];
+        Tabs = new View[5];
 
         Tabs[0] = getLayoutInflater().inflate(R.layout.tab_layout, null);
         Tabs[1] = getLayoutInflater().inflate(R.layout.tab_layout, null);
@@ -229,6 +265,7 @@ public class MainActivity extends FragmentActivity {
 
         pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager(),Tabs));
         tabs.setViewPager(pager);
+        tabs.setShouldExpand(true);
     }
 
 
@@ -305,9 +342,9 @@ public class MainActivity extends FragmentActivity {
                     return mGroupList;
                 case 3:
 
-                    mCourseList = new CourseList();
+                    mNotifyList = new NotifyList();
 
-                    return mCourseList;
+                    return mNotifyList;
                 case 4:
 
                     mAboutMe = new Aboutme();

@@ -13,11 +13,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +27,7 @@ import java.util.Map;
 public class LoginActivity extends Activity {
 
     private static Context mContext;
-    private static RequestQueue mVolleyRequestQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +36,7 @@ public class LoginActivity extends Activity {
         actionBar.hide();
 
         mContext = getApplicationContext();
-        mVolleyRequestQueue = Volley.newRequestQueue(mContext);
+
 
         Button loginButton = (Button)findViewById(R.id.btn_login);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +132,7 @@ public class LoginActivity extends Activity {
                     }
                 };
                 stringRequest.setTag("LoginActivity");
-                mVolleyRequestQueue.add(stringRequest);
+                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
 
             }

@@ -16,10 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
 import org.json.JSONArray;
@@ -38,7 +36,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MyGroupAdapter mAdapter;
     private List<GroupItem> groupList;
-    private RequestQueue mQueue = null;
+
     protected ListView mListView;
 
     public class GroupItem {
@@ -236,7 +234,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
         if(mSwipeLayout != null){
             mSwipeLayout.setRefreshing(true);
             GetMyGroupRequest stringRequest = new GetMyGroupRequest(getActivity(), listener, errorListener);
-            mQueue.add(stringRequest);
+            MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
         }
 
 
@@ -264,7 +262,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
         mAdapter = new MyGroupAdapter(getActivity(), groupList);
         mListView = (ListView) view.findViewById(R.id.my_course_list);
         mListView.setAdapter(mAdapter);
-        mQueue = Volley.newRequestQueue(getActivity());
+
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) view.findViewById(R.id.my_course_list_swipe);
         mSwipeLayout.setOnRefreshListener(GroupList.this);
@@ -290,7 +288,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
 
         mSwipeLayout.setRefreshing(true);
         GetMyGroupRequest stringRequest = new GetMyGroupRequest(getActivity(), listener, errorListener);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getActivity()).addToRequestQueue(stringRequest);
         return view;
     }
 }

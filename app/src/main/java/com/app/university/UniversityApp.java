@@ -3,6 +3,7 @@ package com.app.university;
 import android.app.Application;
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
@@ -29,6 +30,12 @@ public class UniversityApp extends Application {
     @Override public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        RequestQueue queue = MySingleton.getInstance(getApplicationContext()).getRequestQueue();
+
+        //CrashHandler crashHandler = CrashHandler.getInstance();
+        //crashHandler.init(getApplicationContext());
+
+
 
     }
 

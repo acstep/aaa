@@ -3,9 +3,7 @@ package com.app.university;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,11 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
 import org.json.JSONArray;
@@ -45,25 +41,24 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MessageAdapter mAdapter;
     private List<MessageItem> mMessageList;
-    private RequestQueue mQueue = null;
     protected ListView mListView;
     private Context mContext;
-    private ImageLoader mImageLoader;
     private int mStart = 0;
     boolean mClear = false;
     boolean mNoMore = false;
     boolean mFlagloading = false;
     int mGroupType = 0;
+    private  ImageLoader mImageLoader;
 
 
     public class MessageItem {
 
-        public String title;
-        public String eventID;
-        public String content;
-        public String groupid;
-        public String userName;
-        public String userID;
+        public String title = "";
+        public String eventID = "";
+        public String content = "";
+        public String groupid = "";
+        public String userName = "";
+        public String userID = "";
         public JSONArray imageNameList;
         public int type;
         public String url;
@@ -100,31 +95,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
 
 
-    public class BitmapCache implements ImageLoader.ImageCache {
 
-        private LruCache<String, Bitmap> mCache;
-
-        public BitmapCache() {
-            int maxSize = 10 * 1024 * 1024;
-            mCache = new LruCache<String, Bitmap>(maxSize) {
-                @Override
-                protected int sizeOf(String key, Bitmap bitmap) {
-                    return bitmap.getRowBytes() * bitmap.getHeight();
-                }
-            };
-        }
-
-        @Override
-        public Bitmap getBitmap(String url) {
-            return mCache.get(url);
-        }
-
-        @Override
-        public void putBitmap(String url, Bitmap bitmap) {
-            mCache.put(url, bitmap);
-        }
-
-    }
 
 
     private class MessageAdapter extends BaseAdapter {
@@ -216,6 +187,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
                     ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+
                     mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
 
                     if(messageList.get(position).imageNameList.length() == 0){
@@ -312,6 +284,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
             }
             public void onClick(View v) {
+
                 Bundle bundle = new Bundle();
                 bundle.putString(NETTag.GROPU_EVNET_EVENTID, mMessageList.get(mposition).eventID);
                 Intent intent = new Intent(mContext, CommentActivity.class);
@@ -356,7 +329,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             mClear = true;
         }
         GetEventRequest stringRequest = new GetEventRequest(this, listener, errorListener, mGroupID, mGroupType, start, Data.GET_MESSAGE_NUMBER);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
     @Override
@@ -371,8 +344,9 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
         Log.d("MessageActivity course id = ", mGroupID);
         Log.d("MessageActivity course type = ", String.valueOf(mGroupType) );
-        mQueue = Volley.newRequestQueue(this);
-        mImageLoader = new ImageLoader(mQueue, new BitmapCache());
+
+        mImageLoader =  MySingleton.getInstance(getApplicationContext()).getImageLoader();
+
 
         mMessageList = new ArrayList<MessageItem>();
         mAdapter = new MessageAdapter(this, mMessageList);
@@ -380,7 +354,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         mListView.setAdapter(mAdapter);
 
 
-        mQueue = Volley.newRequestQueue(this);
+
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) findViewById(R.id.message_list_swipe);
         mSwipeLayout.setOnRefreshListener(MessageActivity.this);
@@ -415,6 +389,9 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0){
+                    return;
+                }
                 Bundle bundle = new Bundle();
                 bundle.putString(NETTag.GROPU_EVNET_EVENTID, mMessageList.get(position).eventID);
                 bundle.putInt(Data.GROUP_TYPE, mGroupType);
@@ -447,6 +424,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     mStart = Integer.valueOf(jsonObject.getString(NETTag.GROPU_EVNET_NEXT_START_TIME));
                     JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.GROPU_EVNET_LIST));
                     mNoMore = false;
+
                     if(jsonCourseList.length() < Data.GET_MESSAGE_NUMBER){
                         mNoMore = true;
                     }

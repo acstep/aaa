@@ -23,11 +23,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 
 import org.json.JSONArray;
@@ -47,7 +45,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
     private SwipeRefreshAndLoadLayout mSwipeLayout;
     private MessageAdapter mAdapter;
     private List<MessageItem> mMessageList;
-    private RequestQueue mQueue = null;
+
     protected ListView mListView;
     private Context mContext;
     private ImageLoader mImageLoader;
@@ -375,7 +373,8 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             mClear = true;
         }
         GetCommentRequest stringRequest = new GetCommentRequest(this, listener, errorListener, mEvnetID, start, Data.GET_MESSAGE_NUMBER);
-        mQueue.add(stringRequest);
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+
     }
 
     @Override
@@ -389,14 +388,14 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         mGroupType = bundle.getInt(Data.GROUP_TYPE);
 
         Log.d("CommentActivity course id = ", mEvnetID);
-        mQueue = Volley.newRequestQueue(this);
-        mImageLoader = new ImageLoader(mQueue, new BitmapCache());
+
+        mImageLoader = MySingleton.getInstance(this.getApplicationContext()).getImageLoader();
 
         mMessageList = new ArrayList<MessageItem>();
         mAdapter = new MessageAdapter(this, mMessageList);
         mListView = (ListView) findViewById(R.id.comment_list);
         mListView.setAdapter(mAdapter);
-        mQueue = Volley.newRequestQueue(this);
+
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) findViewById(R.id.comment_list_swipe);
         mSwipeLayout.setOnRefreshListener(CommentActivity.this);
@@ -485,7 +484,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                 Log.d("CommentActivity post string = ", jsonObject.toString());
                 PostCommentRequest stringRequest = new PostCommentRequest(mContext, listener, errorListener, jsonObject.toString());
-                mQueue.add(stringRequest);
+                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
             }
         });
 

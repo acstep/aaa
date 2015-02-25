@@ -21,10 +21,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -47,7 +45,7 @@ public class Schedule extends Fragment {
     private FrameLayout friView;
     private int posY = 0;
     private boolean mFirstLaunch = true;
-    private RequestQueue mQueue = null;
+
     private CourseColor courseColor;
 
 
@@ -337,11 +335,12 @@ public class Schedule extends Fragment {
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
-                                    postCourseArray.remove(i);
+                                    postCourseArray = CommonUtil.RemoveJSONArray(postCourseArray,i);
+                                    //postCourseArray.remove(i);
                                     String postCourseString = postCourseArray.toString();
 
                                     AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, mCourseInfo.id, listener, errorListener,preCourseString,postCourseString,"");
-                                    mQueue.add(stringRequest);
+                                    MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
                                     dialog.cancel();
                                 }
                             } catch (JSONException e) {
@@ -377,7 +376,7 @@ public class Schedule extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mQueue = Volley.newRequestQueue(getActivity());
+
         viewSchedule = inflater.inflate(R.layout.schedule, container, false);
 
         Tracker t = ((UniversityApp) getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);

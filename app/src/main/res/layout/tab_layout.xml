@@ -9,4 +9,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageView7"
         android:src="@android:drawable/presence_online" />
+
 </LinearLayout>
