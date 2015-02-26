@@ -396,27 +396,38 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    mSchedule = new Schedule();
+                    if(mSchedule == null){
+                        mSchedule = new Schedule();
+                    }
+
 
                     return mSchedule;
                 case 1:
+                    if(mCourseList == null){
+                        mCourseList = new CourseList();
+                    }
 
-                    mCourseList = new CourseList();
 
                     return mCourseList;
                 case 2:
+                    if(mGroupList == null){
+                        mGroupList = new GroupList();
+                    }
 
-                    mGroupList = new GroupList();
 
                     return mGroupList;
                 case 3:
+                    if(mNotifyList == null){
+                        mNotifyList = new NotifyList();
+                    }
 
-                    mNotifyList = new NotifyList();
 
                     return mNotifyList;
                 case 4:
+                    if(mAboutMe ==  null){
+                        mAboutMe = new Aboutme();
+                    }
 
-                    mAboutMe = new Aboutme();
 
                     return mAboutMe;
                 default:

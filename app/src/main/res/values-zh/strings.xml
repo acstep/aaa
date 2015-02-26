@@ -66,6 +66,9 @@
     <string name="profile_ntu">台灣大學</string>
     <string name="comment_reply">回應了你的貼文。</string>
     <string name="forget_pass">忘記密碼?</string>
+    <string name="password_less_word">密碼必須大於八個字元</string>
+    <string name="need_verify">帳號尚未認證。要使用全部功能，請到註冊信箱認證</string>
+
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
 

@@ -57,6 +57,11 @@ public class CreateAccountActivity extends Activity {
                     return;
                 }
 
+                if(passwdString.length() <8){
+                    Toast.makeText(mContext, R.string.password_less_word, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if(emailString.endsWith("ntu.edu.tw") == false){
                     Toast.makeText(mContext, R.string.email_incorrent, Toast.LENGTH_SHORT).show();
                     return;

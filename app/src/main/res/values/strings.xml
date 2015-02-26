@@ -70,6 +70,8 @@
     <string name="title_about">About</string>
     <string name="event_anonymous">Anonymous</string>
     <string name="forget_pass">Forget Password?</string>
+    <string name="password_less_word">Password should be more than 8 characters.</string>
+    <string name="need_verify">Your Account is not verified. Click the link in the email to verify that you own this address.</string>
 
     <string name="comment_reply">Reply your message</string>
     <string name="title_activity_image_viewer"></string>

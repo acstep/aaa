@@ -140,8 +140,8 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     if(fromname.length() == 0){
                         fromname = getResources().getString(R.string.event_anonymous);
                     }
-                    String title = fromname + " " + getResources().getString(R.string.comment_reply);
-                    holder.textTitle.setText(title);
+                    //String title = fromname + " " + getResources().getString(R.string.comment_reply);
+                    holder.textTitle.setText(notifyList.get(position).title);
 
                     holder.textContent.setText(notifyList.get(position).content);
 
@@ -289,7 +289,8 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                 else{
                     mLoading = false;
                     mSwipeLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.need_verify, Toast.LENGTH_SHORT).show();
+
                     return;
                 }
             } catch (JSONException e) {

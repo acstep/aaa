@@ -478,7 +478,8 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                 else{
                     mSwipeLayout.setRefreshing(false);
                     mFlagloading = false;
-                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.need_verify, Toast.LENGTH_SHORT).show();
+                    finish();
                     return;
                 }
             } catch (JSONException e) {
