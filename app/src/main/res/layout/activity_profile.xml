@@ -150,8 +150,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="20dp"
                     android:layout_marginBottom="10dp"
-                    android:textColor="#ff178dff"
-                    android:text="@string/profile_ntu" />
+                    android:textColor="#ff178dff" />
             </LinearLayout>
             <View
                 android:layout_width="fill_parent"

@@ -136,7 +136,12 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
                     }
 
-                    holder.textTitle.setText(notifyList.get(position).title);
+                    String fromname = notifyList.get(position).fromname;
+                    if(fromname.length() == 0){
+                        fromname = getResources().getString(R.string.event_anonymous);
+                    }
+                    String title = fromname + " " + getResources().getString(R.string.comment_reply);
+                    holder.textTitle.setText(title);
 
                     holder.textContent.setText(notifyList.get(position).content);
 
@@ -233,6 +238,13 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
         @Override
         public void onResponse(String response) {
             try {
+
+                SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt(Data.NOTIFICATION_NUM,0);
+                editor.commit();
+
+
                 Log.d("NotifyList Response = ", response);
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
@@ -248,8 +260,8 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     mStartIndex = Integer.valueOf(jsonObject.getString(NETTag.NOTIFY_EVNET_NEXT_START_TIME));
                     Log.d("NotifyList  jsonCourseList.length() = ", String.valueOf(jsonDataList.length()));
                     if(getActivity() != null && jsonDataList.length() != 0 && notifyList.isEmpty()) {
-                        SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
+
+                        editor = settings.edit();
                         editor.putString(Data.CURRENTNOTIGYLIST, response);
                         editor.commit();
                     }

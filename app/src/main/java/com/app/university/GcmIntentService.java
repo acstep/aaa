@@ -86,6 +86,13 @@ public class GcmIntentService extends IntentService {
             mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
         }
 
+
+        SharedPreferences.Editor editor = settings.edit();
+        int notifyNum = settings.getInt(Data.NOTIFICATION_NUM,0);
+        notifyNum = notifyNum + 1;
+        editor.putInt(Data.NOTIFICATION_NUM,notifyNum);
+        editor.commit();
+
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }

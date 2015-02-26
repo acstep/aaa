@@ -11,15 +11,15 @@
         android:scaleType="fitCenter" />
 
     <TextView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:text="1"
-        android:id="@+id/textView19"
-        android:layout_marginLeft="-5dp"
+        android:id="@+id/text_num_notify"
+        android:layout_marginLeft="-10dp"
         android:textColor="#ffffffff"
         android:background="@drawable/btn_circle"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:visibility="gone" />
+        android:gravity="center|center_vertical|center_horizontal"
+        android:visibility="gone"
+        android:layout_marginTop="-5dp" />
 
 </LinearLayout>

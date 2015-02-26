@@ -28,6 +28,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
                 android:ems="10"
+                android:lineSpacingExtra="5dp"
                 android:id="@+id/edit_event_content"
                 android:hint="內容" />
 

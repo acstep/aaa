@@ -21,6 +21,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -73,11 +74,17 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Toast toast = Toast.makeText(context, "hola", Toast.LENGTH_LONG);
-            //toast.show();
-            //abortBroadcast();
-            //TextView mmm = (TextView)Tabs[0].findViewById(R.id.tab_text);
-            //mmm.setText("bbb");
+            TextView nofityNum = (TextView)mTabs[3].findViewById(R.id.text_num_notify);
+            nofityNum.setVisibility(TextView.VISIBLE);
+            SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+            int notifyNum = settings.getInt(Data.NOTIFICATION_NUM,0);
+            notifyNum = notifyNum + 1;
+            editor.putInt(Data.NOTIFICATION_NUM,notifyNum);
+            editor.commit();
+            nofityNum.setText(String.valueOf(notifyNum));
+            abortBroadcast();
+
         }
 
     }
@@ -94,6 +101,15 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
         IntentFilter filter = new IntentFilter("com.google.android.c2dm.intent.RECEIVE");
         filter.setPriority(1);
         registerReceiver(mGCMReceiver, filter);
+
+        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        int notifyNum = settings.getInt(Data.NOTIFICATION_NUM,0);
+        if(notifyNum > 0){
+            TextView nofityNum = (TextView)mTabs[3].findViewById(R.id.text_num_notify);
+            nofityNum.setText(String.valueOf(notifyNum));
+            nofityNum.setVisibility(TextView.VISIBLE);
+        }
+
         super.onResume();
     }
 
@@ -285,6 +301,15 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
             ImageView image = (ImageView)mTabs[i].findViewById(R.id.tab_image);
             image.setImageResource(tabiconb.get(i));
         }
+
+        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        int notifyNum = settings.getInt(Data.NOTIFICATION_NUM,0);
+        if(notifyNum > 0){
+            TextView nofityNum = (TextView)mTabs[3].findViewById(R.id.text_num_notify);
+            nofityNum.setText(String.valueOf(notifyNum));
+            nofityNum.setVisibility(TextView.VISIBLE);
+        }
+
         ImageView image = (ImageView)mTabs[0].findViewById(R.id.tab_image);
         image.setImageResource(tabicon.get(0));
 
@@ -293,6 +318,8 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
         tabs.setViewPager(pager);
 
         getActionBar().setTitle(mtitleSTring.get(0));
+
+
 
     }
 
@@ -313,6 +340,16 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
                 ImageView image = (ImageView)mTabs[i].findViewById(R.id.tab_image);
                 image.setImageResource(tabiconb.get(i));
             }
+
+        }
+        if(position == 3){
+            SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putInt(Data.NOTIFICATION_NUM,0);
+            editor.commit();
+            TextView nofityNum = (TextView)mTabs[3].findViewById(R.id.text_num_notify);
+            nofityNum.setVisibility(TextView.GONE);
+            nofityNum.setText(String.valueOf(0));
 
         }
     }

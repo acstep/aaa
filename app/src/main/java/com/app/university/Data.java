@@ -28,6 +28,7 @@ public class Data {
     public static final String COURSE_TEACHER = "teacher";
     public static final String COURSE_COLOR = "color";
     public static final String COURSE_ID = "id";
+    public static final String NOTIFICATION_NUM = "notifynum";
 
     public static final String COURSE_TIMESEC = "timesec";
     public static final String MODIFY_TIME = "modify_time";
