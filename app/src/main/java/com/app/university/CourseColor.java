@@ -21,20 +21,20 @@ public class CourseColor {
         } catch (JSONException e) {
             mCourseJsonArray = new JSONArray();
         }
-        courseColor.put("1fc868",false);
-        courseColor.put("f8de41",false);
-        courseColor.put("f452af",false);
-        courseColor.put("8d44b6",false);
-        courseColor.put("533be1",false);
-        courseColor.put("6698ff",false);
-        courseColor.put("62b0d6",false);
-        courseColor.put("77d6e8",false);
-        courseColor.put("b1cd5f",false);
-        courseColor.put("427785",false);
-        courseColor.put("fc93b4",false);
-        courseColor.put("801f1f",false);
-        courseColor.put("92deff",false);
-        courseColor.put("ec713a",false);
+        courseColor.put("7B68EE",false);
+        courseColor.put("0000FF",false);
+        courseColor.put("778899",false);
+        courseColor.put("32CD32",false);
+        courseColor.put("FF1493",false);
+        courseColor.put("008080",false);
+        courseColor.put("FF7F50",false);
+        courseColor.put("6A5ACD",false);
+        courseColor.put("FF00FF",false);
+        courseColor.put("32CD32",false);
+        courseColor.put("FF8C00",false);
+        courseColor.put("8A2BE2",false);
+        courseColor.put("D2B48C",false);
+        courseColor.put("4169E1",false);
 
         for (int i=0;i<mCourseJsonArray.length();i++){
             try {

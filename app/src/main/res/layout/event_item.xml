@@ -18,7 +18,8 @@
                 android:layout_height="40dp"
                 android:id="@+id/event_item_head"
                 android:layout_margin="10dp"
-                android:background="#ffc3ccc9" />
+                android:background="#ffc3ccc9"
+                android:scaleType="fitCenter" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -31,14 +32,16 @@
                     android:layout_height="wrap_content"
                     android:text="New Text"
                     android:id="@+id/event_item_name"
-                    android:textSize="14sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="New Text"
                     android:id="@+id/event_item_date"
-                    android:textSize="14sp" />
+                    android:textSize="10sp"
+                    android:textColor="#ffaaaaaa" />
             </LinearLayout>
 
         </LinearLayout>
@@ -105,7 +108,8 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:background="#fff5f5f5"
-                android:id="@+id/event_like">
+                android:id="@+id/event_like"
+                android:visibility="visible">
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -116,7 +120,8 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:id="@+id/imageView10"
-                        android:layout_gravity="center_vertical" />
+                        android:layout_gravity="center_vertical"
+                        android:visibility="invisible" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -124,7 +129,8 @@
                         android:text="New Text"
                         android:id="@+id/event_item_like"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="20dp" />
+                        android:layout_marginLeft="20dp"
+                        android:visibility="invisible" />
                 </FrameLayout>
             </FrameLayout>
 
@@ -141,18 +147,20 @@
                     android:layout_gravity="center">
 
                     <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:id="@+id/imageView11"
-                        android:layout_gravity="center_vertical" />
+                        android:layout_gravity="center_vertical"
+                        android:src="@mipmap/comment" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="New Text"
                         android:id="@+id/event_item_reply"
-                        android:layout_marginLeft="20dp"
-                        android:layout_gravity="center_vertical" />
+                        android:layout_marginLeft="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp" />
                 </FrameLayout>
             </FrameLayout>
         </LinearLayout>

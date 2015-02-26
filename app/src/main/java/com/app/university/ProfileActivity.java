@@ -309,7 +309,7 @@ public class ProfileActivity extends Activity {
 
         ImageView imHeadPhoto = (ImageView)findViewById(R.id.head_image);
         //imHeadPhoto.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
-        ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(imHeadPhoto, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+        ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(imHeadPhoto, R.mipmap.camera, R.mipmap.camera);
         //mImageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
         RequestQueue mQueue = Volley.newRequestQueue(this);
         ImageLoader imageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {

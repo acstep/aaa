@@ -99,6 +99,10 @@
             android:name=".WebViewerActivity"
             android:label="@string/title_activity_web_viewer" >
         </activity>
+        <activity
+            android:name=".ImageViewerActivity"
+            android:label="@string/title_activity_image_viewer" >
+        </activity>
     </application>
 
 </manifest>

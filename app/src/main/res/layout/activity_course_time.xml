@@ -80,7 +80,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/sp_week_day"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:entries="@array/week_day_arrays" />
 
             </LinearLayout>
 

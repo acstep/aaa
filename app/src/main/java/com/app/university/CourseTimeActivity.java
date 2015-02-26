@@ -25,12 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 
 public class CourseTimeActivity extends Activity {
 
-    private String[] weekDay = new String[] {"MON", "TUE", "WED", "THU", "FRI"};
+
     private Spinner spWeekDat;
     private ArrayAdapter<String> listAdapter;
     private String timeString = "";
@@ -81,6 +79,24 @@ public class CourseTimeActivity extends Activity {
         }
     };
 
+    private int getWeekDay(String day){
+        switch(day){
+            case "MON":
+                return 0;
+            case "TUE":
+                return 1;
+            case "WED":
+                return 2;
+            case "THU":
+                return 3;
+            case "FRI":
+                return 4;
+            default:
+                return 0;
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,10 +126,7 @@ public class CourseTimeActivity extends Activity {
 
         editCourseName.setText(bundle.getString(Data.COURSE_NAME));
         spWeekDat = (Spinner) findViewById(R.id.sp_week_day);
-        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, weekDay);
-        listAdapter.setDropDownViewResource(R.layout.week_day);
-        spWeekDat.setAdapter(listAdapter);
-        spWeekDat.setSelection(Arrays.asList(weekDay).indexOf(day));
+        spWeekDat.setSelection( getWeekDay(day));
 
         txStartTime.setOnClickListener(new View.OnClickListener() {
 

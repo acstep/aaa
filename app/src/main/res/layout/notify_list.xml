@@ -3,15 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFFFF">
     <com.app.university.view.SwipeRefreshAndLoadLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
+
         tools:context=".Notify_List"
         android:id="@+id/notify_list_swipe">
 

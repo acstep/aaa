@@ -19,9 +19,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -34,9 +33,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements ViewPager.OnPageChangeListener{
 
     private GoogleApiClient mGoogleApiClient;
     private Location location;
@@ -57,7 +58,11 @@ public class MainActivity extends FragmentActivity {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String TAG = "MainActivity";
     private static MainActivityBroadcastReceiver mGCMReceiver;
-    private View[] Tabs;
+    private View[] mTabs;
+
+    private Map<Integer, Integer> tabicon = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> tabiconb = new HashMap<Integer, Integer>();
+    private Map<Integer, Integer> mtitleSTring = new HashMap<Integer, Integer>();
 
 
     public class MainActivityBroadcastReceiver extends BroadcastReceiver {
@@ -246,50 +251,77 @@ public class MainActivity extends FragmentActivity {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
+        tabiconb.put(0,R.mipmap.ic_tableb );
+        tabiconb.put(1,R.mipmap.ic_courseb );
+        tabiconb.put(2,R.mipmap.ic_groupb );
+        tabiconb.put(3,R.mipmap.ic_eventb );
+        tabiconb.put(4,R.mipmap.ic_actionb );
+
+        tabicon.put(0,R.mipmap.ic_table );
+        tabicon.put(1,R.mipmap.ic_course );
+        tabicon.put(2,R.mipmap.ic_group );
+        tabicon.put(3,R.mipmap.ic_event );
+        tabicon.put(4,R.mipmap.ic_action );
+
+        mtitleSTring.put(0, R.string.title_class_table);
+        mtitleSTring.put(1, R.string.title_course_list);
+        mtitleSTring.put(2, R.string.title_group);
+        mtitleSTring.put(3, R.string.title_event);
+        mtitleSTring.put(4, R.string.title_about);
+
         dm = getResources().getDisplayMetrics();
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabs.setOnPageChangeListener(this);
 
 
-        tabs.setShouldExpand(true);
-        tabs.setIndicatorColor(Color.parseColor("#45c01a"));
+        tabs.setIndicatorColor(Color.parseColor("#eeeeee"));
+        tabs.setBackgroundColor(Color.parseColor("#eeeeee"));
 
-        Tabs = new View[5];
+        mTabs = new View[5];
 
-        Tabs[0] = getLayoutInflater().inflate(R.layout.tab_layout, null);
-        Tabs[1] = getLayoutInflater().inflate(R.layout.tab_layout, null);
-        Tabs[2] = getLayoutInflater().inflate(R.layout.tab_layout, null);
-        Tabs[3] = getLayoutInflater().inflate(R.layout.tab_layout, null);
-        Tabs[4] = getLayoutInflater().inflate(R.layout.tab_layout, null);
-
-
-        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager(),Tabs));
-        tabs.setViewPager(pager);
-        tabs.setShouldExpand(true);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        for(int i=0 ; i<mTabs.length ; i++){
+            mTabs[i] = getLayoutInflater().inflate(R.layout.tab_layout, null);
+            ImageView image = (ImageView)mTabs[i].findViewById(R.id.tab_image);
+            image.setImageResource(tabiconb.get(i));
         }
+        ImageView image = (ImageView)mTabs[0].findViewById(R.id.tab_image);
+        image.setImageResource(tabicon.get(0));
 
-        return super.onOptionsItemSelected(item);
+
+        pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager(),mTabs));
+        tabs.setViewPager(pager);
+
+        getActionBar().setTitle(mtitleSTring.get(0));
+
     }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        getActionBar().setTitle(mtitleSTring.get(position));
+        for(int i=0 ; i<mTabs.length ;i++){
+            if(i == position){
+                ImageView image = (ImageView)mTabs[i].findViewById(R.id.tab_image);
+                image.setImageResource(tabicon.get(i));
+            }
+            else{
+                ImageView image = (ImageView)mTabs[i].findViewById(R.id.tab_image);
+                image.setImageResource(tabiconb.get(i));
+            }
+
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
 
     public class MyPagerAdapter extends FragmentPagerAdapter implements PagerSlidingTabStrip.ViewTabProvider  {
         private View[] TABS;

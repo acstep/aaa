@@ -30,6 +30,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 /**
  * Created by matt on 2015/2/6.
  */
@@ -79,12 +83,57 @@ public class Schedule extends Fragment {
         if (isVisibleToUser && !mFirstLaunch) {
             try {
                 Log.d("Schedule  ", "redraw");
+                drawTime();
                 drawCourse();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
+    }
+
+
+    public void drawTime() {
+        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+
+        float dpHeight = displayMetrics.heightPixels;
+        float dpWidth = displayMetrics.widthPixels;
+        int timeBlockHeight = (int) (dpHeight / 14);
+        timeFrame = (FrameLayout) viewSchedule.findViewById(R.id.timeframe);
+        int timeStartTop = (int) (40 * displayMetrics.density);
+        int timeStart = 8;
+
+        Date date = new Date();
+        Calendar calendar = GregorianCalendar.getInstance();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY) -7;
+
+        for (int i = 1; i <= 14; i++) {
+
+            Button btn = new Button(getActivity());
+
+            btn.setText(Integer.toString(timeStart) + ":00");
+            FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+            params1.setMargins(0, timeStartTop, 0, 0);
+
+            params1.height = timeBlockHeight;
+
+            btn.setLayoutParams(params1);
+            btn.setTextSize(12);
+            btn.setPadding(2, 2, 2, 2);
+            btn.setGravity(Gravity.TOP | Gravity.CENTER);
+            if(i == currentHour){
+                btn.setBackgroundColor(Color.parseColor("#4577d4"));
+                btn.setTextColor(Color.parseColor("#FFFFFF"));
+            }
+            else{
+                btn.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            }
+
+            timeStart = timeStart + 1;
+
+            timeStartTop = timeStartTop + timeBlockHeight;
+            timeFrame.addView(btn);
+        }
     }
 
     public void drawCourse() throws JSONException {
@@ -106,6 +155,9 @@ public class Schedule extends Fragment {
         wedView.removeAllViews();
         thuView.removeAllViews();
         friView.removeAllViews();
+
+
+
 
         SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
         String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
@@ -271,6 +323,7 @@ public class Schedule extends Fragment {
                     editor.commit();
                     courseColor = new CourseColor(schedule);
                     mCourseJsonArray = CommonUtil.getCourseJsonArray(getActivity());
+                    drawTime();
                     drawCourse();
                 }
                 else{
@@ -366,6 +419,7 @@ public class Schedule extends Fragment {
 
 
         try {
+            drawTime();
             drawCourse();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -386,50 +440,52 @@ public class Schedule extends Fragment {
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
 
-        DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+        Date date = new Date();
+        Calendar calendar = GregorianCalendar.getInstance();
 
-        float dpHeight = displayMetrics.heightPixels;
-        float dpWidth = displayMetrics.widthPixels;
-        int timeBlockHeight = (int) (dpHeight/14);
-        timeFrame = (FrameLayout) viewSchedule.findViewById(R.id.timeframe);
-        int timeStartTop = (int) (40 * displayMetrics.density);
-        int timeStart  = 8;
+        int currentDay = calendar.get(Calendar.DAY_OF_WEEK)-1 ;
 
-
-        for (int i = 1; i <= 14; i++) {
-
-            Button btn = new Button(getActivity());
-
-            btn.setText(Integer.toString(timeStart) + ":00");
-            FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-            params1.setMargins(0,timeStartTop,0,0);
-
-            params1.height = timeBlockHeight;
-
-            btn.setLayoutParams(params1);
-            btn.setTextSize(12);
-            btn.setPadding(2,2,2,2);
-            btn.setGravity(Gravity.TOP|Gravity.CENTER);
-            btn.setBackgroundColor(Color.rgb(255, 255, 255));
-            timeStart = timeStart + 1;
-
-            timeStartTop = timeStartTop + timeBlockHeight;
-            timeFrame.addView(btn);
-
+        Button buttonDay;
+        switch(currentDay){
+            case 1:
+                buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_mon);
+                break;
+            case 2:
+                buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_tue);
+                break;
+            case 3:
+                buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_wed);
+                break;
+            case 4:
+                buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_thu);
+                break;
+            case 5:
+                buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_fri);
+                break;
+            default:
+                buttonDay = null;
+                break;
+        }
+        if(buttonDay != null){
+            buttonDay.setBackgroundColor(Color.parseColor("#4577d4"));
+            buttonDay.setTextColor(Color.parseColor("#FFFFFF"));
         }
 
+
+
         try {
+            drawTime();
             drawCourse();
             monView.setOnClickListener(new newCourse_Click(monView,"MON"));
             monView.setOnTouchListener(new newCourse_Click(monView,"MON"));
             tueView.setOnClickListener(new newCourse_Click(tueView,"TUE"));
-            monView.setOnTouchListener(new newCourse_Click(monView,"TUE"));
+            tueView.setOnTouchListener(new newCourse_Click(tueView,"TUE"));
             wedView.setOnClickListener(new newCourse_Click(wedView,"WED"));
-            monView.setOnTouchListener(new newCourse_Click(monView,"WED"));
+            wedView.setOnTouchListener(new newCourse_Click(wedView,"WED"));
             thuView.setOnClickListener(new newCourse_Click(thuView,"THU"));
-            monView.setOnTouchListener(new newCourse_Click(monView,"THU"));
+            thuView.setOnTouchListener(new newCourse_Click(thuView,"THU"));
             friView.setOnClickListener(new newCourse_Click(friView,"FRI"));
-            monView.setOnTouchListener(new newCourse_Click(monView,"FRI"));
+            friView.setOnTouchListener(new newCourse_Click(friView,"FRI"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

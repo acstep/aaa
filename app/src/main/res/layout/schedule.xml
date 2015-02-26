@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Mon"
-                android:id="@+id/button13"
+                android:id="@+id/schedule_mon"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
                 android:layout_gravity="top" />
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Tue"
-                android:id="@+id/button14"
+                android:id="@+id/schedule_tue"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
                 android:layout_gravity="top" />
@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Wed"
-                android:id="@+id/button15"
+                android:id="@+id/schedule_wed"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
                 android:layout_gravity="top" />
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Thu"
-                android:id="@+id/button16"
+                android:id="@+id/schedule_thu"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
                 android:layout_gravity="top" />
@@ -121,7 +121,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Fri"
-                android:id="@+id/button17"
+                android:id="@+id/schedule_fri"
                 android:background="#FFFFFFFF"
                 android:textSize="16dp"
                 android:layout_gravity="top" />

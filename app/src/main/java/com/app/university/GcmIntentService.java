@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -72,7 +73,19 @@ public class GcmIntentService extends IntentService {
                         .setContentText(content)
                         .setAutoCancel(true);
 
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
+
+        SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        int type = settings.getInt(Data.NOTIFICATION_TYPE,0);
+        if(type == 0){
+            mBuilder.setDefaults(Notification.DEFAULT_LIGHTS);
+        }
+        else if(type == 1){
+            mBuilder.setDefaults(Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
+        }
+        else{
+            mBuilder.setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_VIBRATE|Notification.DEFAULT_LIGHTS);
+        }
+
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }

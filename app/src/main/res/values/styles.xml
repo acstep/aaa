@@ -9,12 +9,12 @@
     </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">#303537</item>
+        <item name="android:background">#0b61a4</item>
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
     </style>
 
     <style name="MyActionBarTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
-        <item name="android:textColor">#cfcfcf</item>
+        <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">17sp</item>
     </style>
 

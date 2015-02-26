@@ -179,14 +179,20 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                     }
 
-                    holder.textName.setText(messageList.get(position).userName);
+                    if(messageList.get(position).userName.length() == 0){
+                        holder.textName.setText(R.string.event_anonymous);
+                    }
+                    else{
+                        holder.textName.setText(messageList.get(position).userName);
+                    }
+
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
                     holder.textContent.setText(messageList.get(position).content);
 
                     holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.mipmap.headphoto, R.mipmap.headphoto);
 
                     mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
 
@@ -206,14 +212,18 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        holder.layerImageOne.setOnClickListener(new Image_Click(position,0));
 
                     }
                     else{
                         holder.layerImageList.setVisibility(View.VISIBLE);
                         holder.layerImageOne.setVisibility(View.GONE);
                         holder.contentImage1.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImage1.setOnClickListener(new Image_Click(position,0));
                         holder.contentImage2.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImage2.setOnClickListener(new Image_Click(position,1));
                         holder.contentImage3.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImage3.setOnClickListener(new Image_Click(position,2));
                         for(int i=0; i<messageList.get(position).imageNameList.length() && i<3; i++){
                             ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.imageList.get(i), R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
                             try {
@@ -225,7 +235,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                     }
 
-                    holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
+                    //holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
                     holder.CommentLayer.setOnClickListener(new CommentItem_Click(position));
                     //holder.headImage.setImageURI();
                     //holder.contentImage1.setImageURI()
@@ -260,16 +270,28 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         }
 
 
-        class LikeItem_Click implements View.OnClickListener {
+        class Image_Click implements View.OnClickListener {
             private int mposition;
-
-
-
-            LikeItem_Click(int pos) {
+            private int mIndex;
+            Image_Click(int pos,int index) {
                 mposition = pos;
+                mIndex = index;
 
             }
             public void onClick(View v) {
+
+                try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Data.REMOTE_IMAGE_VIEWER_ID, messageList.get(mposition).imageNameList.getString(mIndex));
+                    Intent intent = new Intent(mContext, ImageViewerActivity.class);
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, 0);
+                    Log.d("MessageActivity comment click pos = ", String.valueOf(mposition)  );
+
+                } catch( Exception e ) {
+
+                }
+
                 Log.d("MessageActivity like click pos = ", String.valueOf(mposition)  );
             }
         }
@@ -418,7 +440,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                         mClear = false;
                         MessageItem messageItem = new MessageItem();
                         messageItem.title = jsonObject.getJSONObject(NETTag.GROPU_EVNET_INFO).getString(NETTag.COURSE_NAME);
-
+                        getActionBar().setTitle(messageItem.title);
                         mMessageList.add(messageItem);
                     }
                     mStart = Integer.valueOf(jsonObject.getString(NETTag.GROPU_EVNET_NEXT_START_TIME));

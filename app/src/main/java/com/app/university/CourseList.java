@@ -1,6 +1,8 @@
 package com.app.university;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -124,6 +126,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
             LinearLayout itemLayout = (LinearLayout)convertView.findViewById(R.id.my_course_item);
             itemLayout.setOnClickListener(new ItemButton_Click(position));
+            itemLayout.setOnLongClickListener(new ItemButton_LongClick(position));
 
 
             return convertView;
@@ -147,6 +150,116 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             startActivityForResult(intent, 0);
         }
     }
+
+
+    Response.ErrorListener errorLongListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("AddCourseActivity", error.getMessage(), error);
+            Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
+    Response.Listener<String> Longlistener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    String schedule = jsonObject.getString(NETTag.POST_COURSE_STRING);
+                    SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(Data.CURRENTCOURSE, schedule);
+                    editor.commit();
+                    mSwipeLayout.setRefreshing(true);
+                    GetMyCourseRequest stringRequest = new GetMyCourseRequest(getActivity(), listener, errorListener);
+                    MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
+
+                }
+                else{
+                    Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            }
+        }
+    };
+
+    class ItemButton_LongClick implements View.OnLongClickListener{
+        private int mposition;
+
+        ItemButton_LongClick(int pos) {
+            mposition = pos;
+
+        }
+        public boolean  onLongClick(View v) {
+            final CharSequence courseOption[] = { getString( R.string.course_delete) };
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            alert.setTitle(getString(R.string.course_action));
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            alert.setSingleChoiceItems(courseOption, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                    String jsonCoursString = settings.getString(Data.CURRENTCOURSE, "[]");
+                    JSONArray mCourseJsonArray;
+                    try {
+                        mCourseJsonArray = new JSONArray(jsonCoursString);
+                    } catch (JSONException e) {
+                        mCourseJsonArray = new JSONArray();
+                    }
+                    if(which == 0){
+                        for (int i=0;i<mCourseJsonArray.length();i++){
+                            try {
+                                if( ((JSONObject)(mCourseJsonArray.get(i))).getString(Data.COURSE_ID).compareTo(courseList.get(mposition).getId()) == 0){
+
+                                    String preCourseString = mCourseJsonArray.toString();
+                                    JSONArray postCourseArray  = new JSONArray();
+                                    try {
+                                        postCourseArray = new JSONArray(mCourseJsonArray.toString());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    postCourseArray = CommonUtil.RemoveJSONArray(postCourseArray,i);
+                                    //postCourseArray.remove(i);
+                                    String postCourseString = postCourseArray.toString();
+
+                                    AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, courseList.get(mposition).getId(), Longlistener, errorLongListener,preCourseString,postCourseString,"");
+                                    MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
+                                    dialog.cancel();
+                                    return;
+                                }
+
+                            } catch (JSONException e) {
+                                dialog.cancel();
+                                e.printStackTrace();
+                            }
+                        }
+                        AddCourseRequest stringRequest = new AddCourseRequest(getActivity(), NETTag.API_DELETE_COURSE, courseList.get(mposition).getId(), Longlistener, errorLongListener,jsonCoursString,jsonCoursString,"");
+                        MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(stringRequest);
+                        dialog.cancel();
+
+                    }else {
+                        dialog.cancel();
+                    }
+                }
+            });
+            alert.show();
+            return true;
+        }
+    }
+
+
 
     Response.Listener<String> listener = new Response.Listener<String>() {
         @Override

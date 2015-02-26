@@ -140,7 +140,7 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
                     holder.textContent.setText(notifyList.get(position).content);
 
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage,R.mipmap.headphoto, R.mipmap.headphoto);
 
                     mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
                     //holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
@@ -170,6 +170,9 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     holder.textTitle.setText(notifyList.get(position).title);
 
                     holder.textContent.setText(notifyList.get(position).content);
+                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage, R.mipmap.headphoto, R.mipmap.headphoto);
+
+                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
 
                     break;
                 }

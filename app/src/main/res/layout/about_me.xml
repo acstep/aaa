@@ -12,7 +12,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:background="#FFFFFFFF">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -27,8 +28,9 @@
                     android:id="@+id/imageView2"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:background="#FFCCCCCC"
-                    android:adjustViewBounds="false" />
+                    android:background="#FFFFFFFF"
+                    android:adjustViewBounds="false"
+                    android:src="@mipmap/info" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -62,8 +64,9 @@
                     android:id="@+id/imageView3"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:background="#FFCCCCCC"
-                    android:adjustViewBounds="false" />
+                    android:background="#FFFFFFFF"
+                    android:adjustViewBounds="false"
+                    android:src="@mipmap/addcourse" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -103,7 +106,7 @@
                 <Spinner
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/spinner"
+                    android:id="@+id/spinner_profile_notify"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="20dp"
@@ -130,8 +133,9 @@
                     android:id="@+id/imageView5"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:background="#FFCCCCCC"
-                    android:adjustViewBounds="false" />
+                    android:background="#FFFFFFFF"
+                    android:adjustViewBounds="false"
+                    android:src="@mipmap/logout" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -145,7 +149,13 @@
 
 
             </LinearLayout>
-
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="#FFCCCCCC"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
         </LinearLayout>
     </ScrollView>
 

@@ -168,25 +168,37 @@ ADDED from AndroidManifest.xml:80:9
 	android:name
 		ADDED from AndroidManifest.xml:81:13
 receiver#com.app.university.GcmBroadcastReceiver
-ADDED from AndroidManifest.xml:85:9
+ADDED from AndroidManifest.xml:86:9
 	android:permission
+		ADDED from AndroidManifest.xml:88:13
+	android:name
 		ADDED from AndroidManifest.xml:87:13
-	android:name
-		ADDED from AndroidManifest.xml:86:13
 intent-filter#com.app.university+com.google.android.c2dm.intent.RECEIVE
-ADDED from AndroidManifest.xml:88:13
+ADDED from AndroidManifest.xml:89:13
 action#com.google.android.c2dm.intent.RECEIVE
-ADDED from AndroidManifest.xml:89:17
-	android:name
-		ADDED from AndroidManifest.xml:89:25
-category#com.app.university
 ADDED from AndroidManifest.xml:90:17
 	android:name
-		ADDED from AndroidManifest.xml:90:27
-service#com.app.university.GcmIntentService
-ADDED from AndroidManifest.xml:93:9
+		ADDED from AndroidManifest.xml:90:25
+category#com.app.university
+ADDED from AndroidManifest.xml:92:17
 	android:name
-		ADDED from AndroidManifest.xml:93:18
+		ADDED from AndroidManifest.xml:92:27
+service#com.app.university.GcmIntentService
+ADDED from AndroidManifest.xml:96:9
+	android:name
+		ADDED from AndroidManifest.xml:96:18
+activity#com.app.university.WebViewerActivity
+ADDED from AndroidManifest.xml:98:9
+	android:label
+		ADDED from AndroidManifest.xml:100:13
+	android:name
+		ADDED from AndroidManifest.xml:99:13
+activity#com.app.university.ImageViewerActivity
+ADDED from AndroidManifest.xml:102:9
+	android:label
+		ADDED from AndroidManifest.xml:104:13
+	android:name
+		ADDED from AndroidManifest.xml:103:13
 uses-sdk
 INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from com.android.support:appcompat-v7:21.0.3:15:5

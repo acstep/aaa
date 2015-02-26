@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 /**
  * Created by matt on 2015/2/17.
@@ -19,6 +21,7 @@ public class Aboutme extends Fragment {
     private LinearLayout mAddCourse;
     private LinearLayout mAddNewCourse;
     private LinearLayout mLogout;
+    private Spinner mNotifyType;
 
     private View mView;
     private static final String IMAGE_FILE_NAME = "face.jpg";
@@ -60,6 +63,24 @@ public class Aboutme extends Fragment {
             }
         });
 
+        mNotifyType = (Spinner)mView.findViewById(R.id.spinner_profile_notify);
+        SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+        mNotifyType.setSelection(settings.getInt(Data.NOTIFICATION_TYPE,0));
+        mNotifyType.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt(Data.NOTIFICATION_TYPE, position);
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         mLogout = (LinearLayout)mView.findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +95,9 @@ public class Aboutme extends Fragment {
                 Log.d("Aboutme ", "add_course pressed");
             }
         });
+
+
+
 
         return mView;
     }

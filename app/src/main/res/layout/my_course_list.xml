@@ -6,11 +6,8 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:id="@+id/my_course_list_swipe">
+        android:id="@+id/my_course_list_swipe"
+        android:background="#FFFFFFFF">
 
 
         <ListView
