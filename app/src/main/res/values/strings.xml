@@ -61,6 +61,8 @@
     <string name="title_activity_new_message">New Message</string>
     <string name="title_activity_comment">Comment</string>
     <string name="edit_post_comment">Comment...</string>
+    <string name="comment_success">Post Comment Successfully. Please reflash.</string>
+    <string name="post_event_success">Post message successfully. Please reflash.</string>
 
     <string name="profile_notify">Notification</string>
     <string name="profile_ntu">National Taiwan University</string>

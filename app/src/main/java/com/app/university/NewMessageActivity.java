@@ -244,6 +244,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
                     Log.d("NewMessageActivity", "success");
+                    Toast.makeText(mContext, R.string.post_event_success, Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 else{

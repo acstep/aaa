@@ -73,6 +73,8 @@
     <string name="send_pass">您的密碼稍待一會寄送到您註冊的信箱。請前往查看</string>
     <string name="need_email">請輸入您註冊的信箱號碼。</string>
     <string name="delete_meddage">刪除訊息</string>
+    <string name="comment_success">回文完成。如未看到，請刷新。</string>
+    <string name="post_event_success">貼文完成。如未看到，請刷新。</string>
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>

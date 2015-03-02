@@ -61,6 +61,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
     boolean mClear = false;
     boolean mNoMore = false;
     boolean mFlagloading = false;
+    boolean mPosting = false;
 
 
 
@@ -521,17 +522,19 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             @Override
             public void onResponse(String response) {
                 try {
+
                     JSONObject jsonObject = new JSONObject(response);
                     if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
                         EditText editContent = (EditText) findViewById(R.id.edit_comment);
                         editContent.setText("");
+                        mPosting = false;
                         editContent.clearFocus();
                         InputMethodManager imm = (InputMethodManager)getSystemService(
                                 Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(editContent.getWindowToken(), 0);
                         GetMessage(0);
                         Log.d("NewMessageActivity", "success");
-
+                        Toast.makeText(mContext, R.string.comment_success, Toast.LENGTH_SHORT).show();
                     }
                     else{
 
@@ -539,7 +542,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                         return;
                     }
                 } catch (JSONException e) {
-
+                    mPosting = false;
                     Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                     return;
@@ -553,6 +556,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("CommentActivity", error.getMessage(), error);
+                mPosting = false;
                 Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -566,6 +570,10 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 if(editContent.length() == 0){
                     return;
                 }
+                if(mPosting == true){
+                    return;
+                }
+                mPosting = true;
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(NETTag.GET_COMMENT_EVENTID, mEvnetID);
