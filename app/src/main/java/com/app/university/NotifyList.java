@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -239,7 +241,7 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
         public void onResponse(String response) {
             try {
 
-                SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putInt(Data.NOTIFICATION_NUM,0);
                 editor.commit();
@@ -394,6 +396,13 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
         mStartIndex = 0;
         hasMoreData = false;
         mLoading = false;
+
+        Tracker t = ((UniversityApp)getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("View Notify");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) view.findViewById(R.id.notify_list_swipe);
         mSwipeLayout.setOnRefreshListener(NotifyList.this);

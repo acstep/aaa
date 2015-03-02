@@ -1,7 +1,9 @@
 package com.app.university;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +38,13 @@ public class CreateAccountActivity extends Activity {
         setContentView(R.layout.activity_create_account);
 
         mContext = getApplicationContext();
+
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Create Account");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         Button createButton = (Button)findViewById(R.id.btn_createaccount);
 
@@ -74,20 +85,32 @@ public class CreateAccountActivity extends Activity {
                             Log.d("CreateAccountActivity", "response -> " + response);
                             try {
                                 JSONObject jsonObject = new JSONObject(response);
-                                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
-                                    SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                                if (jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0) {
+                                    SharedPreferences settings = getSharedPreferences("ID", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = settings.edit();
-                                    editor.putString(Data.USER_ID,jsonObject.getString(NETTag.USER_ID));
-                                    editor.putString(Data.EMAIL,jsonObject.getString(NETTag.EMAIL));
-                                    editor.putString(Data.TOKEN,jsonObject.getString(NETTag.TOKEN));
-                                    editor.putString(Data.UNIVERSITY,jsonObject.getString(NETTag.UNIVERSITY));
-                                    editor.putString(Data.CURRENTCOURSE,"");
+                                    editor.putString(Data.USER_ID, jsonObject.getString(NETTag.USER_ID));
+                                    editor.putString(Data.EMAIL, jsonObject.getString(NETTag.EMAIL));
+                                    editor.putString(Data.TOKEN, jsonObject.getString(NETTag.TOKEN));
+                                    editor.putString(Data.UNIVERSITY, jsonObject.getString(NETTag.UNIVERSITY));
+                                    editor.putString(Data.CURRENTCOURSE, "");
                                     editor.putBoolean(Data.COURSE_SCHEDULE_SET, false);
                                     editor.commit();
 
-                                    Intent intent = new Intent(mContext, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(CreateAccountActivity.this);
+                                    builder.setMessage(R.string.send_verify);
+                                    builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(mContext, MainActivity.class);
+                                            startActivity(intent);
+                                            dialog.dismiss();
+                                            CreateAccountActivity.this.finish();
+                                        }
+                                    });
+
+                                    builder.create().show();
                                 }
                                 else{
                                     if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.ERROR_USER_EXIST) == 0){

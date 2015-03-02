@@ -1,8 +1,12 @@
 package com.app.university;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +28,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -354,15 +360,66 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+
+    final Response.Listener<String> dellistener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    String eventid = jsonObject.getString(NETTag.GROPU_EVNET_EVENTID);
+                    for(int i=0 ; i< mMessageList.size() ; i++ ){
+                        if(mMessageList.get(i).eventID.compareTo(eventid) == 0){
+                            mMessageList.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+
+                }
+                else{
+
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            } finally {
+
+            }
+        }
+    };
+
+    final Response.ErrorListener delerrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("CommentActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         mContext = this;
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         mGroupID =  bundle.getString(Data.GROUP_ID);
         mGroupType = bundle.getInt(Data.GROUP_TYPE);
+
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("View Message");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         Log.d("MessageActivity course id = ", mGroupID);
         Log.d("MessageActivity course type = ", String.valueOf(mGroupType) );
@@ -420,6 +477,45 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                 Intent intent = new Intent(mContext, CommentActivity.class);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                if(position == 0){
+                    return true;
+                }
+                SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                if(mMessageList.get(position).userID.compareTo(settings.getString(Data.USER_ID,"")) == 0){
+                    final CharSequence courseOption[] = { getString( R.string.delete_meddage) };
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+                    alert.setTitle(getString(R.string.delete_meddage));
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    alert.setSingleChoiceItems(courseOption, -1, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (which == 0) {
+                                DelMessageRequest stringRequest = new DelMessageRequest(mContext, dellistener, delerrorListener, mMessageList.get(position).eventID);
+                                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+                                dialog.cancel();
+                            } else {
+                                dialog.cancel();
+                            }
+                        }
+                        });
+                    alert.show();
+                }
+                return true;
             }
         });
 
@@ -551,6 +647,13 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             return true;
         }
 
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
+
+
 }

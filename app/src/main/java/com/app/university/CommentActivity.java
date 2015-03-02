@@ -1,17 +1,23 @@
 package com.app.university;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +33,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,13 +67,13 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
     public class MessageItem {
 
-        public String title;
-        public String eventID;
-        public String commentID;
-        public String content;
-        public String groupid;
-        public String userName;
-        public String userID;
+        public String title = "";
+        public String eventID = "";
+        public String commentID = "";
+        public String content = "";
+        public String groupid = "";
+        public String userName = "";
+        public String userID = "";
         public JSONArray imageNameList;
         public int type;
         public String url;
@@ -225,7 +233,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage,  R.mipmap.headphoto, R.mipmap.headphoto);
                     mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
 
                     if(messageList.get(position).imageNameList.length() == 0){
@@ -409,15 +417,66 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
     }
 
+
+    final Response.Listener<String> dellistener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    String commentid = jsonObject.getString(NETTag.POST_COMMENT_ID);
+                    for(int i=0 ; i< mMessageList.size() ; i++ ){
+                        if(mMessageList.get(i).commentID.compareTo(commentid) == 0){
+                            mMessageList.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+
+                }
+                else{
+
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            } finally {
+
+            }
+        }
+    };
+
+    final Response.ErrorListener delerrorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("CommentActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         mContext = this;
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         mEvnetID =  bundle.getString(Data.COMMENT_EVNET_ID);
         mGroupType = bundle.getInt(Data.GROUP_TYPE);
+
+        Tracker t = ((UniversityApp) getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("View Comment");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         Log.d("CommentActivity course id = ", mEvnetID);
 
@@ -504,6 +563,9 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             @Override
             public void onClick(View arg0) {
                 EditText editContent = (EditText) findViewById(R.id.edit_comment);
+                if(editContent.length() == 0){
+                    return;
+                }
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(NETTag.GET_COMMENT_EVENTID, mEvnetID);
@@ -517,6 +579,46 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 Log.d("CommentActivity post string = ", jsonObject.toString());
                 PostCommentRequest stringRequest = new PostCommentRequest(mContext, listener, errorListener, jsonObject.toString());
                 MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+            }
+        });
+
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                if(position == 0){
+                    return false;
+                }
+                SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                if(mMessageList.get(position).userID.compareTo(settings.getString(Data.USER_ID,"")) == 0){
+                    final CharSequence courseOption[] = { getString( R.string.delete_meddage) };
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+                    alert.setTitle(getString(R.string.delete_meddage));
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    alert.setSingleChoiceItems(courseOption, -1, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (which == 0) {
+                                DelCommentRequest stringRequest = new DelCommentRequest(mContext, dellistener, delerrorListener, mMessageList.get(position).commentID);
+                                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+                                dialog.cancel();
+                            } else {
+                                dialog.cancel();
+                            }
+                        }
+                    });
+                    alert.show();
+                }
+                return false;
             }
         });
 
@@ -630,5 +732,14 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         Log.d("CommentActivity  = ", "onLoadMore");
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

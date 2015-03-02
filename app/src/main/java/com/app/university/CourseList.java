@@ -21,6 +21,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -388,6 +390,12 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
         mListView = (ListView) view.findViewById(R.id.my_course_list);
         mListView.setAdapter(mAdapter);
 
+        Tracker t = ((UniversityApp)getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("View Course List");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         mSwipeLayout = (com.app.university.view.SwipeRefreshAndLoadLayout) view.findViewById(R.id.my_course_list_swipe);
         mSwipeLayout.setOnRefreshListener(CourseList.this);

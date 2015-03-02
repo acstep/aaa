@@ -1,5 +1,6 @@
 package com.app.university;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,6 +22,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -106,12 +110,22 @@ public class CourseTimeActivity extends Activity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
 
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Edit Course");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
         timeString = bundle.getString(Data.COURSE_TIME);
         courseID =  bundle.getString(Data.COURSE_ID);
         if(courseID.compareTo("") == 0){
             mNewCourse = true;
             getActionBar().setTitle(R.string.course_add);
+
         }
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         day = timeString.substring(0,3);
         startHR = Integer.valueOf(timeString.substring(4, 6));
         startMin = Integer.valueOf(timeString.substring(7, 9));
@@ -264,6 +278,15 @@ public class CourseTimeActivity extends Activity {
 
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

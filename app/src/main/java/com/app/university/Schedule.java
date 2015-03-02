@@ -436,7 +436,7 @@ public class Schedule extends Fragment {
         Tracker t = ((UniversityApp) getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
         // Set screen name.
         // Where path is a String representing the screen name.
-        t.setScreenName("Schedule");
+        t.setScreenName("View Schedule");
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
 

@@ -62,11 +62,11 @@ public class GcmIntentService extends IntentService {
         int iUniqueId = (int) (System.currentTimeMillis() & 0xfffffff);
         PendingIntent contentIntent = PendingIntent.getActivity(this, iUniqueId, intentNewsViewer, 0);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.common_signin_btn_icon_disabled_light);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.mipmap.logob);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.common_signin_btn_icon_disabled_light)
+                        .setSmallIcon(R.mipmap.logon)
                         .setContentTitle(title)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                         .setLargeIcon(largeIcon)

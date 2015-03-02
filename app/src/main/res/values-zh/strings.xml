@@ -67,7 +67,12 @@
     <string name="comment_reply">回應了你的貼文。</string>
     <string name="forget_pass">忘記密碼?</string>
     <string name="password_less_word">密碼必須大於八個字元</string>
-    <string name="need_verify">帳號尚未認證。要使用全部功能，請到註冊信箱認證</string>
+    <string name="need_verify">帳號尚未認證。請到註冊信箱認證</string>
+    <string name="send_verify">為了確認您的帳號以及使用所有功能，我們將寄一封確認信到您的信箱。請前往認證。</string>
+    <string name="add_course_info">您可以開始輸入您的課程。如果沒有找到想要的課或是時間不對，稍後可以在課表頁面空白處點擊手動加入課程，或是點擊課程修改時間。</string>
+    <string name="send_pass">您的密碼稍待一會寄送到您註冊的信箱。請前往查看</string>
+    <string name="need_email">請輸入您註冊的信箱號碼。</string>
+    <string name="delete_meddage">刪除訊息</string>
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>

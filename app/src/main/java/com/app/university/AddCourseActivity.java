@@ -2,7 +2,9 @@ package com.app.university;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -22,6 +24,8 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,13 +60,13 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
 
     public class CourseItem {
-        private String name;
-        private String teacher;
-        private String time;
-        private String realtime;
-        private String loc;
-        private String id;
-        private boolean done;
+        public String name;
+        public String teacher;
+        public String time;
+        public String realtime;
+        public String loc;
+        public String id;
+        public boolean done;
 
         public CourseItem(String name, String teacher, String time, String realtime, String loc, String id) {
             this.name = name;
@@ -354,6 +358,22 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        AlertDialog.Builder builder = new AlertDialog.Builder(AddCourseActivity.this);
+        builder.setMessage(R.string.add_course_info);
+        builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_course);
@@ -365,7 +385,12 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
         mListView = (ListView) findViewById(R.id.search_course_list);
         mListView.setAdapter(mAdapter);
 
-
+        Tracker t = ((UniversityApp) getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Add Course");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
 
         SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
@@ -462,6 +487,8 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
 
         });
 
+
+
     }
 
     @Override
@@ -497,6 +524,9 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                                 jsonCourseItem.getString(NETTag.COURSE_REALTIME),
                                 jsonCourseItem.getString(NETTag.COURSE_LOCATION),
                                 jsonCourseItem.getString(NETTag.COURSE_ID));
+                        if(courseItem.realtime.compareTo("") == 0){
+                            courseItem.realtime = "MON-08:00~09:00";
+                        }
                         courseList.add(courseItem);
                     }
                     startIndex = startIndex +  jsonCourseList.length();

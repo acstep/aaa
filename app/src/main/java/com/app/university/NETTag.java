@@ -16,25 +16,29 @@ import java.util.Map;
  */
 public class NETTag {
 
-    public static final String API_CREATE_ACCOUNT = "http://newsapi.nexbbs.com/api/createaccount";
-    public static final String API_UPDATE_ACCOUNT = "http://newsapi.nexbbs.com/api/updateaccount";
-    public static final String API_LOGIN_ACCOUNT = "http://newsapi.nexbbs.com/api/login";
-    public static final String API_SEARCH_COURSE = "http://newsapi.nexbbs.com/api/findcourse";
-    public static final String API_UPLOAD_IMAGE = "http://newsapi.nexbbs.com/api/uploadheadimg";
-    public static final String API_ADD_COURSE = "http://newsapi.nexbbs.com/api/addcourse";
-    public static final String API_DELETE_COURSE = "http://newsapi.nexbbs.com/api/deletecourse";
-    public static final String API_GET_MY_COURSE = "http://newsapi.nexbbs.com/api/getcourse";
-    public static final String API_POST_COURSE_EVENT = "http://newsapi.nexbbs.com/api/addevent";
-    public static final String API_GET_GROUP_EVENT = "http://newsapi.nexbbs.com/api/getevent";
-    public static final String API_POST_COMMENT = "http://newsapi.nexbbs.com/api/addcomment";
-    public static final String API_GET_COMMENT = "http://newsapi.nexbbs.com/api/getcomment";
-    public static final String API_GET_HEADIMAGE = "http://newsapi.nexbbs.com/api/headimage";
-    public static final String API_GET_HEADIMAGE_SMALL = "http://newsapi.nexbbs.com/api/headimagem";
-    public static final String API_GET_FEEDIMAGE = "http://newsapi.nexbbs.com/api/eventimage";
-    public static final String API_GET_FEEDIMAGE_SMALL = "http://newsapi.nexbbs.com/api/eventimagem";
-    public static final String API_GET_MY_GROUP = "http://newsapi.nexbbs.com/api/getgroup";
-    public static final String API_GET_MY_NOTIFY = "http://newsapi.nexbbs.com/api/getnotify";
-    public static final String API_GET_CRASH = "http://newsapi.nexbbs.com/api/crash";
+    public static final String API_CREATE_ACCOUNT = "http://university.nexbbs.com/api/createaccount";
+    public static final String API_UPDATE_ACCOUNT = "http://university.nexbbs.com/api/updateaccount";
+    public static final String API_LOGIN_ACCOUNT = "http://university.nexbbs.com/api/login";
+    public static final String API_SEARCH_COURSE = "http://university.nexbbs.com/api/findcourse";
+    public static final String API_UPLOAD_IMAGE = "http://university.nexbbs.com/api/uploadheadimg";
+    public static final String API_ADD_COURSE = "http://university.nexbbs.com/api/addcourse";
+    public static final String API_DELETE_COURSE = "http://university.nexbbs.com/api/deletecourse";
+    public static final String API_GET_MY_COURSE = "http://university.nexbbs.com/api/getcourse";
+    public static final String API_POST_COURSE_EVENT = "http://university.nexbbs.com/api/addevent";
+    public static final String API_GET_GROUP_EVENT = "http://university.nexbbs.com/api/getevent";
+    public static final String API_POST_COMMENT = "http://university.nexbbs.com/api/addcomment";
+    public static final String API_GET_COMMENT = "http://university.nexbbs.com/api/getcomment";
+    public static final String API_GET_HEADIMAGE = "http://university.nexbbs.com/api/headimage";
+    public static final String API_GET_HEADIMAGE_SMALL = "http://university.nexbbs.com/api/headimagem";
+    public static final String API_GET_FEEDIMAGE = "http://university.nexbbs.com/api/eventimage";
+    public static final String API_GET_FEEDIMAGE_SMALL = "http://university.nexbbs.com/api/eventimagem";
+    public static final String API_GET_MY_GROUP = "http://university.nexbbs.com/api/getgroup";
+    public static final String API_GET_MY_NOTIFY = "http://university.nexbbs.com/api/getnotify";
+    public static final String API_REQUEST_PASSWD = "http://university.nexbbs.com/api/forgetpwd";
+    public static final String API_GET_CRASH = "http://university.nexbbs.com/api/crash";
+    public static final String API_DEL_MESSAGE = "http://university.nexbbs.com/api/delevent";
+    public static final String API_DEL_COMMENT = "http://university.nexbbs.com/api/delcomment";
+
     public static final String CRASH = "crash";
     public static final String EMAIL = "email";
     public static final String GCM = "gcm";
@@ -69,7 +73,7 @@ public class NETTag {
     public static final String USER_ADMISSION = "admission";
     public static final String USER_NAME = "name";
     public static final String USER_DEPARTMENT = "dep";
-    public static final String USER_UNIVERSITY = "univerisity";
+    public static final String USER_UNIVERSITY = "university";
     public static final String UPLOAD_FILENAME = "filename";
     public static final String COURSE_EVNET = "data";
     public static final String COURSE_EVNET_GROUPID = "groupid";
@@ -580,6 +584,103 @@ class GetNotifyRequest extends StringRequest {
         }
 
         Log.e("GetNotifyRequest", myid +' ' + mytoken +' ' +mEventID +' ' +String.valueOf(mNumber));
+        return map;
+    }
+
+}
+
+class PasswdRequest extends StringRequest {
+    private Context mCcontext;
+
+    private String mEmail;
+
+
+    public PasswdRequest(Context context,
+                            Response.Listener<String> listener,
+                            Response.ErrorListener errorListener,
+                            String email) {
+        super(Request.Method.POST, NETTag.API_REQUEST_PASSWD, listener, errorListener);
+        mCcontext = context;
+        mEmail = email;
+
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.EMAIL,mEmail);
+
+        return map;
+    }
+
+}
+
+
+class DelMessageRequest extends StringRequest {
+    private Context mCcontext;
+
+    private String mEventID;
+
+
+    public DelMessageRequest(Context context,
+                            Response.Listener<String> listener,
+                            Response.ErrorListener errorListener,
+                            String eventID) {
+        super(Request.Method.POST, NETTag.API_DEL_MESSAGE, listener, errorListener);
+        mCcontext = context;
+        mEventID = eventID;
+
+
+    }
+
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.GROPU_EVNET_EVENTID, mEventID);
+
+
+        return map;
+    }
+
+}
+
+
+
+class DelCommentRequest extends StringRequest {
+    private Context mCcontext;
+
+    private String mEventID;
+
+
+    public DelCommentRequest(Context context,
+                             Response.Listener<String> listener,
+                             Response.ErrorListener errorListener,
+                             String eventID) {
+        super(Request.Method.POST, NETTag.API_DEL_COMMENT, listener, errorListener);
+        mCcontext = context;
+        mEventID = eventID;
+
+    }
+
+    @Override
+    protected Map<String, String> getParams() {
+        SharedPreferences shareId = mCcontext.getSharedPreferences("ID", Context.MODE_PRIVATE);
+        final String myid = shareId.getString(Data.USER_ID, null);
+        final String mytoken = shareId.getString(Data.TOKEN, null);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(NETTag.USER_ID,myid);
+        map.put(NETTag.TOKEN, mytoken);
+        map.put(NETTag.POST_COMMENT_ID, mEventID);
+
         return map;
     }
 

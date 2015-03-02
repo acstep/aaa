@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,6 +28,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -139,6 +142,13 @@ public class ProfileActivity extends Activity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         mContext = this;
         mImageLoader = MySingleton.getInstance(getApplicationContext()).getImageLoader();
+
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("View Profile");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         SharedPreferences settings = getSharedPreferences ("ID", Context.MODE_PRIVATE);
         String myid = settings.getString(Data.USER_ID, null);
@@ -307,22 +317,33 @@ public class ProfileActivity extends Activity {
             folder.mkdirs();
         }
 
-        ImageView imHeadPhoto = (ImageView)findViewById(R.id.head_image);
-        //imHeadPhoto.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
-        ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(imHeadPhoto, R.mipmap.camera, R.mipmap.camera);
-        //mImageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
-        RequestQueue mQueue = Volley.newRequestQueue(this);
-        ImageLoader imageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-            }
 
-            @Override
-            public Bitmap getBitmap(String url) {
-                return null;
-            }
-        });
-        imageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
+
+        String headPhotoName = settings.getString(Data.FINAL_FACE_FILE_NAME,"");
+        ImageView imHeadPhoto = (ImageView)findViewById(R.id.head_image);
+        if(headPhotoName.compareTo("") == 0){
+            Log.d("headPhotoName ", "use internet");
+            ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(imHeadPhoto, R.mipmap.camera, R.mipmap.camera);
+            RequestQueue mQueue = Volley.newRequestQueue(this);
+            ImageLoader imageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
+                @Override
+                public void putBitmap(String url, Bitmap bitmap) {
+                }
+
+                @Override
+                public Bitmap getBitmap(String url) {
+                    return null;
+                }
+            });
+            imageLoader.get(NETTag.API_GET_HEADIMAGE+"?id="+ myid +".jpg", headlistener);
+        }
+        else{
+            Log.d("headPhotoName ", "use face.jpg");
+            imHeadPhoto.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME)));
+        }
+
+
+
 
 
 
@@ -426,6 +447,15 @@ public class ProfileActivity extends Activity {
         }
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

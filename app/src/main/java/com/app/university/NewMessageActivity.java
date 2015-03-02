@@ -1,5 +1,6 @@
 package com.app.university;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -26,6 +27,8 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,12 +64,21 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         mContext = this;
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         mGroupID =  bundle.getString(Data.GROUP_ID);
         mGroupType =  bundle.getInt(Data.GROUP_TYPE);
+
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Add New Message");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         setContentView(R.layout.activity_new_message);
         mServiceContext = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -261,6 +273,10 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
 
     public void postEvent() throws JSONException {
         EditText editContent = (EditText)findViewById(R.id.edit_event_content);
+        if(editContent.length() == 0 && imageUploadNameList.isEmpty()){
+            return;
+        }
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(NETTag.COURSE_EVNET_GROUPID, mGroupID);
         jsonObject.put(NETTag.GROPU_EVNET_TYPE, mGroupType);
@@ -268,6 +284,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
         jsonObject.put(NETTag.COURSE_EVNET_IMAGE_LIST, imageArray);
 
         jsonObject.put(NETTag.COURSE_EVNET_CONTENT, editContent.getText().toString());
+
         Log.d("NewMessageActivity post string = ", jsonObject.toString());
         PostEventRequest stringRequest = new PostEventRequest(this, listener, errorListener, jsonObject.toString());
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
@@ -306,6 +323,11 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 }
             }
 
+            return true;
+        }
+
+        if (id == android.R.id.home) {
+            finish();
             return true;
         }
 

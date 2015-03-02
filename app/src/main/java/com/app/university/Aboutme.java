@@ -13,6 +13,9 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 /**
  * Created by matt on 2015/2/17.
  */
@@ -29,6 +32,14 @@ public class Aboutme extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Tracker t = ((UniversityApp) getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Aboutme");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
 
         mView = inflater.inflate(R.layout.about_me, container, false);
 

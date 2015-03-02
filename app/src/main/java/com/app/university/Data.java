@@ -16,8 +16,9 @@ public class Data {
     public static final String USER_ADMISSION = "admission";
     public static final String USER_NAME = "name";
     public static final String USER_DEPARTMENT = "department";
-    public static final String USER_UNIVERSITY = "univeristy";
+    public static final String USER_UNIVERSITY = "univerisity";
     public static final String USER_EMAIL = "email";
+
     public static final String NOTIFICATION_TYPE = "notify";
     public static final String COURSE_SCHEDULE_SET = "course_schedule_set";
     public static final String DEPARTMENT = "department";

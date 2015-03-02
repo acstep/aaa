@@ -164,6 +164,10 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
                 if(mImageView != null) {
                     mImageView.setImageURI(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME)));
                     mImageView.invalidate();
+                    SharedPreferences settings = context.getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putString(Data.FINAL_FACE_FILE_NAME,Data.FINAL_FACE_FILE_NAME);
+                    editor.commit();
 
                     File orgImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.IMAGE_FILE_NAME);
                     File finalImage = new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.FINAL_FACE_FILE_NAME);

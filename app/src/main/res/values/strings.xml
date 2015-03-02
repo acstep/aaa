@@ -55,7 +55,9 @@
     <string name="profile_dep">Department</string>
     <string name="profile_admission">Admission Year</string>
     <string name="profile_sex">Sex</string>
-    <string name="title_activity_message">Course</string>
+    <string name="profile_sex_boy">Boy</string>
+    <string name="profile_sex_girl">Girl</string>
+    <string name="title_activity_message"></string>
     <string name="title_activity_new_message">New Message</string>
     <string name="title_activity_comment">Comment</string>
     <string name="edit_post_comment">Comment...</string>
@@ -72,10 +74,16 @@
     <string name="forget_pass">Forget Password?</string>
     <string name="password_less_word">Password should be more than 8 characters.</string>
     <string name="need_verify">Your Account is not verified. Click the link in the email to verify that you own this address.</string>
-
+    <string name="send_verify">We will send an email to your account. Please go to verify your account. Thank you.</string>
+    <string name="add_course_info">If you can not find your course or the time of the course is incorrect, you can add or modify your course in schedule tab manually.</string>
+    <string name="send_pass">Your password will send to your registered Email. Please check later.</string>
+    <string name="need_email">Please input your registered Email.</string>
     <string name="comment_reply">Reply your message</string>
+    <string name="delete_meddage">Delete Message</string>
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
+
+
 
     <string-array name="notify_arrays">
         <item>Close</item>

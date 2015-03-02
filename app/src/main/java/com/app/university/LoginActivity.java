@@ -2,7 +2,9 @@ package com.app.university;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,12 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +32,57 @@ import java.util.Map;
 public class LoginActivity extends Activity {
 
     private static Context mContext;
+    private static TextView mRequestPass;
+
+
+
+    final Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                    builder.setMessage(R.string.send_pass);
+                    builder.setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(mContext, MainActivity.class);
+                            startActivity(intent);
+                            dialog.dismiss();
+
+                        }
+                    });
+
+                    builder.create().show();
+
+                }
+                else{
+
+                    Toast.makeText(mContext, R.string.login_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            } finally {
+
+            }
+        }
+    };
+
+    final Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("CommentActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +93,28 @@ public class LoginActivity extends Activity {
 
         mContext = getApplicationContext();
 
+        Tracker t = ((UniversityApp)getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
+        // Set screen name.
+        // Where path is a String representing the screen name.
+        t.setScreenName("Login");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
+        mRequestPass = (TextView) findViewById(R.id.text_forget_pass);
+        mRequestPass.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                TextView email = (TextView)findViewById(R.id.edit_email);
+                if(email.getText().length() != 0){
+                    PasswdRequest stringRequest = new PasswdRequest(mContext, listener,errorListener,email.getText().toString());
+                    MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+                }
+                else{
+                    Toast.makeText(mContext, R.string.need_email, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
 
         Button loginButton = (Button)findViewById(R.id.btn_login);
         loginButton.setOnClickListener(new View.OnClickListener() {
