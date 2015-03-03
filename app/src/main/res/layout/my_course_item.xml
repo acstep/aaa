@@ -58,7 +58,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/course_loc"
                     android:textSize="14sp"
-                    android:textColor="#ff69726f" />
+                    android:textColor="#ff69726f"
+                    android:visibility="visible" />
             </LinearLayout>
 
         </LinearLayout>

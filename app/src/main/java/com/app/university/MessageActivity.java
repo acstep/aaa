@@ -67,7 +67,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         public String userID = "";
         public JSONArray imageNameList;
         public int type;
-        public String url;
+        public String url= "";
         public int likenum;
         public int commentnum;
         public int anonymous;
@@ -173,6 +173,8 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                         holder.textLikeNum = (TextView) convertView.findViewById(R.id.event_item_like);
                         holder.textCommentNum = (TextView) convertView.findViewById(R.id.event_item_reply);
                         holder.layerImageList = (LinearLayout) convertView.findViewById(R.id.layer_image_list);
+                        holder.layerUrlLink = (LinearLayout) convertView.findViewById(R.id.linear_url_link);
+                        holder.textUrl = (TextView) convertView.findViewById(R.id.text_url);
                         holder.layerImageOne = (FrameLayout) convertView.findViewById(R.id.layer_image_one);
                         holder.LikeLayer = (FrameLayout) convertView.findViewById(R.id.event_like);
                         holder.CommentLayer = (FrameLayout) convertView.findViewById(R.id.event_comment);
@@ -190,6 +192,16 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     }
                     else{
                         holder.textName.setText(messageList.get(position).userName);
+                    }
+
+                    if(messageList.get(position).url.compareTo("") == 0){
+                        holder.layerUrlLink.setVisibility(View.GONE);
+                        holder.textUrl.setText("");
+                    }
+                    else{
+                        holder.layerUrlLink.setVisibility(View.VISIBLE);
+                        holder.textUrl.setText(messageList.get(position).url.toString());
+                        holder.layerUrlLink.setOnClickListener(new UrlItem_Click(position));
                     }
 
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
@@ -322,7 +334,25 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             }
         }
 
+        class UrlItem_Click implements View.OnClickListener {
+            private int mposition;
 
+
+
+            UrlItem_Click(int pos) {
+                mposition = pos;
+
+            }
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Data.NOTIFY_URL, mMessageList.get(mposition).url);
+                Intent intent = new Intent(mContext, WebViewerActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                Log.d("NotifyList  click pos = ", String.valueOf(mposition)  );
+
+            }
+        }
 
 
         public class EventViewHolder {
@@ -338,6 +368,8 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             public TextView  textLikeNum;
             public TextView  textCommentNum;
             public LinearLayout  layerImageList;
+            public LinearLayout  layerUrlLink;
+            public TextView  textUrl;
             public FrameLayout  layerImageOne;
             public FrameLayout  LikeLayer;
             public FrameLayout  CommentLayer;

@@ -274,6 +274,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
 
     public void postEvent() throws JSONException {
         EditText editContent = (EditText)findViewById(R.id.edit_event_content);
+        EditText editURL = (EditText)findViewById(R.id.edit_event_url);
         if(editContent.length() == 0 && imageUploadNameList.isEmpty()){
             return;
         }
@@ -285,6 +286,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
         jsonObject.put(NETTag.COURSE_EVNET_IMAGE_LIST, imageArray);
 
         jsonObject.put(NETTag.COURSE_EVNET_CONTENT, editContent.getText().toString());
+        jsonObject.put(NETTag.GROPU_EVNET_URL, editURL.getText().toString());
 
         Log.d("NewMessageActivity post string = ", jsonObject.toString());
         PostEventRequest stringRequest = new PostEventRequest(this, listener, errorListener, jsonObject.toString());

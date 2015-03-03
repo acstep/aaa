@@ -104,6 +104,8 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
             final View mview = convertView;
 
             TextView txName = (TextView) convertView.findViewById(R.id.course_name);
+            TextView txLoc = (TextView) convertView.findViewById(R.id.course_loc);
+            txLoc.setVisibility(View.GONE);
 
 
             // getting movie data for the row

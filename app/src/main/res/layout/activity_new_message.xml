@@ -30,7 +30,15 @@
                 android:ems="10"
                 android:lineSpacingExtra="5dp"
                 android:id="@+id/edit_event_content"
-                android:hint="內容" />
+                android:hint="@string/content" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_event_url"
+                android:inputType="textImeMultiLine"
+                android:layout_marginTop="20dp"
+                android:hint="@string/related_url" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"

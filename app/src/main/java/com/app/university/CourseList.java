@@ -44,12 +44,12 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
     protected ListView mListView;
 
     public class CourseItem {
-        private String name;
-        private String teacher;
-        private String time;
-        private String loc;
-        private String id;
-        private String stunum;
+        private String name = "";
+        private String teacher = "";
+        private String time = "";
+        private String loc = "";
+        private String id = "";
+        private String stunum = "";
 
 
         public CourseItem(String id, String name, String time, String loc, String stunum) {
@@ -124,8 +124,8 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
                 courseName = courseName.substring(0,courseName.indexOf("-"));
             }
             txName.setText(courseName);
-            if(m.loc.compareTo("") == 0){
-                txLoc.setVisibility(TextView.GONE);
+            if(m.loc.compareTo("") == 0 || m.loc.compareTo(" ") == 0){
+                txLoc.setVisibility(View.GONE);
             }
             else{
                 txLoc.setText(m.loc);

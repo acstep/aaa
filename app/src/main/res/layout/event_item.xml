@@ -68,6 +68,7 @@
                 android:layout_height="150dp"
                 android:id="@+id/event_item_image_only"
                 android:scaleType="fitStart" />
+
         </FrameLayout>
 
         <LinearLayout
@@ -96,6 +97,33 @@
                 android:id="@+id/event_item_image3"
                 android:layout_marginLeft="5dp"
                 android:scaleType="centerCrop" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffededed"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/linear_url_link">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_url"
+                android:layout_gravity="center"
+                android:textSize="16sp"
+                android:textColor="#ff747474"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:textStyle="bold"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:layout_weight="6" />
+
         </LinearLayout>
 
         <LinearLayout
