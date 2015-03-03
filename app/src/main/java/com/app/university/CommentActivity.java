@@ -207,6 +207,8 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                         holder.contentImageonly = (ImageView) convertView.findViewById(R.id.event_item_image_only);
                         holder.textLikeNum = (TextView) convertView.findViewById(R.id.event_item_like);
                         holder.textCommentNum = (TextView) convertView.findViewById(R.id.event_item_reply);
+                        holder.layerUrlLink = (LinearLayout) convertView.findViewById(R.id.linear_url_link);
+                        holder.textUrl = (TextView) convertView.findViewById(R.id.text_url);
                         holder.layerImageList = (LinearLayout) convertView.findViewById(R.id.layer_image_list);
                         holder.layerImageOne = (FrameLayout) convertView.findViewById(R.id.layer_image_one);
                         holder.LikeLayer = (FrameLayout) convertView.findViewById(R.id.event_like);
@@ -233,6 +235,16 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textContent.setMaxLines(1000);
                     holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
+
+                    if(messageList.get(position).url.compareTo("") == 0){
+                        holder.layerUrlLink.setVisibility(View.GONE);
+                        holder.textUrl.setText("");
+                    }
+                    else{
+                        holder.layerUrlLink.setVisibility(View.VISIBLE);
+                        holder.textUrl.setText(messageList.get(position).url.toString());
+                        holder.layerUrlLink.setOnClickListener(new UrlItem_Click(position));
+                    }
 
                     ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage,  R.mipmap.headphoto, R.mipmap.headphoto);
                     mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
@@ -378,7 +390,25 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             }
         }
 
+        class UrlItem_Click implements View.OnClickListener {
+            private int mposition;
 
+
+
+            UrlItem_Click(int pos) {
+                mposition = pos;
+
+            }
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Data.NOTIFY_URL, mMessageList.get(mposition).url);
+                Intent intent = new Intent(mContext, WebViewerActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                Log.d("NotifyList  click pos = ", String.valueOf(mposition)  );
+
+            }
+        }
 
 
         public class EventViewHolder {
@@ -397,6 +427,8 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             public FrameLayout  layerImageOne;
             public FrameLayout  LikeLayer;
             public FrameLayout  CommentLayer;
+            public LinearLayout  layerUrlLink;
+            public TextView  textUrl;
 
             ArrayList<ImageView> imageList = new ArrayList<ImageView>();
 
