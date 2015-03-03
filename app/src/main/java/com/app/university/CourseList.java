@@ -114,7 +114,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             final View mview = convertView;
 
             TextView txName = (TextView) convertView.findViewById(R.id.course_name);
-
+            TextView txLoc = (TextView) convertView.findViewById(R.id.course_loc);
 
             // getting movie data for the row
             CourseItem m = courseList.get(position);
@@ -124,6 +124,12 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
                 courseName = courseName.substring(0,courseName.indexOf("-"));
             }
             txName.setText(courseName);
+            if(m.loc.compareTo("") == 0){
+                txLoc.setVisibility(TextView.GONE);
+            }
+            else{
+                txLoc.setText(m.loc);
+            }
 
 
             LinearLayout itemLayout = (LinearLayout)convertView.findViewById(R.id.my_course_item);
