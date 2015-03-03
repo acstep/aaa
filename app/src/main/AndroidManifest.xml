@@ -113,6 +113,9 @@
             android:screenOrientation="portrait"
             android:label="@string/title_activity_image_viewer" >
         </activity>
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="15a4bb4a7effc6def13b6a2bd11410dbf8aae235" />
     </application>
 
 </manifest>

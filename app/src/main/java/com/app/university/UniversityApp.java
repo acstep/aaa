@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.HashMap;
 
 /**
@@ -29,6 +31,7 @@ public class UniversityApp extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         context = getApplicationContext();
         RequestQueue queue = MySingleton.getInstance(getApplicationContext()).getRequestQueue();
 
