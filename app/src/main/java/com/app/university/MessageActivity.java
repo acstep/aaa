@@ -207,7 +207,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
                     holder.textContent.setText(messageList.get(position).content);
 
-                    holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
+                    //holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
                     ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.mipmap.headphoto, R.mipmap.headphoto);
@@ -255,6 +255,13 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                     //holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
                     holder.CommentLayer.setOnClickListener(new CommentItem_Click(position));
+                    holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
+                    if(messageList.get(position).url.compareTo("") == 0){
+                        holder.LikeLayer.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        holder.LikeLayer.setVisibility(View.VISIBLE);
+                    }
                     //holder.headImage.setImageURI();
                     //holder.contentImage1.setImageURI()
                     //holder.contentImage2.setImageURI()
@@ -311,6 +318,22 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                 }
 
                 Log.d("MessageActivity like click pos = ", String.valueOf(mposition)  );
+            }
+        }
+
+
+        class LikeItem_Click implements View.OnClickListener {
+            private int mposition;
+
+            LikeItem_Click(int pos) {
+                mposition = pos;
+            }
+            public void onClick(View v) {
+
+                Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_TEXT, messageList.get(mposition).url);
+                startActivity(Intent.createChooser(share, getString(R.string.share)));
             }
         }
 

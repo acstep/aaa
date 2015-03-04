@@ -76,13 +76,13 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
         public String userName = "";
         public String userID = "";
         public JSONArray imageNameList;
-        public int type;
-        public String url;
-        public int likenum;
-        public int commentnum;
-        public int anonymous;
-        public long postTime;
-        public int time;
+        public int type = 0;
+        public String url = "";
+        public int likenum = 0;
+        public int commentnum = 0;
+        public int anonymous = 0;
+        public long postTime = 0;
+        public int time = 0;
         public int eventType;
         private Calendar date;
 
@@ -233,7 +233,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
                     holder.textContent.setText(messageList.get(position).content);
                     holder.textContent.setMaxLines(1000);
-                    holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
+                    //holder.textLikeNum.setText(String.valueOf(messageList.get(position).likenum));
                     holder.textCommentNum.setText(String.valueOf(messageList.get(position).commentnum));
 
                     if(messageList.get(position).url.compareTo("") == 0){
@@ -288,6 +288,16 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                     //holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
                     holder.CommentLayer.setOnClickListener(new CommentItem_Click(position));
+                    holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
+                    if(messageList.get(position).url.compareTo("") == 0){
+                        holder.LikeLayer.setVisibility(View.INVISIBLE);
+                    }
+                    else{
+                        holder.LikeLayer.setVisibility(View.VISIBLE);
+                    }
+
+
+
                     //holder.headImage.setImageURI();
                     //holder.contentImage1.setImageURI()
                     //holder.contentImage2.setImageURI()
@@ -407,6 +417,21 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                 startActivity(intent);
                 Log.d("NotifyList  click pos = ", String.valueOf(mposition)  );
 
+            }
+        }
+
+        class LikeItem_Click implements View.OnClickListener {
+            private int mposition;
+
+            LikeItem_Click(int pos) {
+                mposition = pos;
+            }
+            public void onClick(View v) {
+
+                Intent share = new Intent(android.content.Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_TEXT, messageList.get(mposition).url);
+                startActivity(Intent.createChooser(share, getString(R.string.share)));
             }
         }
 

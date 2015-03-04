@@ -34,6 +34,7 @@
             android:id="@+id/text_notify_content"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:lineSpacingExtra="3dp" />
     </LinearLayout>
 </LinearLayout>

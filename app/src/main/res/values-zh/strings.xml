@@ -77,6 +77,7 @@
     <string name="post_event_success">貼文完成。如未看到，請刷新。</string>
     <string name="content">內容</string>
     <string name="related_url">相關網址</string>
+    <string name="share">分享</string>
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>

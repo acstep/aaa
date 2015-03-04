@@ -107,7 +107,7 @@ public class Schedule extends Fragment {
         Calendar calendar = GregorianCalendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY) -7;
 
-        for (int i = 1; i <= 14; i++) {
+        for (int i = 1; i <= 16; i++) {
 
             Button btn = new Button(getActivity());
 

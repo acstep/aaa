@@ -84,6 +84,7 @@
     <string name="delete_meddage">Delete Message</string>
     <string name="content">Content</string>
     <string name="related_url">Related URL</string>
+    <string name="share">Share</string>
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
 
