@@ -21,13 +21,15 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/comment_item_head"
-                android:layout_margin="10dp"
-                android:background="#ffc3ccc9" />
+                android:background="#ffc3ccc9"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp" />
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp">
 
                 <TextView
@@ -57,9 +59,10 @@
             android:maxLines="5"
             android:ellipsize="end"
             android:lineSpacingExtra="5dp"
-            android:layout_marginLeft="70dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp" />
 
     </LinearLayout>
     <View
