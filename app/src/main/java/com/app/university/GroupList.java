@@ -190,6 +190,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
         public void onErrorResponse(VolleyError error) {
             mSwipeLayout.setRefreshing(false);
             if(getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
                 SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                 String response = settings.getString(Data.CURRENTGROUPLIST, "[]");
 
@@ -217,7 +218,7 @@ public class GroupList extends Fragment implements SwipeRefreshAndLoadLayout.OnR
             mSwipeLayout.setRefreshing(false);
 
             Log.e("GroupList", error.getMessage(), error);
-            Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+
             return;
         }
     };
