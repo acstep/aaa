@@ -275,12 +275,14 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    SharedPreferences settings= null;
+                    SharedPreferences.Editor editor = null;
 
                     JSONArray jsonCourseList= new JSONArray(jsonObject.getString(NETTag.MY_COURSE_LIST));
                     courseList.clear();
                     if(getActivity() != null && jsonCourseList.length() != 0) {
-                        SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = settings.edit();
+                        settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                        editor = settings.edit();
                         editor.putString(Data.CURRENTCOURSELIST, response);
                         editor.commit();
                     }
@@ -294,6 +296,10 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
                                 jsonCourseItem.getString(NETTag.COURSE_REALTIME),
                                 jsonCourseItem.getString(NETTag.COURSE_LOCATION),
                                 jsonCourseItem.getString(NETTag.COURSE_STUDENT_NUMBER));
+                        if(editor != null){
+                            editor.putString(jsonCourseItem.getString(NETTag.COURSE_ID),jsonCourseItem.getString(NETTag.COURSE_LOCATION));
+                            editor.commit();
+                        }
                         courseList.add(courseItem);
                     }
                     mSwipeLayout.setRefreshing(false);

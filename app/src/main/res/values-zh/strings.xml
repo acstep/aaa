@@ -78,6 +78,9 @@
     <string name="content">內容</string>
     <string name="related_url">相關網址</string>
     <string name="share">分享</string>
+    <string name="next_course_name">下次上課:  </string>
+    <string name="next_course_time">上課時間:  </string>
+    <string name="next_course_loc">上課地點:  </string>
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
@@ -88,6 +91,9 @@
     <string name="title_group">校園訊息</string>
     <string name="title_event">通知</string>
     <string name="title_about">關於</string>
+
+    <string name="appwidget_text">University</string>
+    <string name="add_widget">Add widget</string>
 
     <string-array name="notify_arrays">
         <item>關閉</item>

@@ -85,9 +85,17 @@
     <string name="content">Content</string>
     <string name="related_url">Related URL</string>
     <string name="share">Share</string>
+    <string name="next_course_name">Next :  </string>
+    <string name="next_course_time">Time :  </string>
+    <string name="next_course_loc">Loc  :  </string>
+
+
+
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
 
+    <string name="appwidget_text">University</string>
+    <string name="add_widget">Add widget</string>
 
 
     <string-array name="notify_arrays">
@@ -103,6 +111,7 @@
         <item>THU</item>
         <item>FRI</item>
     </string-array>
+
 
 
 </resources>

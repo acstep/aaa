@@ -330,6 +330,12 @@ public class AddCourseActivity extends Activity implements SwipeRefreshAndLoadLa
                     e.printStackTrace();
                 }
 
+                try {
+                    courseItem.put(Data.COURSE_LOC ,tmpcourseItem.getLoc());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 postCourseArray.put(courseItem);
                 postCourseString = postCourseArray.toString();
 
