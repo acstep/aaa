@@ -40,6 +40,7 @@ import java.util.GregorianCalendar;
 public class Schedule extends Fragment {
 
     private FrameLayout timeFrame;
+    private FrameLayout scheduleFrame;
     private JSONArray mCourseJsonArray;
     private View viewSchedule;
     private FrameLayout monView;
@@ -432,6 +433,15 @@ public class Schedule extends Fragment {
                              Bundle savedInstanceState) {
 
         viewSchedule = inflater.inflate(R.layout.schedule, container, false);
+
+        scheduleFrame = (FrameLayout)viewSchedule.findViewById(R.id.schedule_view_action);
+        scheduleFrame.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                Intent intent = new Intent(getActivity(), EventViewActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Tracker t = ((UniversityApp) getActivity().getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
         // Set screen name.

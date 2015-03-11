@@ -52,6 +52,7 @@ public class NETTag {
     public static final String DEPARTMENT = "dep";
     public static final String USER = "user";
     public static final String SCHEDULE = "schedule";
+    public static final String MY_SCHEDULE_EVENT = "myscheduleevent";
     public static final String SEARCH_NAME = "name";
     public static final String SEARCH_NUMBER = "number";
     public static final String SEARCH_START = "start";
@@ -136,6 +137,15 @@ public class NETTag {
     //////////////////////////////////////////
     public static final String NOTIFICATION_TITLE = "title";
     public static final String NOTIFICATION_CONTENT = "content";
+
+    public static final String MY_SCHEDULE_NAME = "schedulename";
+    public static final String MY_SCHEDULE_CONTENT = "content";
+    public static final String MY_SCHEDULE_TIME = "scheduletime";
+    public static final String MY_SCHEDULE_LOC = "scheduleloc";
+    public static final String MY_SCHEDULE_TYPE = "scheduletype";
+    public static final String MY_SCHEDULE_COURSEID = "scheduleid";
+    public static final String MY_SCHEDULE_SHARE = "share";
+
 }
 
 
@@ -158,6 +168,7 @@ class AddCourseRequest extends StringRequest {
         mPostCourseString = PostCourseString;
         mSelfAdd = selfAdd;
         mUrl = url;
+
     }
 
 
@@ -244,13 +255,14 @@ class GetMyGroupRequest extends StringRequest {
 
 
 class userData{
-    String name = "";
-    String university = "";
-    String dep = "";
-    String adimission = "";
-    String sex = "";
-    String schedule = "";
-    String gcm = "";
+    public String name = "";
+    public String university = "";
+    public String dep = "";
+    public String adimission = "";
+    public String sex = "";
+    public String schedule = "";
+    public String gcm = "";
+    public String myEvent = "";
 
     public userData(String name, String university, String dep, String adimission, String sex, String schedule, String gcm) {
         this.name = name;
@@ -277,9 +289,11 @@ class UpdateAccountRequest extends StringRequest {
                               Response.Listener<String> listener,
                               Response.ErrorListener errorListener,
                               userData udata) {
+
         super(Request.Method.POST, NETTag.API_UPDATE_ACCOUNT, listener, errorListener);
         mCcontext = context;
         mUserData = udata;
+
     }
 
 
@@ -311,6 +325,9 @@ class UpdateAccountRequest extends StringRequest {
         }
         if(!mUserData.gcm.isEmpty()){
             map.put(NETTag.GCM, mUserData.gcm);
+        }
+        if(!mUserData.myEvent.isEmpty()){
+            map.put(NETTag.MY_SCHEDULE_EVENT, mUserData.myEvent);
         }
         Log.e("AddCourseActivity", myid + mytoken);
         return map;

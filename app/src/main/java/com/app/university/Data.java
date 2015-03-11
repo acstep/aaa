@@ -19,6 +19,7 @@ public class Data {
     public static final String USER_UNIVERSITY = "univerisity";
     public static final String USER_EMAIL = "email";
 
+
     public static final String NOTIFICATION_TYPE = "notify";
     public static final String COURSE_SCHEDULE_SET = "course_schedule_set";
     public static final String DEPARTMENT = "department";
@@ -55,4 +56,8 @@ public class Data {
     public static final String NOTIFY_URL = "url";
 
     public static final String REMOTE_IMAGE_VIEWER_ID = "remoteid";
+
+    public static final String VOLUME_AUTO_OFF = "volumeautooff";
+
+
 }

@@ -19,6 +19,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -66,6 +68,8 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
     private Map<Integer, Integer> mtitleSTring = new HashMap<Integer, Integer>();
 
 
+
+
     public class MainActivityBroadcastReceiver extends BroadcastReceiver {
 
         public MainActivityBroadcastReceiver(Activity mainActivity) {
@@ -109,6 +113,9 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
             nofityNum.setText(String.valueOf(notifyNum));
             nofityNum.setVisibility(TextView.VISIBLE);
         }
+
+        Intent serviceIntent = new Intent(this, BootService.class);
+        this.startService(serviceIntent);
 
         super.onResume();
     }
@@ -435,5 +442,26 @@ public class MainActivity extends FragmentActivity implements ViewPager.OnPageCh
             }
         }
 
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+
+
+        return super.onOptionsItemSelected(item);
     }
 }

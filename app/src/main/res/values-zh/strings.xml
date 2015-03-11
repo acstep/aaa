@@ -81,9 +81,33 @@
     <string name="next_course_name">下次上課:  </string>
     <string name="next_course_time">上課時間:  </string>
     <string name="next_course_loc">上課地點:  </string>
+    <string name="date">日期</string>
+    <string name="hour">時間</string>
+    <string name="event_loc">地點</string>
+    <string name="event_time">時間</string>
+    <string name="homework">作業</string>
+    <string name="exam">考試</string>
+    <string name="other">其他</string>
+    <string name="add_to_my_schedule">加到我的行事曆</string>
+
+    <string name="event_type">類別</string>
+    <string name="event_share_to_group">分享到課程討論</string>
+    <string name="event_no_time">請輸入開始時間</string>
+    <string name="event_time_expired">開始時間已經過去</string>
+    <string name="event_content_empty">請輸入內容</string>
+    <string name="volume_auto_off">自動切換震動</string>
+    <string name="volume_auto_off_in_class">上課中自動切換成震動模式</string>
+    <string name="volume_auto_off_in_class_title">切換震動</string>
+    <string name="volume_auto_off_in_class_content">已幫您在上課中自動切換成震動模式</string>
+
+
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
+    <string name="title_activity_add_event">新增行事曆</string>
+    <string name="title_activity_event_view">我的行事曆</string>
+
+
 
 
     <string name="title_class_table">課表</string>
@@ -95,18 +119,34 @@
     <string name="appwidget_text">University</string>
     <string name="add_widget">Add widget</string>
 
-    <string-array name="notify_arrays">
+
+    <string-array name="auto_switch_arrays">
         <item>關閉</item>
-        <item>震動</item>
-        <item>聲音加震動</item>
+        <item>開啟</item>
     </string-array>
 
+    <string-array name="notify_arrays">
+    <item>關閉</item>
+    <item>震動</item>
+    <item>聲音加震動</item>
+</string-array>
+
     <string-array name="week_day_arrays">
-        <item>MON</item>
-        <item>TUE</item>
-        <item>WED</item>
-        <item>THU</item>
-        <item>FRI</item>
+    <item>MON</item>
+    <item>TUE</item>
+    <item>WED</item>
+    <item>THU</item>
+    <item>FRI</item>
     </string-array>
+
+    <string-array name="event_course_type">
+        <item>作業</item>
+        <item>考試</item>
+        <item>其他</item>
+    </string-array>
+
+
+
+
 
 </resources>

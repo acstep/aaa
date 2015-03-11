@@ -23,8 +23,8 @@ android {
         applicationId "com.app.university"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 13
-        versionName "2.2"
+        versionCode 23
+        versionName "5.1.1"
     }
     buildTypes {
         release {

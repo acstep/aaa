@@ -25,6 +25,7 @@ public class Aboutme extends Fragment {
     private LinearLayout mAddNewCourse;
     private LinearLayout mLogout;
     private Spinner mNotifyType;
+    private Spinner mAutoType;
 
     private View mView;
     private static final String IMAGE_FILE_NAME = "face.jpg";
@@ -92,10 +93,33 @@ public class Aboutme extends Fragment {
 
             }
         });
+
+        mAutoType = (Spinner)mView.findViewById(R.id.spinner_profile_auto_colume_off);
+
+        mAutoType.setSelection(settings.getInt(Data.VOLUME_AUTO_OFF,0));
+        mAutoType.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putInt(Data.VOLUME_AUTO_OFF, position);
+                editor.commit();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
         mLogout = (LinearLayout)mView.findViewById(R.id.logout);
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+
+
                 SharedPreferences settings = getActivity().getSharedPreferences ("ID", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.clear();

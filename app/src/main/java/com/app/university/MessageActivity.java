@@ -75,6 +75,7 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         public int time;
         public int eventType;
         private Calendar date;
+        private String scheduleString = "";
 
         public static final int TYPE_TITLE = 0;
         public static final int TYPE_MESSAGE = 1;
@@ -178,6 +179,11 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                         holder.layerImageOne = (FrameLayout) convertView.findViewById(R.id.layer_image_one);
                         holder.LikeLayer = (FrameLayout) convertView.findViewById(R.id.event_like);
                         holder.CommentLayer = (FrameLayout) convertView.findViewById(R.id.event_comment);
+                        holder.mScheduleBlock = (LinearLayout) convertView.findViewById(R.id.linear_schedule_block);
+                        holder.mScheduleType = (TextView) convertView.findViewById(R.id.text_schedule_type);
+                        holder.mScheduleTime = (TextView) convertView.findViewById(R.id.text_schedule_time);
+                        holder.mScheduleLoc = (TextView) convertView.findViewById(R.id.text_schedule_loc);
+                        holder.mScheduleadd = (LinearLayout) convertView.findViewById(R.id.linear_schedule_add);;
                         holder.imageList.add(holder.contentImage1);
                         holder.imageList.add(holder.contentImage2);
                         holder.imageList.add(holder.contentImage3);
@@ -185,6 +191,40 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
                     } else {
                         holder = (EventViewHolder) convertView.getTag();
 
+                    }
+
+
+                    if(messageList.get(position).scheduleString.length() == 0){
+                        holder.mScheduleBlock.setVisibility(View.GONE);
+                    }
+                    else{
+                        try {
+                            JSONObject scheduleArray =  new JSONObject(messageList.get(position).scheduleString);
+                            holder.mScheduleBlock.setVisibility(View.VISIBLE);
+                            holder.mScheduleLoc.setText(getResources().getString(R.string.event_loc) + ": " + scheduleArray.getString(NETTag.MY_SCHEDULE_LOC));
+
+                            Calendar date = Calendar.getInstance();
+                            date.setTimeInMillis(scheduleArray.getLong(NETTag.MY_SCHEDULE_TIME)*1000);
+                            Date dt = date.getTime();
+                            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm");
+                            holder.mScheduleTime.setText(getResources().getString(R.string.event_time) + ": " + sdf.format(dt));
+
+                            int scheduleType = scheduleArray.getInt(NETTag.MY_SCHEDULE_TYPE);
+                            if(scheduleType == 0){
+                                holder.mScheduleType.setText(getResources().getString(R.string.homework));
+                            }
+                            else  if(scheduleType == 1){
+                                holder.mScheduleType.setText(getResources().getString(R.string.exam));
+                            }
+                            else{
+                                holder.mScheduleType.setText(getResources().getString(R.string.other));
+                            }
+                            holder.mScheduleadd.setOnClickListener(new ScheduleAddItem_Click(position));
+
+                        } catch (JSONException e) {
+                            holder.mScheduleBlock.setVisibility(View.GONE);
+                            e.printStackTrace();
+                        }
                     }
 
                     if(messageList.get(position).userName.length() == 0){
@@ -322,6 +362,57 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
         }
 
 
+        class ScheduleAddItem_Click implements View.OnClickListener {
+            private int mposition;
+
+            ScheduleAddItem_Click(int pos) {
+                mposition = pos;
+            }
+            public void onClick(View v) {
+                String newScheduleString = messageList.get(mposition).scheduleString;
+                if(newScheduleString.length() == 0){
+                    return;
+                }
+                SharedPreferences settings = mContext.getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                String jsonEventString = settings.getString(NETTag.MY_SCHEDULE_EVENT, "[]");
+                JSONObject newScheduleJsonObj;
+
+                JSONArray postScheduleJsonArray;
+                String PostScheduleString = "";
+
+                try {
+                    JSONArray preScheduleJsonArray = new JSONArray(jsonEventString);;
+                    newScheduleJsonObj = new JSONObject(newScheduleString);
+
+                    postScheduleJsonArray = new JSONArray();
+                    Calendar nowCalendar = Calendar.getInstance();
+                    for (int i=0;i<preScheduleJsonArray.length();i++){
+                        try {
+                            if(preScheduleJsonArray.getJSONObject(i).getLong(NETTag.MY_SCHEDULE_TIME) > (long)(nowCalendar.getTimeInMillis()/1000)){
+                                postScheduleJsonArray.put(preScheduleJsonArray.getJSONObject(i));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    postScheduleJsonArray.put(newScheduleJsonObj);
+                    PostScheduleString = postScheduleJsonArray.toString();
+                } catch (JSONException e) {
+                    return;
+                }
+                if(PostScheduleString.length() != 0){
+                    userData udata = new userData("","","","","","","");
+                    udata.myEvent = PostScheduleString;
+                    Toast.makeText(mContext, R.string.add_to_my_schedule, Toast.LENGTH_SHORT).show();
+                    UpdateAccountRequest stringRequest = new UpdateAccountRequest(mContext, AddSchedulelistener, errorAddScheduleListener, udata);
+
+                    MySingleton.getInstance(mContext.getApplicationContext()).addToRequestQueue(stringRequest);
+                }
+
+            }
+        }
+
         class LikeItem_Click implements View.OnClickListener {
             private int mposition;
 
@@ -396,6 +487,11 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
             public FrameLayout  layerImageOne;
             public FrameLayout  LikeLayer;
             public FrameLayout  CommentLayer;
+            public LinearLayout mScheduleBlock;
+            public TextView mScheduleType;
+            public TextView mScheduleTime;
+            public TextView mScheduleLoc;
+            public LinearLayout mScheduleadd;
             ArrayList<ImageView> imageList = new ArrayList<ImageView>();
 
 
@@ -403,6 +499,53 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
 
     }
+
+
+    Response.ErrorListener errorAddScheduleListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.e("EventViewActivity", error.getMessage(), error);
+            Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    };
+
+    Response.Listener<String> AddSchedulelistener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            try {
+                Log.d("EventViewActivity", response);
+                JSONObject jsonObject = new JSONObject(response);
+                if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
+                    JSONObject userJsonObject = new JSONObject(jsonObject.getString(NETTag.USER));
+                    String jsonSTringSchedule = "";
+                    if(userJsonObject.has(NETTag.MY_SCHEDULE_EVENT)){
+                        jsonSTringSchedule = userJsonObject.getString(NETTag.MY_SCHEDULE_EVENT);
+                        JSONArray myschedule = new JSONArray(jsonSTringSchedule);
+
+                        SharedPreferences settings = mContext.getSharedPreferences ("ID", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putString(NETTag.MY_SCHEDULE_EVENT, jsonSTringSchedule);
+                        editor.commit();
+
+                    }
+                    else{
+                        Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+                else{
+                    Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } catch (JSONException e) {
+                Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+                return;
+            }
+        }
+    };
+
 
     public void GetMessage(int start){
         mStart = start;
@@ -607,19 +750,22 @@ public class MessageActivity extends Activity implements SwipeRefreshAndLoadLayo
 
                         MessageItem messageItem = new MessageItem();
 
-                                messageItem.eventID = jsonMessageItem.getString(NETTag.GROPU_EVNET_EVENTID);
-                                messageItem.content = jsonMessageItem.getString(NETTag.GROPU_EVNET_CONTENT);
-                                messageItem.groupid =     jsonMessageItem.getString(NETTag.GROPU_EVNET_GROUPID);
-                                messageItem.userName = jsonMessageItem.getString(NETTag.GROPU_EVNET_NAME);
-                                messageItem.userID =jsonMessageItem.getString(NETTag.GROPU_EVNET_USERID);
-                                messageItem.imageNameList =jsonMessageItem.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
-                                messageItem.type =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TYPE);
-                                messageItem.url =jsonMessageItem.getString(NETTag.GROPU_EVNET_URL);
-                                messageItem.likenum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_LIKENUM);
-                                messageItem.commentnum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
-                                messageItem.anonymous =jsonMessageItem.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
-                                messageItem.postTime =jsonMessageItem.getInt(NETTag.GROPU_EVNET_POSTTIME);
-                                messageItem.time =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TIME);
+                        messageItem.eventID = jsonMessageItem.getString(NETTag.GROPU_EVNET_EVENTID);
+                        messageItem.content = jsonMessageItem.getString(NETTag.GROPU_EVNET_CONTENT);
+                        messageItem.groupid =     jsonMessageItem.getString(NETTag.GROPU_EVNET_GROUPID);
+                        messageItem.userName = jsonMessageItem.getString(NETTag.GROPU_EVNET_NAME);
+                        messageItem.userID =jsonMessageItem.getString(NETTag.GROPU_EVNET_USERID);
+                        messageItem.imageNameList =jsonMessageItem.getJSONArray(NETTag.GROPU_EVNET_IMAGELIST);
+                        messageItem.type =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TYPE);
+                        messageItem.url =jsonMessageItem.getString(NETTag.GROPU_EVNET_URL);
+                        messageItem.likenum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_LIKENUM);
+                        messageItem.commentnum =jsonMessageItem.getInt(NETTag.GROPU_EVNET_COMMENTNUM);
+                        messageItem.anonymous =jsonMessageItem.getInt(NETTag.GROPU_EVNET_ANONYMOUS);
+                        messageItem.postTime =jsonMessageItem.getInt(NETTag.GROPU_EVNET_POSTTIME);
+                        messageItem.time =jsonMessageItem.getInt(NETTag.GROPU_EVNET_TIME);
+                        if(jsonMessageItem.has(NETTag.MY_SCHEDULE_EVENT)){
+                            messageItem.scheduleString = jsonMessageItem.getString(NETTag.MY_SCHEDULE_EVENT);
+                        }
                         mMessageList.add(messageItem);
 
 

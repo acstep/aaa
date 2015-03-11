@@ -170,6 +170,10 @@ public class LoginActivity extends Activity {
                                             editor.putString(Data.USER_NAME,user.getString(NETTag.USER_NAME));
                                         }
 
+                                        if(user.has(NETTag.MY_SCHEDULE_EVENT)){
+                                            editor.putString(NETTag.MY_SCHEDULE_EVENT,user.getString(NETTag.MY_SCHEDULE_EVENT));
+                                        }
+
                                         editor.putBoolean(Data.COURSE_SCHEDULE_SET, true);
                                         editor.commit();
 

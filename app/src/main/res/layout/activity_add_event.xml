@@ -1,0 +1,124 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.app.university.AddEventActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView5" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:focusable="true">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_share_to_group"
+                android:id="@+id/addevent_share_check"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:checked="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/course"
+                android:id="@+id/textView23"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ff1068b9"
+                android:layout_marginTop="30dp" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_event_course"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_type"
+                android:id="@+id/textView24"
+                android:layout_marginTop="30dp"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ff1068b9" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/spinner_event_type"
+                android:entries="@array/event_course_type" />
+
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_event_content"
+                android:hint="@string/content"
+                android:layout_marginTop="30dp" />
+
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edit_event_loc"
+                android:hint="@string/event_loc"
+                android:layout_marginTop="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_time"
+                android:id="@+id/textView25"
+                android:layout_marginTop="30dp"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ff1068b9" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:id="@+id/text_event_date"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:layout_marginLeft="10dp"
+                    style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hour"
+                    android:id="@+id/text_event_hour"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    style="@android:style/Widget.DeviceDefault.Light.Spinner"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="20dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

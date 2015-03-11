@@ -88,15 +88,37 @@
     <string name="next_course_name">Next :  </string>
     <string name="next_course_time">Time :  </string>
     <string name="next_course_loc">Loc  :  </string>
-
+    <string name="event_type">Type</string>
+    <string name="event_share_to_group">Share with Classmates</string>
+    <string name="date">Date</string>
+    <string name="hour">Time</string>
+    <string name="event_loc">Location</string>
+    <string name="event_time">Time</string>
+    <string name="event_no_time">Please input starting time</string>
+    <string name="event_time_expired">Starting time is expired</string>
+    <string name="event_content_empty">Please input content</string>
+    <string name="homework">Homework</string>
+    <string name="exam">Exam</string>
+    <string name="other">Others</string>
+    <string name="add_to_my_schedule">Add to my schedule</string>
+    <string name="volume_auto_off">Auto Switch</string>
+    <string name="volume_auto_off_in_class_title">VIBRATE Switch</string>
+    <string name="volume_auto_off_in_class_content">We have switched your mobile to VIBRATE mode.</string>
 
 
     <string name="title_activity_image_viewer"></string>
     <string name="title_activity_web_viewer"></string>
+    <string name="title_activity_add_event">Add New Schedule</string>
+    <string name="title_activity_event_view">My Schedule</string>
+
 
     <string name="appwidget_text">University</string>
     <string name="add_widget">Add widget</string>
 
+    <string-array name="auto_switch_arrays">
+        <item>Disable</item>
+        <item>Enable</item>
+    </string-array>
 
     <string-array name="notify_arrays">
         <item>Close</item>
@@ -111,6 +133,17 @@
         <item>THU</item>
         <item>FRI</item>
     </string-array>
+
+    <string-array name="event_course_type">
+        <item>Home Work</item>
+        <item>Exam</item>
+        <item>Others</item>
+    </string-array>
+
+
+
+
+
 
 
 

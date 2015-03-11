@@ -19,13 +19,16 @@
                 android:id="@+id/event_item_head"
                 android:layout_margin="10dp"
                 android:background="#ffc3ccc9"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:layout_weight="0" />
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_margin="10dp">
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -70,6 +73,73 @@
                 android:scaleType="fitStart" />
 
         </FrameLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/linear_schedule_block"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_schedule_type"
+                android:background="@drawable/btn_blue"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:padding="5dp"
+                android:textColor="#ffffffff"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_schedule_time"
+                android:layout_marginLeft="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/text_schedule_loc"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:id="@+id/linear_schedule_add"
+                android:background="@drawable/url_item"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/imageView8"
+                    android:src="@mipmap/addschedule"
+                    android:layout_margin="5dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_to_my_schedule"
+                    android:id="@+id/textView26"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -203,4 +273,5 @@
         </LinearLayout>
 
     </LinearLayout>
+
 </FrameLayout>
