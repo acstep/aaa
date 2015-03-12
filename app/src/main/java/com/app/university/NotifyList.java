@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -28,7 +28,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -128,10 +131,10 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                         convertView = inflater.inflate(R.layout.notify_item, null);
 
                         holder = new EventViewHolder();
-                        holder.logoImage = (ImageView) convertView.findViewById(R.id.image_notify_logo);
+                        holder.logoImage = (NetworkImageView) convertView.findViewById(R.id.image_notify_logo);
                         holder.textTitle = (TextView) convertView.findViewById(R.id.text_notify_title);
                         holder.textContent = (TextView) convertView.findViewById(R.id.text_notify_content);
-
+                        holder.textDate = (TextView) convertView.findViewById(R.id.text_notify_time);
                         convertView.setTag(holder);
                     } else {
                         holder = (EventViewHolder) convertView.getTag();
@@ -147,9 +150,22 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
                     holder.textContent.setText(notifyList.get(position).content);
 
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage,R.mipmap.headphoto, R.mipmap.headphoto);
+                    holder.logoImage.setDefaultImageResId(R.mipmap.headphoto);
+                    holder.logoImage.setErrorImageResId(R.mipmap.headphoto);
+                    holder.logoImage.setImageUrl(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", mImageLoader);
+                    //ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage,R.mipmap.headphoto, R.mipmap.headphoto);
 
-                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
+                   // mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
+                    Log.d("NotifyList  fromid = ", notifyList.get(position).fromid );
+
+
+                    Calendar date = Calendar.getInstance();
+                    date.setTimeInMillis(notifyList.get(position).time*1000);
+                    Date dt = date.getTime();
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm");
+                    holder.textDate.setText(sdf.format(dt));
+
+
                     //holder.LikeLayer.setOnClickListener(new LikeItem_Click(position));
                     //holder.CommentLayer.setOnClickListener(new CommentItem_Click(position));
                     //holder.headImage.setImageURI();
@@ -164,10 +180,10 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                         convertView = inflater.inflate(R.layout.notify_item, null);
 
                         holder = new EventViewHolder();
-                        holder.logoImage = (ImageView) convertView.findViewById(R.id.image_notify_logo);
+                        holder.logoImage = (NetworkImageView) convertView.findViewById(R.id.image_notify_logo);
                         holder.textTitle = (TextView) convertView.findViewById(R.id.text_notify_title);
                         holder.textContent = (TextView) convertView.findViewById(R.id.text_notify_content);
-
+                        holder.textDate = (TextView) convertView.findViewById(R.id.text_notify_time);
                         convertView.setTag(holder);
                     } else {
                         holder = (EventViewHolder) convertView.getTag();
@@ -177,9 +193,21 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     holder.textTitle.setText(notifyList.get(position).title);
 
                     holder.textContent.setText(notifyList.get(position).content);
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage, R.mipmap.headphoto, R.mipmap.headphoto);
 
-                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
+
+                    holder.logoImage.setDefaultImageResId(R.mipmap.headphoto);
+                    holder.logoImage.setErrorImageResId(R.mipmap.headphoto);
+                    holder.logoImage.setImageUrl(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", mImageLoader);
+                    //ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.logoImage, R.mipmap.headphoto, R.mipmap.headphoto);
+                    //mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ notifyList.get(position).fromid+".jpg", headlistener);
+
+                    Calendar date = Calendar.getInstance();
+                    date.setTimeInMillis(notifyList.get(position).time*1000);
+                    Date dt = date.getTime();
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm");
+                    holder.textDate.setText(sdf.format(dt));
+
+
 
                     break;
                 }
@@ -196,7 +224,7 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
 
         public class EventViewHolder {
             public TextView title;
-            public ImageView logoImage;
+            public NetworkImageView logoImage;
             public TextView  textTitle;
             public TextView  textDate;
             public TextView  textContent;

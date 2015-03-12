@@ -5,17 +5,20 @@
     android:id="@+id/layout_notify_item"
     android:background="#FFFFFFFF">
 
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/image_notify_logo"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp">
 
-    <LinearLayout
+    </com.android.volley.toolbox.NetworkImageView>
+
+
+<LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+    android:layout_margin="10dp">
 
         <TextView
             android:layout_width="match_parent"
@@ -28,13 +31,20 @@
             android:textStyle="bold" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_notify_time"
+            android:textSize="12sp"
+            android:textColor="#ff7b7b7b" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/text_notify_content"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:lineSpacingExtra="3dp" />
     </LinearLayout>
 </LinearLayout>

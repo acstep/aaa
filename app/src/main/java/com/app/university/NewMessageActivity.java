@@ -59,6 +59,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     private ProgressBar mProgressBar;
     private String mGroupID;
     private int mGroupType = 0;
+    private boolean mSending = false;
 
 
     @Override
@@ -231,6 +232,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 postEvent();
             }
         } catch (JSONException e) {
+            mSending = false;
             e.printStackTrace();
         }
 
@@ -240,6 +242,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     Response.Listener<String> listener = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
+
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 if(jsonObject.getString(NETTag.RESULT).compareTo(NETTag.OK) == 0){
@@ -248,12 +251,12 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                     finish();
                 }
                 else{
-
+                    mSending = false;
                     Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                     return;
                 }
             } catch (JSONException e) {
-
+                mSending = false;
                 Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return;
@@ -266,6 +269,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
     Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
+            mSending = false;
             Log.e("NewMessageActivity", error.getMessage(), error);
             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
@@ -276,6 +280,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
         EditText editContent = (EditText)findViewById(R.id.edit_event_content);
         EditText editURL = (EditText)findViewById(R.id.edit_event_url);
         if(editContent.length() == 0 && imageUploadNameList.isEmpty()){
+            mSending = false;
             return;
         }
 
@@ -309,9 +314,11 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_message_done) {
-            if(uploading){
+            Log.d("NewMessageActivity post string = ", "posting");
+            if(mSending){
                 return super.onOptionsItemSelected(item);
             }
+            mSending = true;
             if(imageNameList.size() != 0){
                 mCurrentUploadIndex = 0;
                 mProgressBar.setVisibility(ProgressBar.VISIBLE);
@@ -322,6 +329,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 try {
                     postEvent();
                 } catch (JSONException e) {
+                    mSending = false;
                     e.printStackTrace();
                 }
             }

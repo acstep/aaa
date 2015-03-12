@@ -456,6 +456,7 @@ public class Schedule extends Fragment {
         int currentDay = calendar.get(Calendar.DAY_OF_WEEK)-1 ;
 
         Button buttonDay;
+        Log.d("Schedule currentDay = ", String.valueOf(currentDay));
         switch(currentDay){
             case 1:
                 buttonDay = (Button)viewSchedule.findViewById(R.id.schedule_mon);

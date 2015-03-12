@@ -52,6 +52,7 @@ public class AddEventActivity extends Activity {
     private int mHour = 99;
     private int mMin = 0;
     private Calendar eventCalendar = Calendar.getInstance();
+    private boolean mSending = false;
 
     private List<String> mCourseName = new ArrayList<String>();
     private List<CourseInfo> mCourseList = new ArrayList<CourseInfo>();;
@@ -248,6 +249,7 @@ public class AddEventActivity extends Activity {
     Response.Listener<String> listener = new Response.Listener<String>() {
         @Override
         public void onResponse(String response) {
+
             try {
                 JSONObject jsonObject = new JSONObject(response);
                 Log.d("AddEventActivity", response);
@@ -262,12 +264,12 @@ public class AddEventActivity extends Activity {
 
                 }
                 else{
-
+                    mSending = false;
                     Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                     return;
                 }
             } catch (JSONException e) {
-
+                mSending = false;
                 Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return;
@@ -281,12 +283,17 @@ public class AddEventActivity extends Activity {
         @Override
         public void onErrorResponse(VolleyError error) {
             Log.e("AddEventActivity", error.getMessage(), error);
+            mSending = false;
             Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
             return;
         }
     };
 
     public void postEvent(int share, String scheduleString , String prestring, String poststring) {
+        if(mSending == true){
+            return;
+        }
+        mSending = true;
         try {
             JSONObject jsonObject = new JSONObject();
 
@@ -301,6 +308,7 @@ public class AddEventActivity extends Activity {
             MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
         } catch (JSONException e) {
             e.printStackTrace();
+            mSending = false;
             return;
         }
     }

@@ -55,6 +55,7 @@ public class BootService extends Service {
         weekString.add("THU");
         weekString.add("FRI");
         weekString.add("SAT");
+
         startTimer();
     }
 
@@ -78,6 +79,11 @@ public class BootService extends Service {
 
                 @Override
                 public void run() {
+                    Context mContext = getApplicationContext();
+                    if(mContext != null){
+                        startService(new Intent(mContext, CourseUpdateService.class));
+                    }
+
                     number = number + 1;
                     if(number%4 == 0){
                         Tracker t = ((UniversityApp) getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
@@ -114,13 +120,18 @@ public class BootService extends Service {
                         Integer index = 0;
                         while (index + 15 <= courseTimeString.length()) {
                             String timeString =courseTimeString.substring(index, index + 15);
+                            Log.d("BootService timeString = ", timeString);
                             if(timeString.substring(0, 3).compareTo(weekString.get(currentDay)) == 0){
                                 int startMin = Integer.valueOf(timeString.substring(7, 9));
                                 int startHR = Integer.valueOf(timeString.substring(4, 6));
-                                if((startHR*60 + startMin - currentHour*60 - currentMin) <120 && (startHR*60 + startMin - currentHour*60 - currentMin)> 0){
+                                Log.d("BootService timeString currentHour currentMin = ", String.valueOf(currentHour) +  String.valueOf(currentMin));
+                                if((startHR*60 + startMin - currentHour*60 - currentMin) <3 && (startHR*60 + startMin - currentHour*60 - currentMin)> 0){
+                                    Log.d("BootService = ", "service start VIBRATE!");
                                     AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
                                     if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
+                                        Log.d("BootService = ", "service need VIBRATE!");
                                         if(settings.getInt(Data.VOLUME_AUTO_OFF, 0) == 1){
+                                            Log.d("BootService = ", "service send VIBRATE!");
                                             audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                                             sendNotification();
                                         }
@@ -148,6 +159,7 @@ public class BootService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopTimer();
+        startService(new Intent(this, BootService.class));
     }
 
     private void stopTimer() {
@@ -160,6 +172,7 @@ public class BootService extends Service {
     }
 
     private void sendNotification() {
+        Log.d("BootService = ", "sendNotification");
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intentNewsViewer = new Intent(this, MainActivity.class);

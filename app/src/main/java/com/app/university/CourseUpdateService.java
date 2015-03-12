@@ -75,6 +75,12 @@ public class CourseUpdateService extends Service {
                 @Override
                 public void run() {
                     Log.d("CourseUpdateService = ", "service update!");
+
+                    Context mContext = getApplicationContext();
+                    if(mContext != null){
+                        startService(new Intent(mContext, BootService.class));
+                    }
+
                     number = number + 1;
                     if(number%4 == 0) {
                         Tracker t = ((UniversityApp) getApplication()).getTracker(UniversityApp.TrackerName.APP_TRACKER);
@@ -139,8 +145,10 @@ public class CourseUpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopTimer();
+        startService(new Intent(this, CourseUpdateService.class));
 
     }
+
 
     private void stopTimer() {
         if (timer != null && task != null) {

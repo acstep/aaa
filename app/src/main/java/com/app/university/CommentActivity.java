@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +31,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.app.university.view.SwipeRefreshAndLoadLayout;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -197,14 +197,14 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     if (convertView == null) {
                         convertView = getLayoutInflater().inflate(R.layout.event_item, null);
                         holder = new EventViewHolder();
-                        holder.headImage = (ImageView) convertView.findViewById(R.id.event_item_head);
+                        holder.headImage = (NetworkImageView) convertView.findViewById(R.id.event_item_head);
                         holder.textName = (TextView) convertView.findViewById(R.id.event_item_name);
                         holder.textDate = (TextView) convertView.findViewById(R.id.event_item_date);
                         holder.textContent = (TextView) convertView.findViewById(R.id.event_item_content);
-                        holder.contentImage1 = (ImageView) convertView.findViewById(R.id.event_item_image1);
-                        holder.contentImage2 = (ImageView) convertView.findViewById(R.id.event_item_image2);
-                        holder.contentImage3 = (ImageView) convertView.findViewById(R.id.event_item_image3);
-                        holder.contentImageonly = (ImageView) convertView.findViewById(R.id.event_item_image_only);
+                        holder.contentImage1 = (NetworkImageView) convertView.findViewById(R.id.event_item_image1);
+                        holder.contentImage2 = (NetworkImageView) convertView.findViewById(R.id.event_item_image2);
+                        holder.contentImage3 = (NetworkImageView) convertView.findViewById(R.id.event_item_image3);
+                        holder.contentImageonly = (NetworkImageView) convertView.findViewById(R.id.event_item_image_only);
                         holder.textLikeNum = (TextView) convertView.findViewById(R.id.event_item_like);
                         holder.textCommentNum = (TextView) convertView.findViewById(R.id.event_item_reply);
                         holder.layerUrlLink = (LinearLayout) convertView.findViewById(R.id.linear_url_link);
@@ -246,8 +246,11 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                         holder.layerUrlLink.setOnClickListener(new UrlItem_Click(position));
                     }
 
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage,  R.mipmap.headphoto, R.mipmap.headphoto);
-                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
+                    holder.headImage.setDefaultImageResId(R.mipmap.headphoto);
+                    holder.headImage.setErrorImageResId(R.mipmap.headphoto);
+                    holder.headImage.setImageUrl(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", mImageLoader);
+                    //ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage,  R.mipmap.headphoto, R.mipmap.headphoto);
+                    //mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
 
                     if(messageList.get(position).imageNameList.length() == 0){
                         holder.layerImageList.setVisibility(View.GONE);
@@ -257,30 +260,41 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     else if(messageList.get(position).imageNameList.length() == 1){
                         holder.layerImageList.setVisibility(View.GONE);
                         holder.layerImageOne.setVisibility(View.VISIBLE);
-                        ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.contentImageonly, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+
+                        holder.contentImageonly.setDefaultImageResId(R.drawable.abc_list_divider_mtrl_alpha);
+                        holder.contentImageonly.setErrorImageResId(R.drawable.abc_list_divider_mtrl_alpha);
                         try {
-                            mImageLoader.get(NETTag.API_GET_FEEDIMAGE_SMALL+"?id="+ messageList.get(position).imageNameList.getString(0), listener);
+                            holder.contentImageonly.setImageUrl(NETTag.API_GET_FEEDIMAGE_SMALL+"?id="+ messageList.get(position).imageNameList.getString(0), mImageLoader);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        //ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.contentImageonly, R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
+                        //try {
+                        //    mImageLoader.get(NETTag.API_GET_FEEDIMAGE_SMALL+"?id="+ messageList.get(position).imageNameList.getString(0), listener);
+                        //} catch (JSONException e) {
+                        //    e.printStackTrace();
+                        //}
                         holder.layerImageOne.setOnClickListener(new Image_Click(position,0));
 
                     }
                     else{
                         holder.layerImageList.setVisibility(View.VISIBLE);
                         holder.layerImageOne.setVisibility(View.GONE);
-                        holder.contentImage1.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
-                        holder.contentImage1.setOnClickListener(new Image_Click(position,0));
-                        holder.contentImage2.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
-                        holder.contentImage2.setOnClickListener(new Image_Click(position,1));
-                        holder.contentImage3.setImageResource(R.drawable.abc_list_divider_mtrl_alpha);
-                        holder.contentImage3.setOnClickListener(new Image_Click(position,2));
-                        for(int i=0; i<messageList.get(position).imageNameList.length() && i<3; i++){
-                            ImageLoader.ImageListener listener = ImageLoader.getImageListener(holder.imageList.get(i), R.drawable.abc_list_divider_mtrl_alpha, R.drawable.abc_list_divider_mtrl_alpha);
-                            try {
-                                mImageLoader.get(NETTag.API_GET_FEEDIMAGE_SMALL+"?id="+ messageList.get(position).imageNameList.getString(i), listener);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        for(int i=0; i<3; i++) {
+                            if(i<messageList.get(position).imageNameList.length()){
+                                holder.imageList.get(i).setVisibility(View.VISIBLE);
+                                holder.imageList.get(i).setOnClickListener(new Image_Click(position, i));
+                                holder.imageList.get(i).setDefaultImageResId(R.drawable.abc_list_divider_mtrl_alpha);
+                                holder.imageList.get(i).setErrorImageResId(R.drawable.abc_list_divider_mtrl_alpha);
+                                try {
+                                    holder.imageList.get(i).setImageUrl(NETTag.API_GET_FEEDIMAGE_SMALL + "?id=" + messageList.get(position).imageNameList.getString(i), mImageLoader);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else{
+                                holder.imageList.get(i).setVisibility(View.GONE);
                             }
                         }
 
@@ -328,7 +342,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     if (convertView == null) {
                         convertView = getLayoutInflater().inflate(R.layout.comment_item, null);
                         holder = new EventViewHolder();
-                        holder.headImage = (ImageView) convertView.findViewById(R.id.comment_item_head);
+                        holder.headImage = (NetworkImageView) convertView.findViewById(R.id.comment_item_head);
                         holder.textName = (TextView) convertView.findViewById(R.id.comment_item_name);
                         holder.textDate = (TextView) convertView.findViewById(R.id.comment_item_date);
                         holder.textContent = (TextView) convertView.findViewById(R.id.comment_item_content);
@@ -348,8 +362,12 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                     holder.textDate.setText(messageList.get(position).getDateDisplayString(mContext));
                     holder.textContent.setText(messageList.get(position).content);
                     holder.textContent.setMaxLines(100);
-                    ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.mipmap.headphoto, R.mipmap.headphoto);
-                    mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
+
+                    holder.headImage.setDefaultImageResId(R.mipmap.headphoto);
+                    holder.headImage.setErrorImageResId(R.mipmap.headphoto);
+                    holder.headImage.setImageUrl(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", mImageLoader);
+                    //ImageLoader.ImageListener headlistener = ImageLoader.getImageListener(holder.headImage, R.mipmap.headphoto, R.mipmap.headphoto);
+                    //mImageLoader.get(NETTag.API_GET_HEADIMAGE_SMALL+"?id="+ messageList.get(position).userID+".jpg", headlistener);
                     break;
                 }
                 default:
@@ -438,14 +456,14 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
 
         public class EventViewHolder {
             public TextView title;
-            public ImageView headImage;
+            public NetworkImageView headImage;
             public TextView  textName;
             public TextView  textDate;
             public TextView  textContent;
-            public ImageView contentImage1;
-            public ImageView contentImage2;
-            public ImageView contentImage3;
-            public ImageView contentImageonly;
+            public NetworkImageView contentImage1;
+            public NetworkImageView contentImage2;
+            public NetworkImageView contentImage3;
+            public NetworkImageView contentImageonly;
             public TextView  textLikeNum;
             public TextView  textCommentNum;
             public LinearLayout  layerImageList;
@@ -455,7 +473,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
             public LinearLayout  layerUrlLink;
             public TextView  textUrl;
 
-            ArrayList<ImageView> imageList = new ArrayList<ImageView>();
+            ArrayList<NetworkImageView> imageList = new ArrayList<NetworkImageView>();
 
 
         }
@@ -594,7 +612,7 @@ public class CommentActivity extends Activity implements SwipeRefreshAndLoadLayo
                         Toast.makeText(mContext, R.string.comment_success, Toast.LENGTH_SHORT).show();
                     }
                     else{
-
+                        mPosting = false;
                         Toast.makeText(mContext, R.string.network_error, Toast.LENGTH_SHORT).show();
                         return;
                     }

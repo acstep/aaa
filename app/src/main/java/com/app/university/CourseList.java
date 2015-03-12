@@ -283,6 +283,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
                     if(getActivity() != null && jsonCourseList.length() != 0) {
                         settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                         editor = settings.edit();
+                        // this tag only used for network fail mode. Don't use this tag other place
                         editor.putString(Data.CURRENTCOURSELIST, response);
                         editor.commit();
                     }
@@ -329,6 +330,7 @@ public class CourseList extends Fragment implements SwipeRefreshAndLoadLayout.On
             if(getActivity() != null) {
                 Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
                 SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
+                // this tag only used for network fail mode. Don't use this tag other place
                 String response = settings.getString(Data.CURRENTCOURSELIST, "[]");
                 JSONObject jsonObject = null;
                 try {

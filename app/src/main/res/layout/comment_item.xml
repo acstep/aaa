@@ -17,14 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+            <com.android.volley.toolbox.NetworkImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/comment_item_head"
                 android:background="#ffc3ccc9"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp" >
+            </com.android.volley.toolbox.NetworkImageView>
 
             <LinearLayout
                 android:orientation="vertical"
