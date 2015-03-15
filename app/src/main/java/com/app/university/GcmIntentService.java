@@ -34,6 +34,9 @@ public class GcmIntentService extends IntentService {
 
 
         Bundle extras = intent.getExtras();
+        if(extras == null){
+            return;
+        }
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
 

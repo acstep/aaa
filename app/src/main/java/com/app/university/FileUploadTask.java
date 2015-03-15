@@ -122,8 +122,8 @@ class FileUploadTask extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... params) {
 
         SharedPreferences shareId = context.getSharedPreferences("ID", Context.MODE_PRIVATE);
-        final String myid = shareId.getString(Data.USER_ID, null);
-        final String mytoken = shareId.getString(Data.TOKEN, null);
+        final String myid = shareId.getString(Data.USER_ID, "");
+        final String mytoken = shareId.getString(Data.TOKEN, "");
         MultipartEntityBuilder entitys = MultipartEntityBuilder.create();
         entitys.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         entitys.setCharset(Charset.forName(HTTP.UTF_8));
