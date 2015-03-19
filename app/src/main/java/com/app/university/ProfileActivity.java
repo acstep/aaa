@@ -411,7 +411,7 @@ public class ProfileActivity extends Activity {
                     String selectedPath = CommonUtil.getImagePath(this, data.getData());
                     String selectedPath1 = CommonUtil.getRealPathFromURI(this,data.getData());
 
-                    if(selectedPath == null){
+                    if(selectedPath == null || selectedPath.compareTo("")==0){
                         intent.setDataAndType(Uri.fromFile(new File(selectedPath1)), "image/*");
                     }
                     else{
@@ -422,6 +422,7 @@ public class ProfileActivity extends Activity {
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.CROP_IMAGE_FILE_NAME)), "image/*");;
                 }
 
+               
 
                 intent.putExtra("output",Uri.fromFile(new File(Environment.getExternalStorageDirectory()+"/"+Data.FOLDER,Data.IMAGE_FILE_NAME)));
                 intent.putExtra("crop", "true");

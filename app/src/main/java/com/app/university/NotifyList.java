@@ -343,6 +343,7 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
         public void onErrorResponse(VolleyError error) {
             mSwipeLayout.setRefreshing(false);
             if(getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
                 SharedPreferences settings = getActivity().getSharedPreferences("ID", Context.MODE_PRIVATE);
                 String response = settings.getString(Data.CURRENTNOTIGYLIST, "[]");
 
@@ -380,7 +381,7 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
             mSwipeLayout.setRefreshing(false);
 
             Log.e("NotifyList", error.getMessage(), error);
-            Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+
             return;
         }
     };

@@ -104,6 +104,7 @@
     <string name="volume_auto_off">Auto Switch</string>
     <string name="volume_auto_off_in_class_title">VIBRATE Switch</string>
     <string name="volume_auto_off_in_class_content">We have switched your mobile to VIBRATE mode.</string>
+    <string name="photo_notwork">Sorry. We did not support this image format.</string>
 
 
     <string name="title_activity_image_viewer"></string>

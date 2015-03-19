@@ -129,7 +129,7 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                     String selectedPath = CommonUtil.getImagePath(this, data.getData());
                     String selectedPath1 = CommonUtil.getRealPathFromURI(this,data.getData());
 
-                    if(selectedPath == null){
+                    if(selectedPath == null || selectedPath.compareTo("")==0){
                         originalBitmap = BitmapFactory.decodeFile(selectedPath1);
                     }
                     else{
@@ -138,6 +138,11 @@ public class NewMessageActivity extends Activity implements FileUploadTask.Async
                 }
                 else{
                     originalBitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER + "/" + tmpFileName);
+                }
+
+                if(originalBitmap == null){
+                    Toast.makeText(mContext, R.string.photo_notwork, Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 int width = originalBitmap.getWidth();

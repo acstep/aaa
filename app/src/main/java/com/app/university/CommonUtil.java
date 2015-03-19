@@ -50,29 +50,38 @@ public class CommonUtil {
     }
 
     public static String getRealPathFromURI(Context context,Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+        try{
+            String[] proj = { MediaStore.Images.Media.DATA };
+            CursorLoader loader = new CursorLoader(context, contentUri, proj, null, null, null);
+            Cursor cursor = loader.loadInBackground();
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public static String getImagePath(Context context, Uri uri){
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
+        try{
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            cursor.moveToFirst();
+            String document_id = cursor.getString(0);
+            document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+            cursor.close();
 
-        cursor = context.getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
+            cursor = context.getContentResolver().query(
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+            cursor.moveToFirst();
 
-        return path;
+            String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            cursor.close();
+
+            return path;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public static JSONArray RemoveJSONArray( JSONArray jarray,int pos) {

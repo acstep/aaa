@@ -99,6 +99,7 @@
     <string name="volume_auto_off_in_class">上課中自動切換成震動模式</string>
     <string name="volume_auto_off_in_class_title">切換震動</string>
     <string name="volume_auto_off_in_class_content">已幫您在上課中自動切換成震動模式</string>
+    <string name="photo_notwork">抱歉。您選的照片格式不支援。請選擇其他照片。</string>
 
 
 
