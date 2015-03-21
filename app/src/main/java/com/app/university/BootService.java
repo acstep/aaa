@@ -128,14 +128,18 @@ public class BootService extends Service {
                                 if((startHR*60 + startMin - currentHour*60 - currentMin) <3 && (startHR*60 + startMin - currentHour*60 - currentMin)> 0){
                                     Log.d("BootService = ", "service start VIBRATE!");
                                     AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                                    if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
-                                        Log.d("BootService = ", "service need VIBRATE!");
-                                        if(settings.getInt(Data.VOLUME_AUTO_OFF, 0) == 1){
-                                            Log.d("BootService = ", "service send VIBRATE!");
+
+                                    if(settings.getInt(Data.VOLUME_AUTO_OFF, 0) == 1){
+                                        Log.d("BootService = ", "service send VIBRATE!");
+                                        if(audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
                                             audioManager.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
                                             sendNotification();
                                         }
 
+                                    }
+                                    else if(settings.getInt(Data.VOLUME_AUTO_OFF, 0) == 2){
+                                        audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                                        sendNotification();
                                     }
 
                                 }

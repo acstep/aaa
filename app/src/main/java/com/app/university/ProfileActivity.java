@@ -422,7 +422,7 @@ public class ProfileActivity extends Activity {
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/" + Data.FOLDER, Data.CROP_IMAGE_FILE_NAME)), "image/*");;
                 }
 
-               
+
 
                 intent.putExtra("output",Uri.fromFile(new File(Environment.getExternalStorageDirectory()+"/"+Data.FOLDER,Data.IMAGE_FILE_NAME)));
                 intent.putExtra("crop", "true");

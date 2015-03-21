@@ -277,7 +277,11 @@ public class CourseUpdateService extends Service {
 
                     int courseHR = Integer.valueOf(courseInfo.timeString.substring(4, 6));
                     if(dayDistance == 0){
-                        if((courseHR - currentHour)<=0 && startMin < currentMin){
+                        if((courseHR - currentHour)==0 && startMin < currentMin){
+
+                            courseInfo.distance = 24-currentHour + 6*24 + courseHR;
+                        }
+                        else if((courseHR - currentHour)< 0){
                             courseInfo.distance = 24-currentHour + 6*24 + courseHR;
                         }
                         else{

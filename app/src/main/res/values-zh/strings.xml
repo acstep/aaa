@@ -95,10 +95,10 @@
     <string name="event_no_time">請輸入開始時間</string>
     <string name="event_time_expired">開始時間已經過去</string>
     <string name="event_content_empty">請輸入內容</string>
-    <string name="volume_auto_off">自動切換震動</string>
-    <string name="volume_auto_off_in_class">上課中自動切換成震動模式</string>
+    <string name="volume_auto_off">上課自動切換</string>
+    <string name="volume_auto_off_in_class">上課中自動切換成靜音或是震動模式</string>
     <string name="volume_auto_off_in_class_title">切換震動</string>
-    <string name="volume_auto_off_in_class_content">已幫您在上課中自動切換成震動模式</string>
+    <string name="volume_auto_off_in_class_content">已幫您在上課中自動切換成震動或靜音模式</string>
     <string name="photo_notwork">抱歉。您選的照片格式不支援。請選擇其他照片。</string>
 
 
@@ -123,7 +123,8 @@
 
     <string-array name="auto_switch_arrays">
         <item>關閉</item>
-        <item>開啟</item>
+        <item>上課自動切換震動</item>
+        <item>上課自動切換靜音</item>
     </string-array>
 
     <string-array name="notify_arrays">

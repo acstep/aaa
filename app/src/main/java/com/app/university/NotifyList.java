@@ -319,14 +319,17 @@ public class NotifyList extends Fragment implements SwipeRefreshAndLoadLayout.On
                 else{
                     mLoading = false;
                     mSwipeLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), R.string.need_verify, Toast.LENGTH_SHORT).show();
-
+                    if(getActivity() != null) {
+                        Toast.makeText(getActivity(), R.string.need_verify, Toast.LENGTH_SHORT).show();
+                    }
                     return;
                 }
             } catch (JSONException e) {
                 mSwipeLayout.setRefreshing(false);
                 mLoading = false;
-                Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                if(getActivity() != null) {
+                    Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
                 e.printStackTrace();
                 return;
             } finally {
